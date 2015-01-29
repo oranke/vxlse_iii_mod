@@ -260,7 +260,7 @@ begin
       p^.Section[i].Tailer.Det := StrToFloat(scale.Text);
     except
       on EConvertError do begin
-        i:=0;
+        //i:=0;
       end;
     end;
   end;
@@ -281,7 +281,7 @@ begin
       end;
     except
       on EConvertError do begin
-        i:=0;
+        //i:=0;
       end;
     end;
   end;

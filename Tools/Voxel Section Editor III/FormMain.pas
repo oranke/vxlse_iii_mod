@@ -3627,7 +3627,7 @@ var
    path:  string;
    Filename: string;
    item, item2: TMenuItem;
-   {c,}x: integer;
+   //c,x: integer;
    s:     TStringList;
    Split: string;
    GameType: string;
@@ -4178,7 +4178,8 @@ end;
 procedure TFrmMain.Importfrommodel1Click(Sender: TObject);
 var
    tempvxl : TVoxel;
-   i, SectionIndex,tempsectionindex,u1,u2,{u3,}num: Integer;
+   i, SectionIndex,tempsectionindex: Integer;
+   //u1,u2,{u3,}num: Integer;
    frm: Tfrmimportsection;
 begin
    if not isEditable then exit;

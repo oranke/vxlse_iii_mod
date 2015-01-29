@@ -632,7 +632,7 @@ begin
    {$ifdef DEBUG_FILE}
    FrmMain.DebugFile.Add('VoxelEngine: PaintView2');
    {$endif}
-   Bitmap := nil;
+   //Bitmap := nil;
    if (not Cnv.Enabled) or (not IsEditable) then
    begin // draw it empty then
       with Cnv.Canvas do
@@ -2064,7 +2064,7 @@ var
    image : TBitmap;
    v : tvoxelunpacked;
 begin
-   Image := nil;
+   //Image := nil;
    // Security Check
    if not isEditable then exit;
 

@@ -45,15 +45,15 @@ end;
 
 procedure TFrmTestHVA.SpinEdit1Change(Sender: TObject);
 begin
-try
-if SpinEdit1.Value > HVAFile.Header.N_Frames-1 then
-SpinEdit1.Value := 0;
-if SpinEdit1.Value < 0 then
-SpinEdit1.Value := HVAFile.Header.N_Frames-1;
-except
-exit;
-end;
-HVAFrame := SpinEdit1.Value;
+  try
+    if SpinEdit1.Value > Int64(HVAFile.Header.N_Frames)-1 then
+      SpinEdit1.Value := 0;
+    if SpinEdit1.Value < 0 then
+      SpinEdit1.Value := HVAFile.Header.N_Frames-1;
+  except
+    exit;
+  end;
+  HVAFrame := SpinEdit1.Value;
 end;
 
 procedure TFrmTestHVA.Button1Click(Sender: TObject);

@@ -617,7 +617,7 @@ end;
 // Builds
 procedure TBZK2File.BuildSectorMap;
 var
-   Sector : TBZK2Sector;
+   //Sector : TBZK2Sector;
    Scale : TVector3i;
    xcount, ycount, zcount, x, y, z, xmax, ymax, zmax: Integer;
    v : TVoxelUnpacked;
@@ -805,6 +805,8 @@ begin
             bfdWest: Normal := GetNormalX(v);
             bfdFloor: Normal := GetNormalZ(v);
             bfdCeiling: Normal := GetNormalZ(v);
+         else
+          Normal := GetNormalZ(v);
          end;
          // We get the colour
          Colour.X := Round(GetRValue(VXLPalette[V.Colour]) * Normal * Settings.LocalLighting.X);

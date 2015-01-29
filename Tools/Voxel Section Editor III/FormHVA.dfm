@@ -48,11 +48,21 @@ object FrmTestHVA: TFrmTestHVA
     Height = 89
     BorderStyle = bsNone
     Color = clBtnFace
+    Font.Charset = HANGEUL_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = []
+    ImeName = 'Microsoft IME 2010'
     Lines.Strings = (
-      'When the test is on the 3d view on '
-      'the main form should b changed by '
-      'this test when the frame changes...... '
+      'When the test is on the 3d view '
+      'on '
+      'the main form should b changed '
+      'by '
+      'this test when the frame '
+      'changes...... '
       'this is the hope anyway')
+    ParentFont = False
     TabOrder = 1
   end
   object Button1: TButton

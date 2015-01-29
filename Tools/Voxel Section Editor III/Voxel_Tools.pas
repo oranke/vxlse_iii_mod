@@ -175,7 +175,7 @@ Function Norm2Index(N : TVector3f; Vxl : TVoxelSection) : Byte;
 begin
    if Vxl.Tailer.Unknown = 2 then
       Result := Norm2IndexTS(N)
-   else if Vxl.Tailer.Unknown = 4 then
+   else //if Vxl.Tailer.Unknown = 4 then
       Result := Norm2IndexRA2(N);
 end;
 
@@ -733,11 +733,11 @@ const
 var
    x,y,z : integer;
    IsInsideVolume : boolean;
-   MaxX,MaxY,MaxZ : integer;
+   //MaxX,MaxY,MaxZ : integer;
 begin
-   MaxX := High(Map);
-   MaxY := High(Map[0]);
-   MaxZ := High(Map[0,0]);
+   //MaxX := High(Map);
+   //MaxY := High(Map[0]);
+   //MaxZ := High(Map[0,0]);
    // Scan on z direction.
    for x := Low(Map) to High(Map) do
       for y := Low(Map) to High(Map[x]) do
@@ -1234,8 +1234,9 @@ const
 var
    x,y,z : integer;
    Size,MidPoint : integer;
-   Distance,Distance2D : single;
-   AngTheta, AngPhi : single;
+   Distance : single;
+   //Distance2D : single;
+   //AngTheta, AngPhi : single;
 begin
    // 1.36 Setup distance array
    MidPoint := Max(Trunc(SmoothLevel),Trunc(Range));
@@ -1265,10 +1266,10 @@ begin
                if (Distance <= Range) then
                begin
                   // Here we find the angTheta.
-                  angTheta := arctan2(MidPoint - y,MidPoint - x);
+                  //angTheta := arctan2(MidPoint - y,MidPoint - x);
                   // Now, we find angPhi
-                  Distance2D := Hypot(x - MidPoint,y - MidPoint);
-                  angPhi := ANG90 - arctan2((MidPoint - z),Distance2D);
+                  //Distance2D := Hypot(x - MidPoint,y - MidPoint);
+                  //angPhi := ANG90 - arctan2((MidPoint - z),Distance2D);
                   if MidPoint <> x then
 //                     Dist[x,y,z].X := (sin(angPhi) * cos(AngTheta)) / Power(Distance,Power(abs(MidPoint-x),ContrastLevel))
 //                     Dist[x,y,z].X := (3 * abs(MidPoint-x)) / (sin(angPhi) * cos(AngTheta) * power(Distance,3))
@@ -1397,7 +1398,7 @@ function ApplyCubedNormals(Voxel : TVoxelSection; Range,SmoothLevel : single; Co
 var
    BinaryMap,FilledMap : TBinaryMap;
    FloatMap : TVector3fMap;
-   x,y,z : integer;
+   //x,y,z : integer;
    Dist : TDistanceArray;
    IntRange,IntSmooth,FullRange : integer;
 begin
@@ -2179,7 +2180,7 @@ end;
 
 // a voxel is internal if all adjacent voxels (including diagonals) are inside
 function Internal(voxel: TVoxelSection; x,y,z: Integer): Boolean;
-var maxx, maxy, maxz: Integer;
+//var maxx, maxy, maxz: Integer;
    function IsExternal(x,y,z:Integer):Boolean;
    var
       v: TVoxelUnpacked;
@@ -2192,9 +2193,9 @@ var
    x1, y1, z1: Integer;
 begin
    Result := False; // assume not
-   maxx := voxel.Tailer.XSize - 1;
-   maxy := voxel.Tailer.YSize - 1;
-   maxz := voxel.Tailer.ZSize - 1;
+   //maxx := voxel.Tailer.XSize - 1;
+   //maxy := voxel.Tailer.YSize - 1;
+   //maxz := voxel.Tailer.ZSize - 1;
    for x1 := Pred(x) to Succ(x) do
       for y1 := Pred(y) to Succ(y) do
          for z1 := Pred(z) to Succ(z) do

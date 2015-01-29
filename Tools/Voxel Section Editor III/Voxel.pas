@@ -175,7 +175,7 @@ type
       Dir: EVoxelViewDir;
       swapX, swapY, swapZ: boolean; // are these inversed for viewing?
       procedure CreateCanvas;
-      procedure Clear;
+      //procedure Clear;
       procedure CalcSwapXYZ;
    public
       Foreground, // the Depth in Canvas[] that is the active slice
@@ -437,9 +437,9 @@ begin
    // Copy anything else.
    spectrum := _VoxelSection.spectrum;
    MaxNormal := _VoxelSection.MaxNormal;
-   X := _VoxelSection.X;
-   Y := _VoxelSection.Y;
-   Z := _VoxelSection.Z;
+   //X := _VoxelSection.X;
+   //Y := _VoxelSection.Y;
+   //Z := _VoxelSection.Z;
    for i := 0 to 2 do
    begin
       View[i].Assign(_VoxelSection.View[i]);
@@ -1101,7 +1101,7 @@ begin
       SetLength(Canvas[x],Height);
    //CalcIncs;
 end;
-
+{
 procedure TVoxelView.Clear;
 var
    x, y: Integer;
@@ -1114,7 +1114,7 @@ begin
             Depth := 0; // far away
          end;
 end;
-
+}
 constructor TVoxelView.Create(Owner: TVoxelSection; o: EVoxelViewOrient; d: EVoxelViewDir);
 begin
    Voxel := Owner;
