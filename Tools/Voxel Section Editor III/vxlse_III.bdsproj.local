@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2007/02/11 21:20:05.390.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\Debug.pas</Transaction>
+    <Transaction>2007/02/17 21:19:58.921.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\FormAutoNormals.pas</Transaction>
+    <Transaction>2007/02/17 21:19:58.921.dfm,J:\SuperProjetos\VXLSE III13\Unit1.dfm=J:\SuperProjetos\VXLSE III13\FormAutoNormals.dfm</Transaction>
+    <Transaction>2007/02/20 03:36:41.812.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\BZK_Sector.pas</Transaction>
+    <Transaction>2007/02/21 02:45:13.921.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\BZK_Actor.pas</Transaction>
+    <Transaction>2007/02/21 03:03:22.656.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\BZKCamera.pas</Transaction>
+    <Transaction>2007/02/21 03:20:33.562.pas,J:\SuperProjetos\VXLSE III13\BZKCamera.pas=J:\SuperProjetos\VXLSE III13\BZK_Camera.pas</Transaction>
+    <Transaction>2007/02/21 10:57:23.593.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\BZK2_File.pas</Transaction>
+    <Transaction>2007/02/21 10:57:34.531.pas,J:\SuperProjetos\VXLSE III13\BZK_Actor.pas=J:\SuperProjetos\VXLSE III13\BZK2_Actor.pas</Transaction>
+    <Transaction>2007/02/21 10:57:45.578.pas,J:\SuperProjetos\VXLSE III13\BZK_Camera.pas=J:\SuperProjetos\VXLSE III13\BZK2_Camera.pas</Transaction>
+    <Transaction>2007/02/21 10:57:56.046.pas,J:\SuperProjetos\VXLSE III13\BZK_Sector.pas=J:\SuperProjetos\VXLSE III13\BZK2_Sector.pas</Transaction>
+    <Transaction>2007/04/25 05:25:08.453.pas,J:\SuperProjetos\VXLSE III13\Unit1.pas=J:\SuperProjetos\VXLSE III13\voxel_autonormals.pas</Transaction>
+    <Transaction>2007/04/28 18:18:36.203.pas,J:\SuperProjetos\VXLSE III13\voxel_autonormals.pas=J:\SuperProjetos\VXLSE III13\voxel_autonormals1.pas</Transaction>
+    <Transaction>2007/04/28 18:18:47.359.pas,J:\SuperProjetos\VXLSE III13\voxel_autonormals1.pas=J:\SuperProjetos\VXLSE III13\Voxel_AutoNormals.pas</Transaction>
+    <Transaction>2007/08/24 18:12:11.218.pas,J:\SuperProjetos\Voxel Tools SVN\vxlseiii13x\FormMain.pas=</Transaction>
+    <Transaction>2007/08/24 18:12:11.218.dfm,J:\SuperProjetos\Voxel Tools SVN\vxlseiii13x\FormMain.dfm=</Transaction>
+  </Transactions>
+</BorlandProject>
