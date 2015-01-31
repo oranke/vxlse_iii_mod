@@ -15,6 +15,9 @@ type
       Color, Normal: integer;
       Position: TVector3f;
       Faces: array [1..6] of boolean;
+
+      // by oranke.
+      IsSkin: Boolean;
    end;
 
    TVoxelBoxSection = record
