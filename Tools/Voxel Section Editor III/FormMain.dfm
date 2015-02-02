@@ -1514,7 +1514,8 @@ object FrmMain: TFrmMain
         OnMouseMove = CnvView0MouseMove
         OnMouseUp = CnvView0MouseUp
         OnPaint = CnvView0Paint
-        ExplicitHeight = 753
+        ExplicitLeft = 0
+        ExplicitTop = 8
       end
       object TopBarImageHolder: TImage
         Left = 0

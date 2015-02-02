@@ -17,6 +17,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls,
 
+  Voxel_Engine,
+
   OpenGL15;
 
 type
@@ -38,12 +40,20 @@ type
     fDC: HDC; // Device Context
     fRC: HGLRC; // Rendering Context
 
-    fCubicDrawID: GLUint; 
+    fCubicDrawID: GLUint;
+
+  private
+    fRotX, fRotY, fFov, fDist,
+    fNear, fFar: Single;
+    fLookAtPos: TVector3f;
+
+    procedure RenderScene;
   public
     { Public declarations }
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
 
+    procedure SetViewParams;
     procedure Idle(Sender: TObject; var Done: Boolean);
   end;
 
@@ -56,11 +66,9 @@ implementation
 
 uses
   OGLUtil,
-  
-  Voxel_Engine,
   ogl3dview_engine,
-  
-  FormMain;
+
+  FormMain, Voxel;
 
 
 
@@ -117,6 +125,11 @@ begin
   glEnd();								// Done Drawing Quads
   glEndList();
 
+
+  //------------------
+
+  SetViewParams;
+
 end;
 
 destructor TFrmEdit3D.Destroy;
@@ -127,9 +140,49 @@ begin
   inherited;
 end;
 
+procedure TFrmEdit3D.RenderScene;
+begin
+
+end;
+
+procedure TFrmEdit3D.SetViewParams;
+begin
+  fRotX := 25;
+  fRotY := 0;
+  fFov  := 45;
+
+  //with VoxelFile.Section[0].Tailer do
+  with ActiveSection.Tailer do
+  begin
+    fLookAtPos.X := XSize / 2;
+    fLookAtPos.Y := YSize / 2;
+    fLookAtPos.Z := ZSize / 2;
+
+    fDist :=
+      Sqrt(
+        XSize * XSize +
+        YSize * YSize +
+        ZSize * ZSize
+      ) * 3;
+
+    fNear := fDist / 10;
+    fFar  := fDist * 10; 
+  end;
+end;
+
 procedure TFrmEdit3D.Idle(Sender: TObject; var Done: Boolean);
 begin
-  RenderPaintPaint(RenderPaint); 
+  wglMakeCurrent(fDC, fRC);
+  //SetCurrent(fDC, fRC);
+
+  //glClearColor(0.5, 0.5, 1.0, 1.0);
+  glClearColor(140 / 255, 170 / 255, 235 / 255, 1.0);
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
+
+  RenderScene();
+
+
+  SwapBuffers(fDC); // Display the scene
 end;
 
 
@@ -160,17 +213,9 @@ end;
 
 procedure TFrmEdit3D.RenderPaintPaint(Sender: TObject);
 begin
-  wglMakeCurrent(fDC, fRC);
-  //SetCurrent(fDC, fRC);
-
-  //glClearColor(0.5, 0.5, 1.0, 1.0);
-  glClearColor(140 / 255, 170 / 255, 235 / 255, 1.0);
-
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
-
-
-
-  SwapBuffers(DC); // Display the scene
+//
 end;
+
+
 
 end.

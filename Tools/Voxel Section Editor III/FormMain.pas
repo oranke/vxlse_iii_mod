@@ -1344,7 +1344,8 @@ begin
    frm.Close;
    frm.Free;
 
-   WindowState := wsMaximized;
+   //WindowState := wsMaximized;
+   
 //  refresh;
    setupscrollbars;
    UpdateUndo_RedoState;
