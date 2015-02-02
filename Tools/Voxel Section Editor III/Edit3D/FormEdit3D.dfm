@@ -14,6 +14,7 @@ object FrmEdit3D: TFrmEdit3D
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object CtrlPanel: TPanel
@@ -39,25 +40,13 @@ object FrmEdit3D: TFrmEdit3D
     Top = 26
     Width = 493
     Height = 408
-    Cursor = crCross
     Align = alClient
-    BevelOuter = bvLowered
+    BevelOuter = bvNone
     Color = clBlack
     TabOrder = 1
-    object RenderPaint: TPaintBox
-      Left = 1
-      Top = 1
-      Width = 491
-      Height = 406
-      Align = alClient
-      OnMouseDown = RenderPaintMouseDown
-      OnMouseMove = RenderPaintMouseMove
-      OnMouseUp = RenderPaintMouseUp
-      OnPaint = RenderPaintPaint
-      ExplicitLeft = 120
-      ExplicitTop = 136
-      ExplicitWidth = 161
-      ExplicitHeight = 137
-    end
+    OnMouseDown = RenderPaintMouseDown
+    OnMouseMove = RenderPaintMouseMove
+    OnMouseUp = RenderPaintMouseUp
+    OnResize = RenderPanelResize
   end
 end

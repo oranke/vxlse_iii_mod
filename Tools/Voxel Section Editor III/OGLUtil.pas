@@ -1,11 +1,11 @@
-{-----------------------------------------------------------------------------
+ï»¿{-----------------------------------------------------------------------------
  Unit Name: OGLUtil
  Author:    oranke
  Date:      2011-04-08
  Purpose:
-    OpenGL Á¦¾î¿ë À¯Æ¿¸®Æ¼ À¯´ÏÆ®.
-    ´ë¼· ¼¼¹Ì³ª¿ëÀ¸·Î Á¦ÀÛ.
-    °¡±ŞÀû °£´ÜÇÑ ÀÎÅÍÆäÀÌ½º¸¦ À¯ÁöÇÒ °Í.
+    OpenGL ì œì–´ìš© ìœ í‹¸ë¦¬í‹° ìœ ë‹ˆíŠ¸.
+    ëŒ€ì„­ ì„¸ë¯¸ë‚˜ìš©ìœ¼ë¡œ ì œì‘.
+    ê°€ê¸‰ì  ê°„ë‹¨í•œ ì¸í„°í˜ì´ìŠ¤ë¥¼ ìœ ì§€í•  ê²ƒ.
 
  History:
 -----------------------------------------------------------------------------}
@@ -25,7 +25,7 @@ procedure CloseOpenGL(aHandle: THandle; aDC: HDC; aRC: HGLRC);
 
 implementation
 
-// OpenGL ÃÊ±âÈ­. 
+// OpenGL ì´ˆê¸°í™”. 
 function InitOpenGL(aHandle: THandle; var aDC: HDC; var aRC: HGLRC): Boolean;
 var
   pfd : TPIXELFORMATDESCRIPTOR;
@@ -59,13 +59,13 @@ begin
   Result := true;
 end;
 
-// ÁöÁ¤µÈ RC¸¦ ÇöÁ¦ RC·Î. 
+// ì§€ì •ëœ RCë¥¼ í˜„ì œ RCë¡œ. 
 procedure SetCurrent(aDC: HDC; aRC: HGLRC);
 begin
   wglMakeCurrent(aDC, aRC);
 end;
 
-// OepnGL Á¤¸®. 
+// OepnGL ì •ë¦¬. 
 procedure CloseOpenGL(aHandle: THandle; aDC: HDC; aRC: HGLRC);
 begin
   if aRC <> 0 then

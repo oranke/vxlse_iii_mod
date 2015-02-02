@@ -36,8 +36,6 @@ object Frm3DPReview: TFrm3DPReview
     OnMouseDown = Panel2MouseDown
     OnMouseMove = Panel2MouseMove
     OnMouseUp = Panel2MouseUp
-    ExplicitWidth = 410
-    ExplicitHeight = 301
   end
   object Panel1: TPanel
     Left = 0
@@ -47,7 +45,6 @@ object Frm3DPReview: TFrm3DPReview
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 363
     DesignSize = (
       362
       26)
@@ -310,7 +307,6 @@ object Frm3DPReview: TFrm3DPReview
       TabOrder = 1
       Value = 1
       OnChange = SpFrameChange
-      ExplicitLeft = 315
     end
   end
   object MainMenu1: TMainMenu

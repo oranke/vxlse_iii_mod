@@ -139,8 +139,8 @@ type
     procedure BuildFont;
     //procedure KillFont;
     procedure MakeMeAScreenshotName(var Filename: string; Ext: string);
-    //private
-      //CubicDrawID : GLuint;
+  //private
+    //CubicDrawID : GLuint;
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
@@ -773,6 +773,7 @@ begin
   RebuildLists:=false;
   Update3dView(ActiveSection);
   IsReady:=true;
+
 
   {
   CubicDrawID := glGenLists(1);
