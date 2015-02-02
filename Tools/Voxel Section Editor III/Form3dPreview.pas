@@ -236,7 +236,10 @@ function TVector3fToTColor(Vector3f: TVector3f): TColor;
 
 implementation
 
-uses FormMain;
+uses
+  OGLUtil, 
+
+  FormMain;
 
 {$R *.DFM}
 
@@ -499,8 +502,9 @@ begin
   try
     if (not Showing) then
       exit;
-    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
+      
     glClearColor(BGColor.X, BGColor.Y, BGColor.Z, 1.0); // Black Background
+    glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
 
     if (not VoxelOpen) then
       exit;
@@ -721,9 +725,6 @@ end;
 {------------------------------------------------------------------}
 
 procedure TFrm3DPReview.FormCreate(Sender: TObject);
-var
-  pfd: TPIXELFORMATDESCRIPTOR;
-  pf: Integer;
 begin
   IsReady:=false;
   // OpenGL initialization
@@ -733,22 +734,13 @@ begin
   FontColor:=SetVector(1, 1, 1);
   Size:=0.1;
 
+
   RemapColour.X:=RemapColourMap[0].R / 255;
   RemapColour.Y:=RemapColourMap[0].G / 255;
   RemapColour.Z:=RemapColourMap[0].B / 255;
 
-  // PixelFormat
-  pfd.nSize:=sizeof(pfd);
-  pfd.nVersion:=1;
-  pfd.dwFlags:=PFD_DRAW_TO_WINDOW or PFD_SUPPORT_OPENGL or PFD_DOUBLEBUFFER or 0;
-  pfd.iPixelType:=PFD_TYPE_RGBA; // PFD_TYPE_RGBA or PFD_TYPEINDEX
-  pfd.cColorBits:=32;
+  InitOpenGL(Panel2.Handle, dc, rc);
 
-  pf:=ChoosePixelFormat(dc, @pfd); // Returns format that most closely matches above pixel format
-  SetPixelFormat(dc, pf, @pfd);
-
-  rc:=wglCreateContext(dc); // Rendering Context = window-glCreateContext
-  wglMakeCurrent(dc, rc); // Make the DC (Form1) the rendering Context
   ActivateRenderingContext(DC, RC);
 
   glClearColor(0.0, 0.0, 0.0, 0.0); // Black Background
@@ -825,7 +817,7 @@ begin
   glEndList();
   }
 
-  glEnable(GL_NORMALIZE);
+  //glEnable(GL_NORMALIZE);
 end;
 
 {------------------------------------------------------------------}
@@ -850,6 +842,7 @@ begin
   FoldTime:=TMP;
   FPS:=1 / FPS;
 
+  //SetCurrent(dc, rc);
   wglMakeCurrent(dc, rc); // Make the DC (Form1) the rendering Context
   DrawMe(); // Draw the scene
   SwapBuffers(DC); // Display the scene
@@ -879,7 +872,10 @@ begin
   //glDeleteLists(CubicDrawID, 1);
 
   //   wglMakeCurrent(0,0);
-  wglDeleteContext(rc);
+  //wglDeleteContext(rc);
+
+  CloseOpenGL(Panel2.Handle, dc, rc);
+  
   FrmMain.p_Frm3DPreview:=nil;
 end;
 
@@ -1456,6 +1452,8 @@ end;
 
 procedure TFrm3DPReview.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
+
+
   FrmMain.p_Frm3DPreview:=nil;
   if FrmMain.Display3dView1.Checked then
     Application.OnIdle:=nil;

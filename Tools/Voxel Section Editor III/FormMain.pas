@@ -582,6 +582,8 @@ implementation
 {$R *.dfm}
 
 uses
+  OGLUtil,
+  
   FormEdit3D,
 
   FormHeaderUnit,LoadForm,FormNewSectionSizeUnit,FormPalettePackAbout,HVA,
@@ -663,8 +665,8 @@ end;
 procedure TFrmMain.FormCreate(Sender: TObject);
 var
    i : integer;
-   pfd : TPIXELFORMATDESCRIPTOR;
-   pf  : Integer;
+   //pfd : TPIXELFORMATDESCRIPTOR;
+   //pf  : Integer;
 begin
    // 1.32: Debug adition
    {$ifdef DEBUG_FILE}
@@ -720,9 +722,8 @@ begin
    Application.OnIdle := nil;
 
    // OpenGL initialisieren
-   InitOpenGL;
-   dc:=GetDC(FrmMain.OGL3DPreview.Handle);
-
+   OpenGL15.InitOpenGL;
+   
    BGColor   := CleanVCCol(GetVXLPaletteColor(-1));
    FontColor := SetVector(1,1,1);
    Size      := 0.2;
@@ -730,6 +731,10 @@ begin
    RemapColour.X := RemapColourMap[0].R /255;
    RemapColour.Y := RemapColourMap[0].G /255;
    RemapColour.Z := RemapColourMap[0].B /255;
+
+   OGLUtil.InitOpenGL(OGL3DPreview.Handle, dc, rc);
+   { 
+   dc:=GetDC(FrmMain.OGL3DPreview.Handle);
 
    // PixelFormat
    pfd.nSize:=sizeof(pfd);
@@ -743,6 +748,7 @@ begin
 
    rc :=wglCreateContext(dc);    // Rendering Context = window-glCreateContext
    wglMakeCurrent(dc,rc);        // Make the DC (Form1) the rendering Context
+   }
 
    ActivateRenderingContext(DC, RC);
 
@@ -1438,8 +1444,11 @@ end;
 
 procedure TFrmMain.FormDestroy(Sender: TObject);
 begin
+  CloseOpenGL(OGL3DPreview.Handle, dc, rc);
+  {
    wglMakeCurrent(0,0);
    wglDeleteContext(rc);
+}   
    UpdateHistoryMenu;
    Config.SaveSettings;
 end;

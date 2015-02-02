@@ -32,10 +32,13 @@ type
     procedure RenderPaintMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure RenderPaintPaint(Sender: TObject);
   private
     { Private declarations }
     fDC: HDC; // Device Context
     fRC: HGLRC; // Rendering Context
+
+    fCubicDrawID: GLUint; 
   public
     { Public declarations }
     constructor Create(aOwner: TComponent); override;
@@ -68,30 +71,65 @@ begin
   inherited;
 
   InitOpenGL(RenderPanel.Handle, fDC, fRC);
+
+  //glEnable(GL_CULL_FACE);
+  //glCullFace(GL_BACK);
+  glEnable(GL_NORMALIZE);
+
+  fCubicDrawID := glGenLists(1);
+  glNewList(fCubicDrawID, GL_COMPILE);
+  glBegin(GL_QUADS);
+   glNormal3f( 0.0, 0.0, 1.0);					// Normal Pointing Towards Viewer
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 1 (Front)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 2 (Front)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 4 (Front)
+  // Back Face
+  glNormal3f( 0.0, 0.0,-1.0);					// Normal Pointing Away From Viewer
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Back)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 2 (Back)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 3 (Back)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 4 (Back)
+  // Top Face
+  glNormal3f( 0.0, 1.0, 0.0);					// Normal Pointing Up
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 1 (Top)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 2 (Top)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 4 (Top)
+  // Bottom Face
+  glNormal3f( 0.0,-1.0, 0.0);					// Normal Pointing Down
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Bottom)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 2 (Bottom)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 3 (Bottom)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 4 (Bottom)
+  // Right face
+  glNormal3f( 1.0, 0.0, 0.0);					// Normal Pointing Right
+  glTexCoord2f(0.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 1 (Right)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 2 (Right)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 4 (Right)
+  // Left Face
+  glNormal3f(-1.0, 0.0, 0.0);					// Normal Pointing Left
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Left)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 2 (Left)
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 3 (Left)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
+  glEnd();								// Done Drawing Quads
+  glEndList();
+
 end;
 
 destructor TFrmEdit3D.Destroy;
 begin
+  glDeleteLists(fCubicDrawID, 1);
 
-  CloseOpenGL(RenderPanel.Handle, fDC, fRC); 
+  CloseOpenGL(RenderPanel.Handle, fDC, fRC);
   inherited;
 end;
 
 procedure TFrmEdit3D.Idle(Sender: TObject; var Done: Boolean);
 begin
-  SetCurrent(fDC, fRC); // Make the DC (Form1) the rendering Context
-
-  //glClearColor(0.5, 0.5, 1.0, 1.0);
-  glClearColor(140 / 255, 170 / 255, 235 / 255, 1.0);
-
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
-
-
-
-  SwapBuffers(DC); // Display the scene
-
-
-//
+  RenderPaintPaint(RenderPaint); 
 end;
 
 
@@ -118,6 +156,21 @@ procedure TFrmEdit3D.RenderPaintMouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
 //
+end;
+
+procedure TFrmEdit3D.RenderPaintPaint(Sender: TObject);
+begin
+  wglMakeCurrent(fDC, fRC);
+  //SetCurrent(fDC, fRC);
+
+  //glClearColor(0.5, 0.5, 1.0, 1.0);
+  glClearColor(140 / 255, 170 / 255, 235 / 255, 1.0);
+
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT); // Clear The Screen And The Depth Buffer
+
+
+
+  SwapBuffers(DC); // Display the scene
 end;
 
 end.

@@ -24,7 +24,6 @@ object FrmEdit3D: TFrmEdit3D
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 363
     object Bevel1: TBevel
       Left = 0
       Top = 0
@@ -45,8 +44,6 @@ object FrmEdit3D: TFrmEdit3D
     BevelOuter = bvLowered
     Color = clBlack
     TabOrder = 1
-    ExplicitWidth = 410
-    ExplicitHeight = 301
     object RenderPaint: TPaintBox
       Left = 1
       Top = 1
@@ -56,6 +53,7 @@ object FrmEdit3D: TFrmEdit3D
       OnMouseDown = RenderPaintMouseDown
       OnMouseMove = RenderPaintMouseMove
       OnMouseUp = RenderPaintMouseUp
+      OnPaint = RenderPaintPaint
       ExplicitLeft = 120
       ExplicitTop = 136
       ExplicitWidth = 161
