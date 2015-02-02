@@ -333,6 +333,8 @@ type
     XPManifest1: TXPManifest;
     CNCNZcom1: TMenuItem;
     CCFilefront1: TMenuItem;
+    N20: TMenuItem;
+    Edit3DWindow1: TMenuItem;
     procedure CCFilefront1Click(Sender: TObject);
     procedure CNCNZcom1Click(Sender: TObject);
     procedure ProjectSVN1Click(Sender: TObject);
@@ -342,6 +344,8 @@ type
     procedure FormActivate(Sender: TObject);
     procedure NewAutoNormals1Click(Sender: TObject);
     procedure Display3DWindow1Click(Sender: TObject);
+    procedure Edit3DWindow1Click(Sender: TObject);
+    
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure RevoraCCForums1Click(Sender: TObject);
     procedure RenegadeProjects1Click(Sender: TObject);
@@ -577,8 +581,12 @@ implementation
 
 {$R *.dfm}
 
-uses FormHeaderUnit,LoadForm,FormNewSectionSizeUnit,FormPalettePackAbout,HVA,FormReplaceColour,FormVoxelTexture,
-  FormHVA,FormBoundsManager, FormImportSection,FormFullResize,FormPreferences,FormVxlError;
+uses
+  FormEdit3D,
+
+  FormHeaderUnit,LoadForm,FormNewSectionSizeUnit,FormPalettePackAbout,HVA,
+  FormReplaceColour,FormVoxelTexture,FormHVA,FormBoundsManager,
+  FormImportSection,FormFullResize,FormPreferences,FormVxlError;
 
 procedure RunAProgram (const theProgram, itsParameters, defaultDirectory : string);
 var rslt     : integer;
@@ -823,6 +831,9 @@ begin
       Form3D^.Idle(sender,done);
       // Once the window is rendered, the FormMain OGL returns as default.
    end;
+
+   if Assigned(FrmEdit3D) then
+    FrmEdit3D.Idle(Sender, Done);
 end;
 
 procedure TFrmMain.FormResize(Sender: TObject);
@@ -4462,6 +4473,18 @@ begin
          Application.OnIdle := Idle;
    end;
 end;
+
+procedure TFrmMain.Edit3DWindow1Click(Sender: TObject);
+begin
+  if Assigned(FrmEdit3D) then Exit;
+
+  FrmEdit3D := TFrmEdit3D.Create(Self);
+  FrmEdit3D.Show; 
+
+  if @Application.OnIdle = nil then
+     Application.OnIdle := Idle;
+end;
+
 
 procedure TFrmMain.NewAutoNormals1Click(Sender: TObject);
 begin

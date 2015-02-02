@@ -123,7 +123,7 @@
 			<Directories Name="UnitOutputDir">.\Dcu</Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
-			<Directories Name="SearchPath"></Directories>
+			<Directories Name="SearchPath">.\Edit3D</Directories>
 			<Directories Name="Packages">vcl;rtl;vclx;VclSmp;vclshlctrls;zippack6;DelphiX_for5;dx3depack;dfs;id3d;gifimage_pack;graph;shrink;panels;biapanel;tetris;shp;SHP_Pack</Directories>
 			<Directories Name="Conditionals"></Directories>
 			<Directories Name="DebugSourceDirs"></Directories>

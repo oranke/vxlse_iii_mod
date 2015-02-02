@@ -3,8 +3,6 @@ program vxlse_III;
 {%File 'Global_Conditionals.inc'}
 
 uses
-  //FastMM4,
-  
   Forms,
   Voxel_Engine in 'Voxel_Engine.pas',
   ogl3dview_engine in 'ogl3dview_engine.pas',

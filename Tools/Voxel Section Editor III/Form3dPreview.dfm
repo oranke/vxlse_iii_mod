@@ -3,8 +3,8 @@ object Frm3DPReview: TFrm3DPReview
   Top = 264
   BorderStyle = bsSizeToolWin
   Caption = 'OpenGL 3D Preview'
-  ClientHeight = 272
-  ClientWidth = 363
+  ClientHeight = 313
+  ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -26,8 +26,8 @@ object Frm3DPReview: TFrm3DPReview
   object Panel2: TPanel
     Left = 0
     Top = 26
-    Width = 363
-    Height = 246
+    Width = 362
+    Height = 287
     Cursor = crCross
     Align = alClient
     BevelOuter = bvLowered
@@ -36,18 +36,20 @@ object Frm3DPReview: TFrm3DPReview
     OnMouseDown = Panel2MouseDown
     OnMouseMove = Panel2MouseMove
     OnMouseUp = Panel2MouseUp
-    ExplicitHeight = 226
+    ExplicitWidth = 410
+    ExplicitHeight = 301
   end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 363
+    Width = 362
     Height = 26
     Align = alTop
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitWidth = 363
     DesignSize = (
-      363
+      362
       26)
     object SpeedButton2: TSpeedButton
       Left = 2
@@ -157,7 +159,7 @@ object Frm3DPReview: TFrm3DPReview
     object Bevel1: TBevel
       Left = 0
       Top = 0
-      Width = 363
+      Width = 362
       Height = 2
       Align = alTop
       Shape = bsTopLine
@@ -226,7 +228,7 @@ object Frm3DPReview: TFrm3DPReview
       OnClick = btn3DRotateXClick
     end
     object SpPlay: TSpeedButton
-      Left = 225
+      Left = 224
       Top = 3
       Width = 23
       Height = 22
@@ -246,9 +248,10 @@ object Frm3DPReview: TFrm3DPReview
         0033377777777777773333333333333333333333333333333333}
       NumGlyphs = 2
       OnClick = SpPlayClick
+      ExplicitLeft = 225
     end
     object SpStop: TSpeedButton
-      Left = 248
+      Left = 247
       Top = 3
       Width = 23
       Height = 22
@@ -268,14 +271,16 @@ object Frm3DPReview: TFrm3DPReview
         0033377777777777773333333333333333333333333333333333}
       NumGlyphs = 2
       OnClick = SpStopClick
+      ExplicitLeft = 248
     end
     object Label1: TLabel
-      Left = 277
+      Left = 276
       Top = 8
       Width = 32
       Height = 13
       Anchors = [akTop, akRight]
       Caption = 'Frame:'
+      ExplicitLeft = 277
     end
     object spin3Djmp: TSpinEdit
       Left = 144
@@ -294,7 +299,7 @@ object Frm3DPReview: TFrm3DPReview
       OnChange = spin3DjmpChange
     end
     object SpFrame: TSpinEdit
-      Left = 315
+      Left = 314
       Top = 3
       Width = 50
       Height = 22
@@ -305,6 +310,7 @@ object Frm3DPReview: TFrm3DPReview
       TabOrder = 1
       Value = 1
       OnChange = SpFrameChange
+      ExplicitLeft = 315
     end
   end
   object MainMenu1: TMainMenu

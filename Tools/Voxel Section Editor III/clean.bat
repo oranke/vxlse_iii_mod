@@ -1,2 +1,2 @@
-del *.~*
-del *.dcu
+del *.~* /s
+del *.dcu /s
