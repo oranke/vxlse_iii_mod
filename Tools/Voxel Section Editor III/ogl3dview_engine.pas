@@ -140,6 +140,7 @@ function CleanAngle(Angle: single): single;
 function CleanVCCol(Color: TColor): TVector3f;
 function CleanV3fCol(Color: TVector3f): TVector3f;
 function GetCorrectColour(Color: integer; RemapColour: TVector3f): TVector3f;
+function GetVXLColor(Color, Normal: integer): TVector3f;
 
 function GetPosWithSize(Position: TVector3f; Size: single): TVector3f;
 procedure GetScaleWithMinBounds(const _Vxl: TVoxelSection; var _Scale, _MinBounds: TVector3f);

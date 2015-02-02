@@ -14,7 +14,6 @@ object FrmEdit3D: TFrmEdit3D
   OldCreateOrder = False
   Position = poScreenCenter
   OnClose = FormClose
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object CtrlPanel: TPanel

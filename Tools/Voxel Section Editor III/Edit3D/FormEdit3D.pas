@@ -37,7 +37,6 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure RenderPanelResize(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
     fDC: HDC; // Device Context
@@ -61,7 +60,6 @@ type
     { Public declarations }
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Loaded; override;
 
     procedure SetViewParams;
     procedure Idle(Sender: TObject; var Done: Boolean);
@@ -199,18 +197,13 @@ begin
   inherited;
 end;
 
-procedure TFrmEdit3D.Loaded;
-begin
-  inherited;
-
-
-    
-end;
-
-
 procedure TFrmEdit3D.RenderScene;
 //const
   //LightPosition : Array [0..3] of GLfloat = (1.5, 0.5, 1.0, 0.0);
+var
+  ix, iy, iz: Integer;
+  v: TVoxelUnpacked;
+  VoxelColor: TVector3f;
 begin
   // Set the projection matrix
   glMatrixMode(GL_PROJECTION);
@@ -226,11 +219,68 @@ begin
   glRotatef(fRotY, 0, 1, 0);
   glTranslatef(-fLookAtPos.X, -fLookAtPos.Y, -fLookAtPos.Z);
 
+  glDisable(GL_LIGHT0);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_DEPTH_TEST);
 
+  RenderAxis(fDist / 3);
 
+  
   glEnable(GL_LIGHT0);
   glEnable(GL_LIGHTING);
+  glEnable(GL_DEPTH_TEST);
 
+  with ActiveSection do
+  begin
+    glPushMatrix();
+    
+    for iz := 0 to Tailer.ZSize - 1 do
+    begin
+      //iz := 0;
+
+      glPushMatrix();
+
+      for iy := 0 to Tailer.YSize - 1 do
+      begin
+        //iy := 0;
+        glPushMatrix();
+
+        for ix := 0 to Tailer.XSize - 1 do
+        begin
+          GetVoxel(ix, iy, iz, v);
+          if v.Used then
+          begin
+            VoxelColor := GetVXLColor(v.Colour, 0);
+            glColor3f(
+              VoxelColor.X,
+              VoxelColor.Y,
+              VoxelColor.Z
+            );
+
+            glPushMatrix();
+              glScalef(0.5,0.5,0.5);
+              glTranslatef(1,1,1);
+              glCallList(CubicDrawID);
+            glPopMatrix();
+          end;
+
+          glTranslatef(1, 0, 0);
+        end;
+
+        glPopMatrix();
+        glTranslatef(0, 1, 0);
+
+      end;
+
+      glPopMatrix();
+      glTranslatef(0, 0, 1); 
+    end;
+    
+    glPopMatrix();
+  end;
+
+
+  {
   glPushMatrix();
 
     with ActiveSection.Tailer do
@@ -242,12 +292,10 @@ begin
     glCallList(CubicDrawID);
 
   glPopMatrix();
+  }
 
-  glDisable(GL_LIGHT0);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_DEPTH_TEST);
 
-  RenderAxis(fDist / 3);
+
 
 end;
 
@@ -309,52 +357,6 @@ begin
   FrmEdit3D := nil;
 end;
 
-procedure TFrmEdit3D.FormCreate(Sender: TObject);
-begin
-{
-  CubicDrawID := glGenLists(1);
-  glNewList(CubicDrawID, GL_COMPILE);
-  glBegin(GL_QUADS);
-   glNormal3f( 0.0, 0.0, 1.0);					// Normal Pointing Towards Viewer
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 1 (Front)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 2 (Front)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 4 (Front)
-  // Back Face
-  glNormal3f( 0.0, 0.0,-1.0);					// Normal Pointing Away From Viewer
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Back)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 2 (Back)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 3 (Back)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 4 (Back)
-  // Top Face
-  glNormal3f( 0.0, 1.0, 0.0);					// Normal Pointing Up
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 1 (Top)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 2 (Top)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 4 (Top)
-  // Bottom Face
-  glNormal3f( 0.0,-1.0, 0.0);					// Normal Pointing Down
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Bottom)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 2 (Bottom)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 3 (Bottom)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 4 (Bottom)
-  // Right face
-  glNormal3f( 1.0, 0.0, 0.0);					// Normal Pointing Right
-  glTexCoord2f(0.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 1 (Right)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 2 (Right)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 4 (Right)
-  // Left Face
-  glNormal3f(-1.0, 0.0, 0.0);					// Normal Pointing Left
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Left)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 2 (Left)
-  glTexCoord2f(1.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 3 (Left)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
- glEnd();								// Done Drawing Quads
-  glEndList();
-  }
-end;
-
 var
   ugMDownPos: TPoint;
 
@@ -362,7 +364,6 @@ procedure TFrmEdit3D.RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   ugMDownPos := Point(X, Y);
-//
 end;
 
 function NormalizeDegAngle(angle : F32) : F32;
@@ -382,7 +383,7 @@ end;
 procedure TFrmEdit3D.RenderPaintMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
-  if ssRight in Shift then
+  if ssLeft in Shift then
   begin
     fRotX := fRotX - (ugMDownPos.Y - Y) / 6;
     if fRotX > 90 then fRotX := 90;

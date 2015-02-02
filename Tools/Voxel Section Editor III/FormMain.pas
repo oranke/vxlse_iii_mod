@@ -810,6 +810,10 @@ begin
       Done := true;
       exit;
    end;
+
+   if Assigned(FrmEdit3D) then
+    FrmEdit3D.Idle(Sender, Done);
+
    if not Display3dView1.checked then
    begin
       LastTime :=ElapsedTime;
@@ -838,8 +842,6 @@ begin
       // Once the window is rendered, the FormMain OGL returns as default.
    end;
 
-   if Assigned(FrmEdit3D) then
-    FrmEdit3D.Idle(Sender, Done);
 end;
 
 procedure TFrmMain.FormResize(Sender: TObject);
