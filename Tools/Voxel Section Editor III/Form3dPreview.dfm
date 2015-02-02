@@ -3,7 +3,7 @@ object Frm3DPReview: TFrm3DPReview
   Top = 264
   BorderStyle = bsSizeToolWin
   Caption = 'OpenGL 3D Preview'
-  ClientHeight = 252
+  ClientHeight = 272
   ClientWidth = 363
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -27,7 +27,7 @@ object Frm3DPReview: TFrm3DPReview
     Left = 0
     Top = 26
     Width = 363
-    Height = 226
+    Height = 246
     Cursor = crCross
     Align = alClient
     BevelOuter = bvLowered
@@ -36,7 +36,7 @@ object Frm3DPReview: TFrm3DPReview
     OnMouseDown = Panel2MouseDown
     OnMouseMove = Panel2MouseMove
     OnMouseUp = Panel2MouseUp
-    ExplicitHeight = 206
+    ExplicitHeight = 226
   end
   object Panel1: TPanel
     Left = 0
@@ -418,11 +418,21 @@ object Frm3DPReview: TFrm3DPReview
       object CurrentSectionOnly1: TMenuItem
         Caption = 'Current Section Only'
         Checked = True
+        GroupIndex = 1
+        RadioItem = True
         OnClick = CurrentSectionOnly1Click
       end
       object WholeVoxel1: TMenuItem
         Caption = 'Whole Voxel'
+        GroupIndex = 1
+        RadioItem = True
+        OnClick = CurrentSectionOnly1Click
+      end
+      object OrankeView1: TMenuItem
+        Caption = 'Oranke View'
         Enabled = False
+        GroupIndex = 1
+        RadioItem = True
         OnClick = CurrentSectionOnly1Click
       end
     end

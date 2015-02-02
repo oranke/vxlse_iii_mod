@@ -72,6 +72,7 @@ type
     Label1: TLabel;
     SpFrame: TSpinEdit;
     AnimationTimer: TTimer;
+    OrankeView1: TMenuItem;
     procedure AnimationTimerTimer(Sender: TObject);
     procedure SpPlayClick(Sender: TObject);
     procedure SpStopClick(Sender: TObject);
@@ -138,11 +139,11 @@ type
     procedure BuildFont;
     //procedure KillFont;
     procedure MakeMeAScreenshotName(var Filename: string; Ext: string);
-  private
-    CubicDrawID : GLuint;
+  //private
+    //CubicDrawID : GLuint;
   public
     constructor Create(aOwner: TComponent); override;
-    destructor Destroy; override; 
+    destructor Destroy; override;
   public
     { Public declarations }
     XRotB, YRotB: boolean;
@@ -249,7 +250,6 @@ end;
 
 destructor TFrm3DPReview.Destroy;
 begin
-  glDeleteLists(CubicDrawID, 1);
 
   inherited;
 end;
@@ -497,7 +497,7 @@ var
   x, Section: integer;
   Scale, MinBounds: TVector3f;
   //   Matrix : TGlmatrixf4;
-  VoxelColor: TVector3f;
+  //VoxelColor: TVector3f;
 begin
   try
     if (not Showing) then
@@ -525,7 +525,9 @@ begin
     // We'll only render anything if there is a voxel to render.
     if VoxelBoxGroup3D.NumBoxes > 0 then
     begin
-      glPushMatrix;
+      glMatrixMode(GL_MODELVIEW);
+
+      //glPushMatrix;
       glLoadIdentity(); // Reset The View
 
 
@@ -536,28 +538,17 @@ begin
       glRotatef(XRot, 1, 0, 0);
       glRotatef(YRot, 0, 0, 1);
 
-
-      // Here we make the OpenGL list to speed up the render.
-      for Section:=Low(VoxelBoxGroup3D.Section) to High(VoxelBoxGroup3D.Section) do
+      {
+      if OrankeView1.Checked then
       begin
-        GetScaleWithMinBounds(VoxelFile.Section[VoxelBoxGroup3D.Section[Section].ID], Scale, MinBounds);
-        if (VoxelBoxGroup3D.Section[Section].List < 1) or RebuildLists then
+        for Section:=Low(VoxelBoxGroup3D.Section) to High(VoxelBoxGroup3D.Section) do
         begin
-          if (VoxelBoxGroup3D.Section[Section].List > 0) then
-            glDeleteLists(VoxelBoxGroup3D.Section[Section].List, 1);
-          VoxelBoxGroup3D.Section[Section].List:=glGenLists(1);
-          glNewList(VoxelBoxGroup3D.Section[Section].List, GL_COMPILE);
-          // Now, we hunt all voxel boxes...
-          for x:=Low(VoxelBoxGroup3D.Section[Section].Box) to High(VoxelBoxGroup3D.Section[Section].Box) do
-          begin
-            DrawBox(VoxelBoxGroup3D.Section[Section].Box[x].Position, GetVXLColor(VoxelBoxGroup3D.Section[Section].Box[x].Color, VoxelBoxGroup3D.Section[Section].Box[x].Normal), Scale, VoxelBoxGroup3D.Section[Section].Box[x]);
-          end;
-          glEndList;
-        end;
-
-        //(*
-        glPushMatrix;
+        //Section := 0;
+        
+        GetScaleWithMinBounds(VoxelFile.Section[VoxelBoxGroup3D.Section[Section].ID], Scale, MinBounds);
         ApplyMatrix(Scale, VoxelBoxGroup3D.Section[Section].ID, HVAFrame);
+        
+        //glPushMatrix;
         for x:=Low(VoxelBoxGroup3D.Section[Section].Box) to High(VoxelBoxGroup3D.Section[Section].Box) do
         if VoxelBoxGroup3D.Section[Section].Box[x].IsSkin then
         begin
@@ -579,27 +570,47 @@ begin
 
           glScalef(0.5, 0.5, 0.5);
           //glScalef(0.9, 0.9, 0.9);
-          
+
           glCallList(CubicDrawID);
 
           glPopMatrix;
         end;
-        glPopMatrix;
-        (**)
+        //glPopMatrix;
+        end;
+      end else}
+      begin
+        // Here we make the OpenGL list to speed up the render.
+        for Section:=Low(VoxelBoxGroup3D.Section) to High(VoxelBoxGroup3D.Section) do
+        begin
+          GetScaleWithMinBounds(VoxelFile.Section[VoxelBoxGroup3D.Section[Section].ID], Scale, MinBounds);
+          ApplyMatrix(Scale, VoxelBoxGroup3D.Section[Section].ID, HVAFrame);
 
-        (*
-        glPushMatrix;
-        ApplyMatrix(Scale, VoxelBoxGroup3D.Section[Section].ID, HVAFrame);
-        glCallList(VoxelBoxGroup3D.Section[Section].List);
-        glPopMatrix;
+          if (VoxelBoxGroup3D.Section[Section].List < 1) or RebuildLists then
+          begin
+            if (VoxelBoxGroup3D.Section[Section].List > 0) then
+              glDeleteLists(VoxelBoxGroup3D.Section[Section].List, 1);
+            VoxelBoxGroup3D.Section[Section].List:=glGenLists(1);
+            glNewList(VoxelBoxGroup3D.Section[Section].List, GL_COMPILE);
+            // Now, we hunt all voxel boxes...
+            for x:=Low(VoxelBoxGroup3D.Section[Section].Box) to High(VoxelBoxGroup3D.Section[Section].Box) do
+            begin
+              DrawBox(VoxelBoxGroup3D.Section[Section].Box[x].Position, GetVXLColor(VoxelBoxGroup3D.Section[Section].Box[x].Color, VoxelBoxGroup3D.Section[Section].Box[x].Normal), Scale, VoxelBoxGroup3D.Section[Section].Box[x]);
+            end;
+            glEndList;
+          end;
 
-        (**)
+          glPushMatrix;
+          ApplyMatrix(Scale, VoxelBoxGroup3D.Section[Section].ID, HVAFrame);
+          glCallList(VoxelBoxGroup3D.Section[Section].List);
+          glPopMatrix;
 
+          RebuildLists:=false;
+        end;
       end;
-      // The get camera settings.
-      glPopMatrix;
 
-      RebuildLists:=false;
+      // The get camera settings.
+      //glPopMatrix;
+
       // End of the final voxel rendering part.
       glDisable(GL_TEXTURE_2D);
 
@@ -776,7 +787,7 @@ begin
   IsReady:=true;
 
   
-
+  {
   CubicDrawID := glGenLists(1);
   glNewList(CubicDrawID, GL_COMPILE);
   glBegin(GL_QUADS);
@@ -817,7 +828,7 @@ begin
 		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
 	glEnd();								// Done Drawing Quads
   glEndList();
-
+  }
 
   glEnable(GL_NORMALIZE); 
 end;
@@ -870,6 +881,8 @@ end;
 
 procedure TFrm3DPReview.FormDestroy(Sender: TObject);
 begin
+  //glDeleteLists(CubicDrawID, 1);
+
   //   wglMakeCurrent(0,0);
   wglDeleteContext(rc);
   FrmMain.p_Frm3DPreview:=nil;
@@ -1457,8 +1470,9 @@ end;
 
 procedure TFrm3DPReview.CurrentSectionOnly1Click(Sender: TObject);
 begin
-  CurrentSectionOnly1.Checked:= not CurrentSectionOnly1.Checked;
-  WholeVoxel1.Checked:= not CurrentSectionOnly1.Checked;
+  TMenuItem(Sender).Checked := true; 
+  //CurrentSectionOnly1.Checked:= not CurrentSectionOnly1.Checked;
+  //WholeVoxel1.Checked:= not CurrentSectionOnly1.Checked;
   FrmMain.RefreshAll;
 end;
 

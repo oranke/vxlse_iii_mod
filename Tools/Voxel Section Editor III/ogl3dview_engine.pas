@@ -707,6 +707,8 @@ var
    x, y, z: byte;
    v:   TVoxelUnpacked;
    Scale,MinBounds : TVector3f;
+
+   i: Integer; 
 begin
    if not IsEditable then exit;
 
@@ -749,7 +751,20 @@ begin
 
                VoxelBoxGroup.Section[0].Box[VoxelBox_No].Color  := v.Colour;
                VoxelBoxGroup.Section[0].Box[VoxelBox_No].Normal := v.Normal;
-               Inc(VoxelBox_No);
+
+              // by oranke. Ω∫≈≤ºø ∞·¡§.
+              with VoxelBoxGroup.Section[0].Box[VoxelBox_No] do
+              begin
+                IsSkin := false;
+                for i:= Low(Faces) to High(Faces) do
+                if Faces[i] then
+                begin
+                  IsSkin := true;
+                  Break;
+                end;
+              end;
+
+              Inc(VoxelBox_No);
             end;
          end;
       end;
