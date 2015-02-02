@@ -3265,6 +3265,7 @@ begin
    {$ifdef DEBUG_FILE}
    DebugFile.Add('FrmMain: BuildReopenMenu');
    {$endif}
+     if not Assigned(Config) then
    Config:=TConfiguration.Create;
    for i:=HistoryDepth - 1 downto 0 do
    begin

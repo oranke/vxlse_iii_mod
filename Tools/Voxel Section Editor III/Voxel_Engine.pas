@@ -72,7 +72,7 @@ Var
    UsedColours : array [0..255] of boolean;
    UsedNormals : array [0..244] of boolean;
 
-   Config: TConfiguration; // For File History
+   Config: TConfiguration = nil; // For File History
    mnuHistory: Array[0..HistoryDepth-1] of TMenuItem;
 Const
    TestBuild = false;
@@ -2546,7 +2546,9 @@ begin
       VoxelFile.Section[x].Tailer.Unknown := Normal;
 end;
 
-begin
+
+initialization
+//begin
    // Load default palette
    LoadPaletteFromFile(ExtractFileDir(ParamStr(0)) + '\palettes\TS\unittem.pal');
 
@@ -2567,4 +2569,11 @@ begin
 
    if TestBuild then
       messagebox(0,'Voxel Section Editor III' + #13#13 + 'Version: TB '+testbuildversion+ #13#13#13 + 'THIS IS NOT TO BE DISTRIBUTED','Test Build Message',0);
+
+
+finalization
+  if Assigned(Config) then FreeAndNil(Config);
+   
 end.
+
+

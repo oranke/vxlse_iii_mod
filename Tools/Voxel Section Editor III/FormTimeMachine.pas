@@ -3026,7 +3026,8 @@ begin
    {$ifdef DEBUG_FILE}
    DebugFile.Add('FrmTimeMain: BuildReopenMenu');
    {$endif}
-   Config:=TConfiguration.Create;
+   if not Assigned(Config) then
+     Config:=TConfiguration.Create;
    for i:=HistoryDepth - 1 downto 0 do
    begin
       mnuHistory[i]:=TMenuItem.Create(Self);
