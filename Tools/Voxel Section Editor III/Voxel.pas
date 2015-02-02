@@ -302,6 +302,10 @@ begin
    Y := (Tailer.YSize div 2);
    Z := (Tailer.ZSize div 2);
    // set views
+   if Assigned(View[0]) then FreeAndNil(View[0]);
+   if Assigned(View[1]) then FreeAndNil(View[1]);
+   if Assigned(View[2]) then FreeAndNil(View[2]);
+
    View[0] := TVoxelView.Create(Self,oriX,dirTowards);
    View[1] := TVoxelView.Create(Self,oriY,dirTowards);
    View[2] := TVoxelView.Create(Self,oriZ,dirTowards);
@@ -459,6 +463,9 @@ constructor TVoxelSection.Create; begin end;
 destructor TVoxelSection.Destroy;
 begin
    SetDataSize(0,0,0);
+   if Assigned(View[0]) then FreeAndNil(View[0]);
+   if Assigned(View[1]) then FreeAndNil(View[1]);
+   if Assigned(View[2]) then FreeAndNil(View[2]);
    inherited Destroy;
 end;
 

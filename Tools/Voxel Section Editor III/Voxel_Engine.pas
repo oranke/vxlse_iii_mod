@@ -42,7 +42,7 @@ type
    end;
 
 Var
-   VoxelFile : TVoxel;
+   VoxelFile : TVoxel = nil;
    ActiveSection : TVoxelSection;
    CurrentSection : cardinal;
    SpectrumMode : ESpectrumMode;
@@ -202,7 +202,8 @@ Function LoadVoxel(Filename : String) : boolean;
 begin
    Result := false;
    try
-      VoxelFile.Free;
+      if Assigned(VoxelFile) then FreeAndNil(VoxelFile);
+
       VoxelFile := TVoxel.Create;
       VoxelFile.LoadFromFile(Filename);
       CurrentSection := 0;
@@ -262,7 +263,8 @@ Function NewVoxel(Game,x,y,z : integer) : boolean;
 begin
    Result := false;
    try
-      VoxelFile.Free;
+      if Assigned(VoxelFile) then FreeAndNil(VoxelFile);
+
       VoxelFile := TVoxel.Create;
 
       SetVoxelFileDefults;
@@ -2573,7 +2575,8 @@ initialization
 
 finalization
   if Assigned(Config) then FreeAndNil(Config);
-   
+  if Assigned(VoxelFile) then FreeAndNil(VoxelFile);
+
 end.
 
 

@@ -3638,6 +3638,8 @@ begin
 
    // SetLength(ColourSchemes,0);
    //   ColourScheme1.Visible := false;
+   s := TStringList.Create;
+   try
 
    path := Concat(Dir, '*.cscheme');
 
@@ -3651,7 +3653,6 @@ begin
 
          ColourSchemes[c].FileName := Filename;
 
-         s := TStringList.Create;
          s.LoadFromFile(Filename);
 
          SetLength(ColourSchemes, c + 1);
@@ -3816,9 +3817,13 @@ begin
             PalPack1.Visible := True;
          end;
       until FindNext(f) <> 0;
-   FindClose(f);
+  FindClose(f);
 
-   Result := c;
+  finally
+    s.Free;
+  end;
+
+  Result := c;
 end;
 
 function TFrmMain.LoadCScheme : integer;
@@ -3837,36 +3842,40 @@ var
    s : tstringlist;
    V : TVoxelUnpacked;
 begin
-   s := TStringList.Create;
-   s.LoadFromFile(ColourSchemes[Tmenuitem(Sender).Tag].Filename);
+  s := TStringList.Create;
+  try
+     s.LoadFromFile(ColourSchemes[Tmenuitem(Sender).Tag].Filename);
 
-   tempview.Data_no := tempview.Data_no +0;
-   setlength(tempview.Data,tempview.Data_no +0);
+     tempview.Data_no := tempview.Data_no +0;
+     setlength(tempview.Data,tempview.Data_no +0);
 
-   for x := 0 to 255 do
-      ColourSchemes[Tmenuitem(Sender).Tag].Data[x] := strtoint(searchcscheme(s,inttostr(x)+'='));
+     for x := 0 to 255 do
+        ColourSchemes[Tmenuitem(Sender).Tag].Data[x] := strtoint(searchcscheme(s,inttostr(x)+'='));
 
-   for x := 0 to ActiveSection.Tailer.XSize-1 do
-      for y := 0 to ActiveSection.Tailer.YSize-1 do
-         for z := 0 to ActiveSection.Tailer.ZSize-1 do
-         begin
-            ActiveSection.GetVoxel(x,y,z,v);
-            if v.Used then
-            begin
-               V.Colour := ColourSchemes[Tmenuitem(Sender).Tag].Data[V.Colour];
-               tempview.Data_no := tempview.Data_no +1;
-               setlength(tempview.Data,tempview.Data_no +1);
-               tempview.Data[tempview.Data_no].VC.X := x;
-               tempview.Data[tempview.Data_no].VC.Y := y;
-               tempview.Data[tempview.Data_no].VC.Z := z;
-               tempview.Data[tempview.Data_no].VU := true;
-               tempview.Data[tempview.Data_no].V := v;
-            end;
-         end;
+     for x := 0 to ActiveSection.Tailer.XSize-1 do
+        for y := 0 to ActiveSection.Tailer.YSize-1 do
+           for z := 0 to ActiveSection.Tailer.ZSize-1 do
+           begin
+              ActiveSection.GetVoxel(x,y,z,v);
+              if v.Used then
+              begin
+                 V.Colour := ColourSchemes[Tmenuitem(Sender).Tag].Data[V.Colour];
+                 tempview.Data_no := tempview.Data_no +1;
+                 setlength(tempview.Data,tempview.Data_no +1);
+                 tempview.Data[tempview.Data_no].VC.X := x;
+                 tempview.Data[tempview.Data_no].VC.Y := y;
+                 tempview.Data[tempview.Data_no].VC.Z := z;
+                 tempview.Data[tempview.Data_no].VU := true;
+                 tempview.Data[tempview.Data_no].V := v;
+              end;
+           end;
 
-   ApplyTempView(ActiveSection);
-   UpdateUndo_RedoState;
-   RefreshAll;
+     ApplyTempView(ActiveSection);
+     UpdateUndo_RedoState;
+     RefreshAll;
+  finally
+    s.Free;
+  end;
 end;
 
 procedure TFrmMain.About2Click(Sender: TObject);
