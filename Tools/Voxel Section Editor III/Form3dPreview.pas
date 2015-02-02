@@ -139,8 +139,8 @@ type
     procedure BuildFont;
     //procedure KillFont;
     procedure MakeMeAScreenshotName(var Filename: string; Ext: string);
-  //private
-    //CubicDrawID : GLuint;
+    //private
+      //CubicDrawID : GLuint;
   public
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
@@ -240,11 +240,9 @@ uses FormMain;
 
 {$R *.DFM}
 
-
 constructor TFrm3DPReview.Create(aOwner: TComponent);
 begin
   inherited;
-  
 
 end;
 
@@ -253,7 +251,6 @@ begin
 
   inherited;
 end;
-
 
 procedure TFrm3DPReview.BuildFont; // Build Our Bitmap Font
 var
@@ -530,7 +527,6 @@ begin
       //glPushMatrix;
       glLoadIdentity(); // Reset The View
 
-
       glTranslatef(0, 0, Depth);
 
       //glLightfv(GL_LIGHT0, GL_POSITION, @LightPosition);
@@ -544,10 +540,10 @@ begin
         for Section:=Low(VoxelBoxGroup3D.Section) to High(VoxelBoxGroup3D.Section) do
         begin
         //Section := 0;
-        
+
         GetScaleWithMinBounds(VoxelFile.Section[VoxelBoxGroup3D.Section[Section].ID], Scale, MinBounds);
         ApplyMatrix(Scale, VoxelBoxGroup3D.Section[Section].ID, HVAFrame);
-        
+
         //glPushMatrix;
         for x:=Low(VoxelBoxGroup3D.Section[Section].Box) to High(VoxelBoxGroup3D.Section[Section].Box) do
         if VoxelBoxGroup3D.Section[Section].Box[x].IsSkin then
@@ -786,51 +782,50 @@ begin
   Update3dView(ActiveSection);
   IsReady:=true;
 
-  
   {
   CubicDrawID := glGenLists(1);
   glNewList(CubicDrawID, GL_COMPILE);
   glBegin(GL_QUADS);
-  	glNormal3f( 0.0, 0.0, 1.0);					// Normal Pointing Towards Viewer
-		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 1 (Front)
-		glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 2 (Front)
-		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
-		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 4 (Front)
-		// Back Face
-		glNormal3f( 0.0, 0.0,-1.0);					// Normal Pointing Away From Viewer
-		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Back)
-		glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 2 (Back)
-		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 3 (Back)
-		glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 4 (Back)
-		// Top Face
-		glNormal3f( 0.0, 1.0, 0.0);					// Normal Pointing Up
-		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 1 (Top)
-		glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 2 (Top)
-		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
-		glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 4 (Top)
-		// Bottom Face
-		glNormal3f( 0.0,-1.0, 0.0);					// Normal Pointing Down
-		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Bottom)
-		glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 2 (Bottom)
-		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 3 (Bottom)
-		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 4 (Bottom)
-		// Right face
-		glNormal3f( 1.0, 0.0, 0.0);					// Normal Pointing Right
-		glTexCoord2f(0.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 1 (Right)
-		glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 2 (Right)
-		glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
-		glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 4 (Right)
-		// Left Face
-		glNormal3f(-1.0, 0.0, 0.0);					// Normal Pointing Left
-		glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Left)
-		glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 2 (Left)
-		glTexCoord2f(1.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 3 (Left)
-		glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
-	glEnd();								// Done Drawing Quads
+   glNormal3f( 0.0, 0.0, 1.0);					// Normal Pointing Towards Viewer
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 1 (Front)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 2 (Front)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 4 (Front)
+  // Back Face
+  glNormal3f( 0.0, 0.0,-1.0);					// Normal Pointing Away From Viewer
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Back)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 2 (Back)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 3 (Back)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 4 (Back)
+  // Top Face
+  glNormal3f( 0.0, 1.0, 0.0);					// Normal Pointing Up
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 1 (Top)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 2 (Top)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 4 (Top)
+  // Bottom Face
+  glNormal3f( 0.0,-1.0, 0.0);					// Normal Pointing Down
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Bottom)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 2 (Bottom)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 3 (Bottom)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 4 (Bottom)
+  // Right face
+  glNormal3f( 1.0, 0.0, 0.0);					// Normal Pointing Right
+  glTexCoord2f(0.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 1 (Right)
+  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 2 (Right)
+  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
+  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 4 (Right)
+  // Left Face
+  glNormal3f(-1.0, 0.0, 0.0);					// Normal Pointing Left
+  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Left)
+  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 2 (Left)
+  glTexCoord2f(1.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 3 (Left)
+  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
+ glEnd();								// Done Drawing Quads
   glEndList();
   }
 
-  glEnable(GL_NORMALIZE); 
+  glEnable(GL_NORMALIZE);
 end;
 
 {------------------------------------------------------------------}
@@ -1005,13 +1000,13 @@ begin
               // by oranke. Ω∫≈≤ºø ∞·¡§.
               with VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No] do
               begin
-                IsSkin := false;
-                for i:= Low(Faces) to High(Faces) do
-                if Faces[i] then
-                begin
-                  IsSkin := true;
-                  Break;
-                end;
+                IsSkin:=false;
+                for i:=Low(Faces) to High(Faces) do
+                  if Faces[i] then
+                  begin
+                    IsSkin:=true;
+                    Break;
+                  end;
               end;
 
               Inc(VoxelBox_No);
@@ -1056,13 +1051,13 @@ begin
             // by oranke. Ω∫≈≤ºø ∞·¡§.
             with VoxelBoxGroup3D.Section[0].Box[VoxelBox_No] do
             begin
-              IsSkin := false;
-              for i:= Low(Faces) to High(Faces) do
-              if Faces[i] then
-              begin
-                IsSkin := true;
-                Break;
-              end;
+              IsSkin:=false;
+              for i:=Low(Faces) to High(Faces) do
+                if Faces[i] then
+                begin
+                  IsSkin:=true;
+                  Break;
+                end;
             end;
 
             Inc(VoxelBox_No);
@@ -1351,7 +1346,6 @@ begin
   DarkSky1.Checked:=false;
 end;
 
-
 procedure TFrm3DPReview.Red1Click(Sender: TObject);
 begin
   ClearRemapClicks;
@@ -1470,7 +1464,7 @@ end;
 
 procedure TFrm3DPReview.CurrentSectionOnly1Click(Sender: TObject);
 begin
-  TMenuItem(Sender).Checked := true; 
+  TMenuItem(Sender).Checked:=true;
   //CurrentSectionOnly1.Checked:= not CurrentSectionOnly1.Checked;
   //WholeVoxel1.Checked:= not CurrentSectionOnly1.Checked;
   FrmMain.RefreshAll;

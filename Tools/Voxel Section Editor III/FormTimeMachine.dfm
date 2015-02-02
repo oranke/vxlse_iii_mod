@@ -35,13 +35,13 @@ object FrmTimeMain: TFrmTimeMain
       Left = 1
       Top = 1
       Width = 152
-      Height = 809
+      Height = 828
       Align = alLeft
       TabOrder = 0
       object lblSection: TLabel
         Left = 1
         Top = 1
-        Width = 42
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Section'
@@ -53,11 +53,12 @@ object FrmTimeMain: TFrmTimeMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 42
       end
       object lblTools: TLabel
         Left = 1
         Top = 55
-        Width = 32
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Tools'
@@ -69,11 +70,12 @@ object FrmTimeMain: TFrmTimeMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 32
       end
       object lblpalette: TLabel
         Left = 1
         Top = 257
-        Width = 39
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Palette'
@@ -85,6 +87,7 @@ object FrmTimeMain: TFrmTimeMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 39
       end
       object cnvPalette: TPaintBox
         Left = 1
@@ -98,7 +101,7 @@ object FrmTimeMain: TFrmTimeMain
       object lblLayer: TLabel
         Left = 1
         Top = 177
-        Width = 37
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Layers'
@@ -110,11 +113,12 @@ object FrmTimeMain: TFrmTimeMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 37
       end
       object lblBrush: TLabel
         Left = 1
         Top = 129
-        Width = 33
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Brush'
@@ -126,6 +130,7 @@ object FrmTimeMain: TFrmTimeMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 33
       end
       object Panel3: TPanel
         Left = 1
@@ -141,7 +146,7 @@ object FrmTimeMain: TFrmTimeMain
           Width = 137
           Height = 21
           ImeName = 'Microsoft IME 2010'
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = SectionComboChange
         end
