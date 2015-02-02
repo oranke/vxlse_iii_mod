@@ -909,4 +909,3 @@ end;
 begin
   HighestNormal:= -1;
 end.
-

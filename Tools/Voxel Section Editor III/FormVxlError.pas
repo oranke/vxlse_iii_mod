@@ -44,35 +44,35 @@ implementation
 
 procedure TFrmVxlError.Button1Click(Sender: TObject);
 begin
- SetVoxelFileDefults;
- VXLChanged := true;
- Button1.Enabled := False;
+  SetVoxelFileDefults;
+  VXLChanged:=true;
+  Button1.Enabled:=False;
 end;
 
 procedure TFrmVxlError.Button7Click(Sender: TObject);
 begin
-Close;
+  Close;
 end;
 
 procedure TFrmVxlError.Button2Click(Sender: TObject);
 var
-N : integer;
+  N: integer;
 begin
 
-N := VoxelFile.Section[0].Tailer.Unknown;
-SetNormals(N);
+  N:=VoxelFile.Section[0].Tailer.Unknown;
+  SetNormals(N);
 
-MessageBox(0,Pchar('Normals Set To: ' + inttostr(N)),'Information',0);
+  MessageBox(0, Pchar('Normals Set To: ' + inttostr(N)), 'Information', 0);
 
-VXLChanged := true;
-Button2.Enabled := False;
+  VXLChanged:=true;
+  Button2.Enabled:=False;
 end;
 
 procedure TFrmVxlError.FormCreate(Sender: TObject);
 begin
-TabSheet1.TabVisible := false;
-TabSheet2.TabVisible := false;
-Panel3.DoubleBuffered := true;
+  TabSheet1.TabVisible:=false;
+  TabSheet2.TabVisible:=false;
+  Panel3.DoubleBuffered:=true;
 end;
 
 end.

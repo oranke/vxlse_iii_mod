@@ -34,7 +34,7 @@ type
     { Private declarations }
   public
     { Public declarations }
-    O : boolean;
+    O: boolean;
   end;
 
 var
@@ -46,29 +46,29 @@ implementation
 
 procedure TFrmBoundsManager.FormShow(Sender: TObject);
 begin
-SizeInGame.ItemIndex := 0;
-O := false;
+  SizeInGame.ItemIndex:=0;
+  O:=false;
 end;
 
 procedure TFrmBoundsManager.OkClick(Sender: TObject);
 begin
-O := true;
-close;
+  O:=true;
+  close;
 end;
 
 procedure TFrmBoundsManager.Button1Click(Sender: TObject);
 begin
-close;
+  close;
 end;
 
 procedure TFrmBoundsManager.SizeInGameChange(Sender: TObject);
 begin
-if SizeInGame.ItemIndex = 4 then
-ManualDiv.Enabled := true
-else
-ManualDiv.Enabled := false;
+  if SizeInGame.ItemIndex = 4 then
+    ManualDiv.Enabled:=true
+  else
+    ManualDiv.Enabled:=false;
 
-Label7.Enabled := ManualDiv.Enabled;
+  Label7.Enabled:=ManualDiv.Enabled;
 end;
 
 end.

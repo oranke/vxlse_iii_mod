@@ -27,7 +27,7 @@ implementation
 
 procedure TFrmImportSection.Button1Click(Sender: TObject);
 begin
-close;
+  close;
 end;
 
 end.

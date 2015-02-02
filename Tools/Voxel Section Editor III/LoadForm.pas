@@ -40,7 +40,7 @@ end;
 
 procedure TLoadFrm.FormCreate(Sender: TObject);
 begin
-//loading.Left := (Width div 2) - (loading.Width div 2);
+  //loading.Left := (Width div 2) - (loading.Width div 2);
 end;
 
 end.

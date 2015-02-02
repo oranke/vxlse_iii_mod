@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Forms, StdCtrls, Controls, Classes, ExtCtrls, Voxel, Sysutils,
-  Buttons, Dialogs, Grids, Graphics,math, ComCtrls, Spin, Voxel_Engine;
+  Buttons, Dialogs, Grids, Graphics, math, ComCtrls, Spin, Voxel_Engine;
 
 {$INCLUDE Global_Conditionals.inc}
 
@@ -73,7 +73,7 @@ type
     procedure butCloseClick(Sender: TObject);
     procedure txtChange(Sender: TObject);
     procedure grdTransSetEditText(Sender: TObject; ACol, ARow: Integer;
-      const Value: String);
+      const Value: string);
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -99,22 +99,22 @@ var
   i: Integer;
 begin
   p:=Vox;
-  label2.caption:='File Type: '+p^.Header.FileType;
-  label3.caption:='Unknown: '+IntToStr(p^.Header.Unknown);
-  label4.caption:='Num Sections: '+IntToStr(p^.Header.NumSections) + ' - ' +IntToStr(p^.Header.NumSections2);
-  label6.caption:='Start: '+IntToStr(p^.Header.StartPaletteRemap);
-  label7.caption:='End: '+IntToStr(p^.Header.EndPaletteRemap);
-  label14.caption:= extractfilename(VXLFilename);
+  label2.caption:= 'File Type: ' + p^.Header.FileType;
+  label3.caption:= 'Unknown: ' + IntToStr(p^.Header.Unknown);
+  label4.caption:= 'Num Sections: ' + IntToStr(p^.Header.NumSections) + ' - ' + IntToStr(p^.Header.NumSections2);
+  label6.caption:= 'Start: ' + IntToStr(p^.Header.StartPaletteRemap);
+  label7.caption:= 'End: ' + IntToStr(p^.Header.EndPaletteRemap);
+  label14.caption:=extractfilename(VXLFilename);
   if p^.Section[0].Tailer.Unknown = 2 then
-  Label17.caption := 'Game: Tiberian Sun'
+    Label17.caption:= 'Game: Tiberian Sun'
+  else if p^.Section[0].Tailer.Unknown = 4 then
+    Label17.caption:= 'Game: Red Alert 2'
   else
-  if p^.Section[0].Tailer.Unknown = 4 then
-  Label17.caption := 'Game: Red Alert 2'
-  else
-  Label17.caption := 'Game: Unknown';
+    Label17.caption:= 'Game: Unknown';
   cmbSection.Style:=csDropDownList;
   cmbSection.Items.Clear;
-  for i:=0 to p^.Header.NumSections - 1 do begin
+  for i:=0 to p^.Header.NumSections - 1 do
+  begin
     cmbSection.Items.Add(p^.Section[i].Name);
   end;
   cmbSection.ItemIndex:=0;
@@ -123,7 +123,7 @@ end;
 
 procedure TFrmHeader.cmbSectionChange(Sender: TObject);
 var
-  i,j,k: Integer;
+  i, j, k: Integer;
 begin
   //now populate those other list boxes...
   i:=cmbSection.ItemIndex;
@@ -138,74 +138,77 @@ begin
 
   txtName.OnChange:=nil;
   txtName.Text:=p^.Section[i].Name;
-//  txtName.OnChange:=txtChange;
+  //  txtName.OnChange:=txtChange;
   txtNumber.OnChange:=nil;
   txtNumber.Text:=IntToStr(p^.Section[i].Header.Number);
-//  txtNumber.OnChange:=txtChange;
+  //  txtNumber.OnChange:=txtChange;
   txtUnknown1.OnChange:=nil;
   txtUnknown1.Text:=IntToStr(p^.Section[i].Header.Unknown1);
-//  txtUnknown1.OnChange:=txtChange;
+  //  txtUnknown1.OnChange:=txtChange;
   txtUnknown2.OnChange:=nil;
   txtUnknown2.Text:=IntToStr(p^.Section[i].Header.Unknown2);
-//  txtUnknown2.OnChange:=txtChange;
+  //  txtUnknown2.OnChange:=txtChange;
   txtNormalMode.OnChange:=nil;
-  txtNormalMode.ItemIndex := p^.Section[i].Tailer.Unknown-1;
+  txtNormalMode.ItemIndex:=p^.Section[i].Tailer.Unknown - 1;
   txtNormalMode.Text:=IntToStr(p^.Section[i].Tailer.Unknown);
-//  txtNormalMode.OnChange:=txtChange;
-//  txtTrailer.Lines.Clear;
+  //  txtNormalMode.OnChange:=txtChange;
+  //  txtTrailer.Lines.Clear;
 
   scaleXmin.OnChange:=nil;
-  scaleXmin.Text := floattostr(p^.Section[i].Tailer.MinBounds[1]);
-//  scaleXmin.OnChange:=txtChange;
+  scaleXmin.Text:=floattostr(p^.Section[i].Tailer.MinBounds[1]);
+  //  scaleXmin.OnChange:=txtChange;
 
   scaleYmin.OnChange:=nil;
-  scaleYmin.Text := floattostr(p^.Section[i].Tailer.MinBounds[2]);
-//  scaleYmin.OnChange:=txtChange;
+  scaleYmin.Text:=floattostr(p^.Section[i].Tailer.MinBounds[2]);
+  //  scaleYmin.OnChange:=txtChange;
 
   scaleZmin.OnChange:=nil;
-  scaleZmin.Text := floattostr(p^.Section[i].Tailer.MinBounds[3]);
-//  scaleZmin.OnChange:=txtChange;
+  scaleZmin.Text:=floattostr(p^.Section[i].Tailer.MinBounds[3]);
+  //  scaleZmin.OnChange:=txtChange;
 
   scaleXmax.OnChange:=nil;
-  scaleXmax.Text := floattostr(p^.Section[i].Tailer.MaxBounds[1]);
-//  scaleXmax.OnChange:=txtChange;
+  scaleXmax.Text:=floattostr(p^.Section[i].Tailer.MaxBounds[1]);
+  //  scaleXmax.OnChange:=txtChange;
 
   scaleYmax.OnChange:=nil;
-  scaleYmax.Text := floattostr(p^.Section[i].Tailer.MaxBounds[2]);
-//  scaleYmax.OnChange:=txtChange;
+  scaleYmax.Text:=floattostr(p^.Section[i].Tailer.MaxBounds[2]);
+  //  scaleYmax.OnChange:=txtChange;
 
   scaleZmax.OnChange:=nil;
-  scaleZmax.Text := floattostr(p^.Section[i].Tailer.MaxBounds[3]);
-//  scaleZmax.OnChange:=txtChange;
+  scaleZmax.Text:=floattostr(p^.Section[i].Tailer.MaxBounds[3]);
+  //  scaleZmax.OnChange:=txtChange;
 
   scale.OnChange:=nil;
-  scale.Text := floattostr(p^.Section[i].Tailer.det);
-//  scale.OnChange:=txtChange;
+  scale.Text:=floattostr(p^.Section[i].Tailer.det);
+  //  scale.OnChange:=txtChange;
 
-  With p^.Section[i].Tailer do begin
-    label1.Caption:='Dimentions: '+Format('%dx%dx%d', [XSize,YSize,ZSize]);
-//    txtTrailer.Lines.Add(Format('Normals mode: %d', [Unknown]));
-//    txtTrailer.Lines.Add(Format('Size:    %dx%dx%d', [XSize,YSize,ZSize]));
-//this is file information, doens't interest user.
-    {txtTrailer.Lines.Add(Format('SpanStart: %d, End: %d, Data: %d', [SpanStartOfs, SpanEndOfs, SpanDataOfs]));
-    txtTrailer.Lines.Add(Format('Scale:   %g', [Det]));
-    txtTrailer.Lines.Add('');
-    txtTrailer.Lines.Add('Transformation matrix:');
-    for j:=1 to 3 do begin
-      txtTrailer.Lines.Add(Format('%g %g %g %g', [Transform[j,1],Transform[j,2],Transform[j,3],Transform[j,4]]));
-    end;     }
-    for j:=1 to 3 do begin
-      for k:=1 to 4 do begin
-        grdTrans.Cells[k-1,j-1]:=FloatToStr(Transform[j,k]);
+  with p^.Section[i].Tailer do
+  begin
+    label1.Caption:= 'Dimentions: ' + Format('%dx%dx%d', [XSize, YSize, ZSize]);
+    //    txtTrailer.Lines.Add(Format('Normals mode: %d', [Unknown]));
+    //    txtTrailer.Lines.Add(Format('Size:    %dx%dx%d', [XSize,YSize,ZSize]));
+    //this is file information, doens't interest user.
+        {txtTrailer.Lines.Add(Format('SpanStart: %d, End: %d, Data: %d', [SpanStartOfs, SpanEndOfs, SpanDataOfs]));
+        txtTrailer.Lines.Add(Format('Scale:   %g', [Det]));
+        txtTrailer.Lines.Add('');
+        txtTrailer.Lines.Add('Transformation matrix:');
+        for j:=1 to 3 do begin
+          txtTrailer.Lines.Add(Format('%g %g %g %g', [Transform[j,1],Transform[j,2],Transform[j,3],Transform[j,4]]));
+        end;     }
+    for j:=1 to 3 do
+    begin
+      for k:=1 to 4 do
+      begin
+        grdTrans.Cells[k - 1, j - 1]:=FloatToStr(Transform[j, k]);
       end;
     end;
-  //  txtTrailer.Lines.Add('');
-   { for j:=1 to 3 do begin
-      txtTrailer.Lines.Add(Format('Scale '+Chr(87+j)+' min: %g', [MinBounds[j]]));
-    end;
-    for j:=1 to 3 do begin
-      txtTrailer.Lines.Add(Format('Scale '+Chr(87+j)+' max: %g', [MaxBounds[j]]));
-    end;}
+    //  txtTrailer.Lines.Add('');
+     { for j:=1 to 3 do begin
+        txtTrailer.Lines.Add(Format('Scale '+Chr(87+j)+' min: %g', [MinBounds[j]]));
+      end;
+      for j:=1 to 3 do begin
+        txtTrailer.Lines.Add(Format('Scale '+Chr(87+j)+' max: %g', [MaxBounds[j]]));
+      end;}
   end;
 end;
 
@@ -218,48 +221,49 @@ procedure TFrmHeader.txtChange(Sender: TObject);
 var
   i: Integer;
 begin
-//  ShowMessage(Sender.ClassName);
-//FrmMain.Clicked := true; // Made changes to voxel... alert system
+  //  ShowMessage(Sender.ClassName);
+  //FrmMain.Clicked := true; // Made changes to voxel... alert system
 
   i:=cmbSection.ItemIndex;
-  if i>=0 then begin
+  if i >= 0 then
+  begin
     try
       if txtName.Text <> '' then
       begin
-         p^.Section[i].SetHeaderName(txtName.Text);
-         FrmMain.SectionCombo.Items.Strings[i] := txtName.Text;
-         cmbSection.Items[i] := p^.Section[i].Name;
-         cmbSection.ItemIndex := i;
+        p^.Section[i].SetHeaderName(txtName.Text);
+        FrmMain.SectionCombo.Items.Strings[i]:=txtName.Text;
+        cmbSection.Items[i]:=p^.Section[i].Name;
+        cmbSection.ItemIndex:=i;
       end;
-      FrmMain.SectionCombo.ItemIndex:= ActiveSection.Header.Number;
-      p^.Section[i].Header.Number:=StrToIntDef(txtNumber.Text,0);
-      p^.Section[i].Header.Unknown1:=StrToIntDef(txtUnknown1.Text,1);
-      p^.Section[i].Header.Unknown2:=StrToIntDef(txtUnknown2.Text,0);
+      FrmMain.SectionCombo.ItemIndex:=ActiveSection.Header.Number;
+      p^.Section[i].Header.Number:=StrToIntDef(txtNumber.Text, 0);
+      p^.Section[i].Header.Unknown1:=StrToIntDef(txtUnknown1.Text, 1);
+      p^.Section[i].Header.Unknown2:=StrToIntDef(txtUnknown2.Text, 0);
 
-      if p^.Section[i].Tailer.Unknown <> txtNormalMode.itemindex+1 then
+      if p^.Section[i].Tailer.Unknown <> txtNormalMode.itemindex + 1 then
       begin
-      SetNormals(txtNormalMode.itemindex+1);
-    //  p^.Section[i].Tailer.Unknown:=txtNormalMode.itemindex+1;
-      if ActiveSection.Tailer.Unknown = 2 then
-      FrmMain.StatusBar1.Panels[0].Text := 'Type: Tiberian Sun'
-      else
-      if ActiveSection.Tailer.Unknown = 4 then
-      FrmMain.StatusBar1.Panels[0].Text := 'Type: RedAlert 2'
-      else
-      FrmMain.StatusBar1.Panels[0].Text := 'Type: Unknown ' + inttostr(ActiveSection.Tailer.Unknown);
-      SetNormalsCount;
-      FrmMain.cnvPalette.Refresh;
-      RepaintViews;
+        SetNormals(txtNormalMode.itemindex + 1);
+        //  p^.Section[i].Tailer.Unknown:=txtNormalMode.itemindex+1;
+        if ActiveSection.Tailer.Unknown = 2 then
+          FrmMain.StatusBar1.Panels[0].Text:= 'Type: Tiberian Sun'
+        else if ActiveSection.Tailer.Unknown = 4 then
+          FrmMain.StatusBar1.Panels[0].Text:= 'Type: RedAlert 2'
+        else
+          FrmMain.StatusBar1.Panels[0].Text:= 'Type: Unknown ' + inttostr(ActiveSection.Tailer.Unknown);
+        SetNormalsCount;
+        FrmMain.cnvPalette.Refresh;
+        RepaintViews;
       end;
-      p^.Section[i].Tailer.MinBounds[1] := StrToFloat(scaleXmin.Text);
-      p^.Section[i].Tailer.MinBounds[2] := StrToFloat(scaleYmin.Text);
-      p^.Section[i].Tailer.MinBounds[3] := StrToFloat(scaleZmin.Text);
-      p^.Section[i].Tailer.MaxBounds[1] := StrToFloat(scaleXmax.Text);
-      p^.Section[i].Tailer.MaxBounds[2] := StrToFloat(scaleYmax.Text);
-      p^.Section[i].Tailer.MaxBounds[3] := StrToFloat(scaleZmax.Text);
-      p^.Section[i].Tailer.Det := StrToFloat(scale.Text);
+      p^.Section[i].Tailer.MinBounds[1]:=StrToFloat(scaleXmin.Text);
+      p^.Section[i].Tailer.MinBounds[2]:=StrToFloat(scaleYmin.Text);
+      p^.Section[i].Tailer.MinBounds[3]:=StrToFloat(scaleZmin.Text);
+      p^.Section[i].Tailer.MaxBounds[1]:=StrToFloat(scaleXmax.Text);
+      p^.Section[i].Tailer.MaxBounds[2]:=StrToFloat(scaleYmax.Text);
+      p^.Section[i].Tailer.MaxBounds[3]:=StrToFloat(scaleZmax.Text);
+      p^.Section[i].Tailer.Det:=StrToFloat(scale.Text);
     except
-      on EConvertError do begin
+      on EConvertError do
+      begin
         //i:=0;
       end;
     end;
@@ -267,20 +271,24 @@ begin
 end;
 
 procedure TFrmHeader.grdTransSetEditText(Sender: TObject; ACol,
-  ARow: Integer; const Value: String);
+  ARow: Integer; const Value: string);
 var
-  i,j,k: Integer;
+  i, j, k: Integer;
 begin
   i:=cmbSection.ItemIndex;
-  if i>=0 then begin
+  if i >= 0 then
+  begin
     try
-      for j:=1 to 3 do begin
-        for k:=1 to 4 do begin
-          p^.Section[i].Tailer.Transform[j,k]:=StrToFloat(grdTrans.Cells[k-1,j-1]);
+      for j:=1 to 3 do
+      begin
+        for k:=1 to 4 do
+        begin
+          p^.Section[i].Tailer.Transform[j, k]:=StrToFloat(grdTrans.Cells[k - 1, j - 1]);
         end;
       end;
     except
-      on EConvertError do begin
+      on EConvertError do
+      begin
         //i:=0;
       end;
     end;
@@ -289,44 +297,44 @@ end;
 
 procedure TFrmHeader.SpeedButton1Click(Sender: TObject);
 begin
-   with p^.Section[cmbSection.ItemIndex] do
-   begin
-      scaleXmax.text := floattostr((Tailer.XSize /2));
-      scaleYmax.text := floattostr((Tailer.YSize /2));
-      scaleXmin.text := floattostr(0 - (Tailer.XSize /2));
-      scaleYmin.text := floattostr(0 - (Tailer.YSize /2));
-      if rbAir.Checked then
-      begin
-         scaleZmax.text := floattostr((Tailer.ZSize /2));
-         scaleZmin.text := floattostr(0 - (Tailer.ZSize /2));
-      end
-      else
-      begin
-         scaleZmax.text := floattostr(Tailer.ZSize);
-         scaleZmin.text := floattostr(0);
-      end;
-   end;
+  with p^.Section[cmbSection.ItemIndex] do
+  begin
+    scaleXmax.text:=floattostr((Tailer.XSize / 2));
+    scaleYmax.text:=floattostr((Tailer.YSize / 2));
+    scaleXmin.text:=floattostr(0 - (Tailer.XSize / 2));
+    scaleYmin.text:=floattostr(0 - (Tailer.YSize / 2));
+    if rbAir.Checked then
+    begin
+      scaleZmax.text:=floattostr((Tailer.ZSize / 2));
+      scaleZmin.text:=floattostr(0 - (Tailer.ZSize / 2));
+    end
+    else
+    begin
+      scaleZmax.text:=floattostr(Tailer.ZSize);
+      scaleZmin.text:=floattostr(0);
+    end;
+  end;
 end;
 
 procedure TFrmHeader.FormCreate(Sender: TObject);
 begin
-   if ActiveSection.Tailer.Unknown = 4 then
-      FrmMain.IconList.GetIcon(2,Image1.Picture.Icon)
-   else
-      FrmMain.IconList.GetIcon(0,Image1.Picture.Icon);
+  if ActiveSection.Tailer.Unknown = 4 then
+    FrmMain.IconList.GetIcon(2, Image1.Picture.Icon)
+  else
+    FrmMain.IconList.GetIcon(0, Image1.Picture.Icon);
 
-   Panel2.DoubleBuffered := true;
+  Panel2.DoubleBuffered:=true;
 
-   //1.3: Voxel Type Support.
-   if VoxelType = vtLand then
-      rbLand.Checked := true
-   else
-      rbAir.Checked := true;
+  //1.3: Voxel Type Support.
+  if VoxelType = vtLand then
+    rbLand.Checked:=true
+  else
+    rbAir.Checked:=true;
 end;
 
 procedure TFrmHeader.Button3Click(Sender: TObject);
 begin
-Close;
+  Close;
 end;
 
 end.

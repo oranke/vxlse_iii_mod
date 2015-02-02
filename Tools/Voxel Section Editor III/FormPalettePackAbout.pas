@@ -35,12 +35,12 @@ implementation
 
 procedure TFrmPalettePackAbout.OkClick(Sender: TObject);
 begin
-   close;
+  close;
 end;
 
 procedure TFrmPalettePackAbout.Label2Click(Sender: TObject);
 begin
-   ShellExecute(Application.Handle,nil,'http://yrarg.cncguild.net/','','',SW_SHOWNORMAL);
+  ShellExecute(Application.Handle, nil, 'http://yrarg.cncguild.net/', '', '', SW_SHOWNORMAL);
 end;
 
 end.

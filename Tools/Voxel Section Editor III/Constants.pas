@@ -14,11 +14,10 @@ unit Constants;
 interface
 
 const
-  HistoryDepth=10; //maximum number of Recently Used Files
-  RegPath='\Software\CnC Tools\VXLSEIII\'; //registry path of the editor
-  MaxUndo=10; //maximum number of undo/redo steps
+  HistoryDepth = 10; //maximum number of Recently Used Files
+  RegPath = '\Software\CnC Tools\VXLSEIII\'; //registry path of the editor
+  MaxUndo = 10; //maximum number of undo/redo steps
 
 implementation
 
 end.
- 
