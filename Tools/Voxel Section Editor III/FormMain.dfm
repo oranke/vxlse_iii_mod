@@ -4599,7 +4599,7 @@ object FrmMain: TFrmMain
         OnClick = Display3DWindow1Click
       end
       object Edit3DWindow1: TMenuItem
-        Caption = 'Edit 3D Window'
+        Caption = 'Display 3D Edit Window'
         OnClick = Edit3DWindow1Click
       end
     end

@@ -20,7 +20,7 @@ uses
   Voxel_Engine,
   //VectorUtil,
 
-  OpenGL15, StdCtrls;
+  OpenGL15, StdCtrls, Menus, Buttons;
 
 type
   F32 = Single; 
@@ -29,6 +29,11 @@ type
     CtrlPanel: TPanel;
     Bevel1: TBevel;
     RenderPanel: TPanel;
+    UpsideMenuBtn: TSpeedButton;
+    UpsidePopup: TPopupMenu;
+    UpsideMenuX: TMenuItem;
+    UpsideMenuY: TMenuItem;
+    UpsideMenuZ: TMenuItem;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -38,6 +43,10 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure RenderPanelResize(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure UpsideMenuBtnClick(Sender: TObject);
+    procedure UpsideMenuClick(Sender: TObject);
+    procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
   private
     { Private declarations }
     fDC: HDC; // Device Context
@@ -217,8 +226,25 @@ begin
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glTranslatef(0, 0, -fDist);
+
+  // 회전 적용 
   glRotatef(fRotU, 1, 0, 0);
   glRotatef(fRotV, 0, 1, 0);
+
+  case UpsideMenuBtn.Tag of
+    0: // X축을 위로 뷰 맞추기
+    begin
+      glRotatef(90, 0, 0, 1);
+      glRotatef(90, 1, 0, 0);
+    end;
+
+    2: // Z축을 위로 뷰 맞추기.
+    begin
+      glRotatef(-90, 1, 0, 0);
+      glRotatef(-90, 0, 0, 1);
+    end;
+  end;
+
   glTranslatef(-fLookAtPos.X, -fLookAtPos.Y, -fLookAtPos.Z);
 
   glDisable(GL_LIGHT0);
@@ -330,6 +356,7 @@ begin
   end;
 end;
 
+
 procedure TFrmEdit3D.WndProc(var Message: TMessage);
 begin
   inherited;
@@ -337,7 +364,7 @@ end;
 
 procedure TFrmEdit3D.Idle(Sender: TObject);
 begin
-  WriteLn('FrmEdit3D Idle, ', GetTickCount); 
+  //WriteLn('FrmEdit3D Idle, ', GetTickCount);
   wglMakeCurrent(fDC, fRC);
   //SetCurrent(fDC, fRC);
 
@@ -362,6 +389,24 @@ begin
   Action := caFree;
   FrmEdit3D := nil;
 end;
+
+procedure TFrmEdit3D.FormMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+var
+  i: Integer;
+begin
+  try
+  i := WheelDelta div ABS(WheelDelta);
+  except
+  i := 0;
+  end;
+
+  fFov := fFov + i;
+
+  if fFov < 20 then fFov := 20;
+  if fFov > 120 then fFov := 120;
+end;
+
 
 var
   ugMDownPos: TPoint;
@@ -417,5 +462,22 @@ begin
   glViewport(0, 0, RenderPanel.Width, RenderPanel.Height);
 end;
 
+procedure TFrmEdit3D.UpsideMenuBtnClick(Sender: TObject);
+var
+  Pt: TPoint; 
+begin
+  Pt := Point(TSpeedButton(Sender).Left, TSpeedButton(Sender).Top + TSpeedButton(Sender).Height);
+  Pt := TSpeedButton(Sender).ClientToScreen(Pt);
+
+  UpsidePopup.Popup(Pt.X, Pt.Y);
+//
+end;
+
+
+procedure TFrmEdit3D.UpsideMenuClick(Sender: TObject);
+begin
+  TMenuItem(Sender).Checked := true;
+  UpsideMenuBtn.Tag := TMenuItem(Sender).Tag; 
+end;
 
 end.
