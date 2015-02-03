@@ -2,6 +2,8 @@ program vxlse_III;
 
 {%File 'Global_Conditionals.inc'}
 
+{$APPTYPE CONSOLE}
+
 uses
   FastMM4,
 

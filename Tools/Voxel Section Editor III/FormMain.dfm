@@ -3,7 +3,7 @@ object FrmMain: TFrmMain
   Top = 0
   ActiveControl = pnlActiveColour
   Caption = 'Application Title'
-  ClientHeight = 722
+  ClientHeight = 742
   ClientWidth = 862
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -29,17 +29,19 @@ object FrmMain: TFrmMain
     Left = 0
     Top = 0
     Width = 862
-    Height = 703
+    Height = 723
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
+    ExplicitHeight = 703
     object LeftPanel: TPanel
       Left = 1
       Top = 26
       Width = 152
-      Height = 676
+      Height = 696
       Align = alLeft
       TabOrder = 0
+      ExplicitHeight = 676
       object lblSection: TLabel
         Left = 1
         Top = 1
@@ -1183,9 +1185,10 @@ object FrmMain: TFrmMain
       Left = 656
       Top = 26
       Width = 205
-      Height = 676
+      Height = 696
       Align = alRight
       TabOrder = 1
+      ExplicitHeight = 676
       object CnvView2: TPaintBox
         Left = 1
         Top = 230
@@ -1482,9 +1485,10 @@ object FrmMain: TFrmMain
       Left = 153
       Top = 26
       Width = 503
-      Height = 676
+      Height = 696
       Align = alClient
       TabOrder = 2
+      ExplicitHeight = 676
       object lblView0: TLabel
         Left = 1
         Top = 1
@@ -1507,7 +1511,7 @@ object FrmMain: TFrmMain
         Left = 1
         Top = 14
         Width = 485
-        Height = 645
+        Height = 665
         Align = alClient
         PopupMenu = MainViewPopup
         OnMouseDown = CnvView0MouseDown
@@ -4201,7 +4205,7 @@ object FrmMain: TFrmMain
         Left = 486
         Top = 14
         Width = 16
-        Height = 645
+        Height = 665
         Align = alRight
         Ctl3D = False
         Kind = sbVertical
@@ -4210,15 +4214,17 @@ object FrmMain: TFrmMain
         Position = 50
         TabOrder = 0
         OnChange = ScrollBar1Change
+        ExplicitHeight = 645
       end
       object Panel5: TPanel
         Left = 1
-        Top = 659
+        Top = 679
         Width = 501
         Height = 16
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
+        ExplicitTop = 659
         object ScrollBar1: TScrollBar
           Left = 0
           Top = 0
@@ -4421,7 +4427,7 @@ object FrmMain: TFrmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 703
+    Top = 723
     Width = 862
     Height = 19
     Panels = <
@@ -4437,6 +4443,7 @@ object FrmMain: TFrmMain
       item
         Width = 50
       end>
+    ExplicitTop = 703
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -4993,9 +5000,9 @@ object FrmMain: TFrmMain
       object N12: TMenuItem
         Caption = '-'
       end
-      object Display3dView1: TMenuItem
+      object Disable3dView1: TMenuItem
         Caption = 'Disable 3d View'
-        OnClick = Display3dView1Click
+        OnClick = Disable3dView1Click
       end
       object DisableDrawPreview1: TMenuItem
         Caption = 'Disable Draw Preview'
@@ -5170,7 +5177,7 @@ object FrmMain: TFrmMain
     Left = 257
     Top = 98
     Bitmap = {
-      494C200627002C00180010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200627002C00200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000010000000C0020000010020000000000000B0
       00000000000000000000000000000000000090270800A0000000000000000000
       0000408A0700900000000000000000000000D09007009C000000000000000000
@@ -6794,9 +6801,9 @@ object FrmMain: TFrmMain
         Caption = 'Debug Mode'
         OnClick = DebugMode1Click
       end
-      object Disable3dView1: TMenuItem
+      object Disable3dView2: TMenuItem
         Caption = 'Disable 3d View'
-        OnClick = Display3dView1Click
+        OnClick = Disable3dView1Click
       end
       object N4: TMenuItem
         Caption = '-'
@@ -6843,7 +6850,7 @@ object FrmMain: TFrmMain
     Left = 288
     Top = 96
     Bitmap = {
-      494C200606000900180020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200606000900200020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000200000002001000001002000000000000090
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -37,6 +37,7 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure RenderPanelResize(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     { Private declarations }
     fDC: HDC; // Device Context
@@ -62,7 +63,7 @@ type
     destructor Destroy; override;
 
     procedure SetViewParams;
-    procedure Idle(Sender: TObject; var Done: Boolean);
+    procedure Idle(Sender: TObject);
   end;
 
 var
@@ -333,9 +334,9 @@ begin
   inherited;
 end;
 
-procedure TFrmEdit3D.Idle(Sender: TObject; var Done: Boolean);
+procedure TFrmEdit3D.Idle(Sender: TObject);
 begin
-
+  WriteLn('FrmEdit3D Idle, ', GetTickCount); 
   wglMakeCurrent(fDC, fRC);
   //SetCurrent(fDC, fRC);
 
@@ -347,9 +348,13 @@ begin
   RenderScene();
 
   SwapBuffers(fDC); // Display the scene
-
 end;
 
+
+procedure TFrmEdit3D.FormActivate(Sender: TObject);
+begin
+  FrmMain.OnActivate(sender);
+end;
 
 procedure TFrmEdit3D.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -377,6 +382,7 @@ begin
     Result:=Result - C_360
   else if Result<- C_180 then
     Result:=Result+ C_360;
+
 end;
 
 
@@ -393,6 +399,9 @@ begin
   end;
 
   ugMDownPos := Point(X, Y);
+
+  if ssCtrl in Shift then
+    Idle(Sender);
 end;
 
 procedure TFrmEdit3D.RenderPaintMouseUp(Sender: TObject; Button: TMouseButton;

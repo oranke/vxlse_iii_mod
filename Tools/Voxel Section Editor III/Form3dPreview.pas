@@ -1456,7 +1456,7 @@ begin
 
 
   FrmMain.p_Frm3DPreview:=nil;
-  if FrmMain.Display3dView1.Checked then
+  if FrmMain.Disable3dView1.Checked then
     Application.OnIdle:=nil;
   Free;
 end;

@@ -717,14 +717,14 @@ begin
   if not IsEditable then
     exit;
 
-  if FrmMain.Display3dView1.Checked then
+  if FrmMain.Disable3dView1.Checked then
     exit;
 
 {$IFDEF DEBUG_FILE}
   FrmMain.DebugFile.Add('OpenGL3DViewEngine: Update3DView');
 {$ENDIF}
   // Shutup 3d view for setup purposes.
-  FrmMain.Display3dView1.Checked:=true;
+  FrmMain.Disable3dView1.Checked:=true;
 
   VoxelBox_No:=0;
   ClearVoxelBoxes(VoxelBoxGroup);
@@ -777,7 +777,7 @@ begin
   VoxelBoxGroup.NumBoxes:=VoxelBox_No;
   RebuildLists:=true;
   // Wake up 3d view, since everything is ready.
-  FrmMain.Display3dView1.Checked:=false;
+  FrmMain.Disable3dView1.Checked:=false;
 
 end;
 
@@ -787,14 +787,14 @@ var
   v: TVoxelUnpacked;
   Scale, MinBounds: TVector3f;
 begin
-  if FrmMain.Display3dView1.Checked then
+  if FrmMain.Disable3dView1.Checked then
     exit;
 
 {$IFDEF DEBUG_FILE}
   FrmMain.DebugFile.Add('OpenGL3DViewEngine: Update3DViewVoxel');
 {$ENDIF}
   // Shutup 3d view for setup purposes.
-  FrmMain.Display3dView1.Checked:=true;
+  FrmMain.Disable3dView1.Checked:=true;
 
   VoxelBoxGroup.NumBoxes:=0;
   ClearVoxelBoxes(VoxelBoxGroup);
@@ -837,21 +837,21 @@ begin
   end;
   RebuildLists:=true;
   // Wake up 3d view, since everything is ready.
-  FrmMain.Display3dView1.Checked:=false;
+  FrmMain.Disable3dView1.Checked:=false;
 end;
 
 procedure Update3dViewWithNormals(Vxl: TVoxelSection);
 var
   x, num: byte;
 begin
-  if FrmMain.Display3dView1.Checked then
+  if FrmMain.Disable3dView1.Checked then
     exit;
 
 {$IFDEF DEBUG_FILE}
   FrmMain.DebugFile.Add('OpenGL3DViewEngine: Update3DViewWithNormals');
 {$ENDIF}
   // Shutup 3d view for setup purposes.
-  FrmMain.Display3dView1.Checked:=true;
+  FrmMain.Disable3dView1.Checked:=true;
 
   VoxelBox_No:=0;
   ClearVoxelBoxes(VoxelBoxGroup);
@@ -904,7 +904,7 @@ begin
   RebuildLists:=true;
   VoxelBoxGroup.NumBoxes:=VoxelBox_No;
   // Wake 3d view, since everything is ready.
-  FrmMain.Display3dView1.Checked:=false;
+  FrmMain.Disable3dView1.Checked:=false;
 end;
 
 begin

@@ -198,7 +198,7 @@ type
     About1: TMenuItem;
     Options1: TMenuItem;
     Preferences1: TMenuItem;
-    Display3dView1: TMenuItem;
+    Disable3dView1: TMenuItem;
     Section2: TMenuItem;
     Copyofthissection1: TMenuItem;
     Importfrommodel1: TMenuItem;
@@ -285,7 +285,7 @@ type
     OpenDialog1: TOpenDialog;
     DisableDrawPreview1: TMenuItem;
     SmoothNormals1: TMenuItem;
-    Disable3dView1: TMenuItem;
+    Disable3dView2: TMenuItem;
     ReplaceColours1: TMenuItem;
     Normals3: TMenuItem;
     Colours2: TMenuItem;
@@ -487,7 +487,7 @@ type
     procedure XCC1Click(Sender: TObject);
     procedure OpenHyperlink(HyperLink: PChar);
     procedure VXLSEHelp1Click(Sender: TObject);
-    procedure Display3dView1Click(Sender: TObject);
+    procedure Disable3dView1Click(Sender: TObject);
     procedure About1Click(Sender: TObject);
     procedure FlipXswitchFrontBack1Click(Sender: TObject);
     procedure FlipYswitchRightLeft1Click(Sender: TObject);
@@ -811,10 +811,7 @@ begin
       exit;
    end;
 
-   if Assigned(FrmEdit3D) then
-    FrmEdit3D.Idle(Sender, Done);
-
-   if not Display3dView1.checked then
+   if not Disable3dView1.checked then
    begin
       LastTime :=ElapsedTime;
       ElapsedTime := GetTickCount() - DemoStart;     // Calculate Elapsed Time
@@ -841,6 +838,9 @@ begin
       Form3D^.Idle(sender,done);
       // Once the window is rendered, the FormMain OGL returns as default.
    end;
+
+   if Assigned(FrmEdit3D) then
+      FrmEdit3D.Idle(Sender);
 
 end;
 
@@ -2429,7 +2429,7 @@ begin
       p_Frm3DPreview^.SpFrame.MaxValue := HVAFile.Header.N_Frames;
       p_Frm3DPreview^.SpFrame.Value := 1;
    end;
-   if not Display3dView1.Checked then
+   if not Disable3dView1.Checked then
       if @Application.OnIdle = nil then
          Application.OnIdle := Idle
    else
@@ -2869,17 +2869,17 @@ begin
    RunAProgram('help.chm','',extractfiledir(paramstr(0)));
 end;
 
-procedure TFrmMain.Display3dView1Click(Sender: TObject);
+procedure TFrmMain.Disable3dView1Click(Sender: TObject);
 begin
-   Display3dView1.Checked := not Display3dView1.Checked;
-   Disable3dView1.Checked := Display3dView1.Checked;
+   Disable3dView1.Checked := not Disable3dView1.Checked;
+   Disable3dView2.Checked := Disable3dView1.Checked;
 
    {$ifdef DEBUG_FILE}
    DebugFile.Add('FrmMain: Display3DView1Click');
    {$endif}
-   if Display3dView1.Checked then
+   if Disable3dView1.Checked then
    begin
-      if p_Frm3DPreview = nil then
+      if (p_Frm3DPreview = nil) and (not Assigned(FrmEdit3D)) then
          Application.OnIdle := nil
       else
       begin
@@ -4524,14 +4524,17 @@ end;
 procedure TFrmMain.FormActivate(Sender: TObject);
 begin
    // Activate the view.
-   if (not Display3dView1.Checked)  then
+   if (not Disable3dView1.Checked)  then
    begin
       if p_Frm3DPreview <> nil then
       begin
          p_Frm3DPreview^.AnimationTimer.Enabled := p_Frm3DPreview^.AnimationState;
       end;
       if @Application.OnIdle = nil then
+      begin
          Application.OnIdle := Idle;
+         //WriteLn('OnIdle Set');
+      end;
    end
    else
       Application.OnIdle := nil;
@@ -4540,6 +4543,7 @@ end;
 procedure TFrmMain.FormDeactivate(Sender: TObject);
 begin
    Application.OnIdle := nil;
+   //WriteLn('OnIdle nil'); 
 end;
 
 end.
