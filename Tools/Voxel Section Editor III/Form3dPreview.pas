@@ -1447,7 +1447,7 @@ begin
 
   btn3DRotateY.Down:=false;
   btn3DRotateY2.Down:=false;
-  btn3DRotateX.Down:=false;
+  btn3DRotateX.Down:=false;                             
   btn3DRotateX2.Down:=false;
 end;
 

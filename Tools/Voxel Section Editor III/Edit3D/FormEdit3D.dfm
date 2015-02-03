@@ -11,10 +11,12 @@ object FrmEdit3D: TFrmEdit3D
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsStayOnTop
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
+  OnKeyDown = FormKeyDown
   OnMouseWheel = FormMouseWheel
   PixelsPerInch = 96
   TextHeight = 13
@@ -41,7 +43,7 @@ object FrmEdit3D: TFrmEdit3D
       Top = 3
       Width = 23
       Height = 22
-      Hint = 'Reset Depth'
+      Hint = 'change Upper side'
       Flat = True
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -74,6 +76,59 @@ object FrmEdit3D: TFrmEdit3D
       ShowHint = True
       OnClick = UpsideMenuBtnClick
     end
+    object ViewButton: TSpeedButton
+      Tag = 1
+      Left = 42
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = '1: View'
+      GroupIndex = 1
+      Down = True
+      Caption = 'V'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object AddButton: TSpeedButton
+      Tag = 1
+      Left = 67
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = '2: Add voxel'
+      GroupIndex = 1
+      Caption = 'A'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object DelButton: TSpeedButton
+      Tag = 1
+      Left = 92
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = '3: Delete voxel'
+      GroupIndex = 1
+      Caption = 'D'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object ReplaceButton: TSpeedButton
+      Tag = 1
+      Left = 117
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = '4: Replace voxel'
+      GroupIndex = 1
+      Caption = 'R'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
   end
   object RenderPanel: TPanel
     Left = 0
@@ -88,8 +143,6 @@ object FrmEdit3D: TFrmEdit3D
     OnMouseMove = RenderPaintMouseMove
     OnMouseUp = RenderPaintMouseUp
     OnResize = RenderPanelResize
-    ExplicitTop = 26
-    ExplicitHeight = 408
   end
   object UpsidePopup: TPopupMenu
     Left = 8

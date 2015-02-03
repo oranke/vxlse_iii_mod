@@ -34,6 +34,10 @@ type
     UpsideMenuX: TMenuItem;
     UpsideMenuY: TMenuItem;
     UpsideMenuZ: TMenuItem;
+    ViewButton: TSpeedButton;
+    AddButton: TSpeedButton;
+    DelButton: TSpeedButton;
+    ReplaceButton: TSpeedButton;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -47,6 +51,7 @@ type
     procedure UpsideMenuClick(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   private
     { Private declarations }
     fDC: HDC; // Device Context
@@ -155,42 +160,43 @@ begin
   glNewList(CubicDrawID, GL_COMPILE);
   glBegin(GL_QUADS);
   glNormal3f( 0.0, 0.0, 1.0);					// Normal Pointing Towards Viewer
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 1 (Front)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 2 (Front)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 4 (Front)
+  glVertex3f(0.0, 0.0,  1.0);	// Point 1 (Front)
+  glVertex3f( 1.0, 0.0,  1.0);	// Point 2 (Front)
+  glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Front)
+  glVertex3f(0.0,  1.0,  1.0);	// Point 4 (Front)
   // Back Face
   glNormal3f( 0.0, 0.0,-1.0);					// Normal Pointing Away From Viewer
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Back)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 2 (Back)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 3 (Back)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 4 (Back)
+  glVertex3f(0.0, 0.0, 0.0);	// Point 1 (Back)
+  glVertex3f(0.0,  1.0, 0.0);	// Point 2 (Back)
+  glVertex3f( 1.0,  1.0, 0.0);	// Point 3 (Back)
+  glVertex3f( 1.0, 0.0, 0.0);	// Point 4 (Back)
   // Top Face
   glNormal3f( 0.0, 1.0, 0.0);					// Normal Pointing Up
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 1 (Top)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 2 (Top)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 4 (Top)
+  glVertex3f(0.0,  1.0, 0.0);	// Point 1 (Top)
+  glVertex3f(0.0,  1.0,  1.0);	// Point 2 (Top)
+  glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Top)
+  glVertex3f( 1.0,  1.0, 0.0);	// Point 4 (Top)
   // Bottom Face
   glNormal3f( 0.0,-1.0, 0.0);					// Normal Pointing Down
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Bottom)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 2 (Bottom)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 3 (Bottom)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 4 (Bottom)
+  glVertex3f(0.0, 0.0, 0.0);	// Point 1 (Bottom)
+  glVertex3f( 1.0, 0.0, 0.0);	// Point 2 (Bottom)
+  glVertex3f( 1.0, 0.0,  1.0);	// Point 3 (Bottom)
+  glVertex3f(0.0, 0.0,  1.0);	// Point 4 (Bottom)
   // Right face
   glNormal3f( 1.0, 0.0, 0.0);					// Normal Pointing Right
-  glTexCoord2f(0.0, 1.0); glVertex3f( 1.0, -1.0, -1.0);	// Point 1 (Right)
-  glTexCoord2f(1.0, 1.0); glVertex3f( 1.0,  1.0, -1.0);	// Point 2 (Right)
-  glTexCoord2f(1.0, 0.0); glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
-  glTexCoord2f(0.0, 0.0); glVertex3f( 1.0, -1.0,  1.0);	// Point 4 (Right)
+  glVertex3f( 1.0, 0.0, 0.0);	// Point 1 (Right)
+  glVertex3f( 1.0,  1.0, 0.0);	// Point 2 (Right)
+  glVertex3f( 1.0,  1.0,  1.0);	// Point 3 (Right)
+  glVertex3f( 1.0, 0.0,  1.0);	// Point 4 (Right)
   // Left Face
   glNormal3f(-1.0, 0.0, 0.0);					// Normal Pointing Left
-  glTexCoord2f(0.0, 1.0); glVertex3f(-1.0, -1.0, -1.0);	// Point 1 (Left)
-  glTexCoord2f(1.0, 1.0); glVertex3f(-1.0, -1.0,  1.0);	// Point 2 (Left)
-  glTexCoord2f(1.0, 0.0); glVertex3f(-1.0,  1.0,  1.0);	// Point 3 (Left)
-  glTexCoord2f(0.0, 0.0); glVertex3f(-1.0,  1.0, -1.0);	// Point 4 (Left)
+  glVertex3f(0.0, 0.0, 0.0);	// Point 1 (Left)
+  glVertex3f(0.0, 0.0,  1.0);	// Point 2 (Left)
+  glVertex3f(0.0,  1.0,  1.0);	// Point 3 (Left)
+  glVertex3f(0.0,  1.0, 0.0);	// Point 4 (Left)
   glEnd();								// Done Drawing Quads
   glEndList();
+
 
   //------------------
 
@@ -286,8 +292,8 @@ begin
             );
 
             glPushMatrix();
-              glScalef(0.5,0.5,0.5);
-              glTranslatef(1,1,1);
+              //glScalef(0.5,0.5,0.5);
+              //glTranslatef(1,1,1);
               glCallList(CubicDrawID);
             glPopMatrix();
           end;
@@ -308,23 +314,6 @@ begin
   end;
 
 
-  {
-  glPushMatrix();
-
-    with ActiveSection.Tailer do
-      glScalef(XSize, YSize, ZSize);
-
-    glColor3ub($FF, $FF, $FF);
-    glScalef(0.5,0.5,0.5);
-    glTranslatef(1,1,1);
-    glCallList(CubicDrawID);
-
-  glPopMatrix();
-  }
-
-
-
-
 end;
 
 procedure TFrmEdit3D.SetViewParams;
@@ -337,9 +326,6 @@ begin
   //with VoxelFile.Section[0].Tailer do
   with ActiveSection.Tailer do
   begin
-    //fLookAtPos.X := 0;//XSize / 2;
-    //fLookAtPos.Y := 0;//YSize / 2;
-    //fLookAtPos.Z := 0;//ZSize / 2;
     fLookAtPos.X := XSize / 2;
     fLookAtPos.Y := YSize / 2;
     fLookAtPos.Z := ZSize / 2;
@@ -352,7 +338,7 @@ begin
       ) * 3;
 
     fNear := fDist / 10;
-    fFar  := fDist * 10; 
+    fFar  := fDist * 10;
   end;
 end;
 
@@ -388,6 +374,18 @@ procedure TFrmEdit3D.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Action := caFree;
   FrmEdit3D := nil;
+end;
+
+procedure TFrmEdit3D.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  case Key of
+    Ord('1'): ViewButton.Down := true;
+    Ord('2'): AddButton.Down := true;
+    Ord('3'): DelButton.Down := true;
+    Ord('4'): ReplaceButton.Down := true;
+  end;
+//
 end;
 
 procedure TFrmEdit3D.FormMouseWheel(Sender: TObject; Shift: TShiftState;
@@ -435,7 +433,8 @@ end;
 procedure TFrmEdit3D.RenderPaintMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
-  if ssLeft in Shift then
+
+  if ViewButton.Down and (ssLeft in Shift) then
   begin
     fRotU := fRotU - (ugMDownPos.Y - Y) / 6;
     if fRotU > 90 then fRotU := 90;
@@ -445,9 +444,6 @@ begin
   end;
 
   ugMDownPos := Point(X, Y);
-
-  if ssCtrl in Shift then
-    Idle(Sender);
 end;
 
 procedure TFrmEdit3D.RenderPaintMouseUp(Sender: TObject; Button: TMouseButton;
