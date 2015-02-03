@@ -33,7 +33,6 @@ object FrmMain: TFrmMain
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitHeight = 703
     object LeftPanel: TPanel
       Left = 1
       Top = 26
@@ -41,7 +40,6 @@ object FrmMain: TFrmMain
       Height = 696
       Align = alLeft
       TabOrder = 0
-      ExplicitHeight = 676
       object lblSection: TLabel
         Left = 1
         Top = 1
@@ -1188,7 +1186,6 @@ object FrmMain: TFrmMain
       Height = 696
       Align = alRight
       TabOrder = 1
-      ExplicitHeight = 676
       object CnvView2: TPaintBox
         Left = 1
         Top = 230
@@ -1488,7 +1485,6 @@ object FrmMain: TFrmMain
       Height = 696
       Align = alClient
       TabOrder = 2
-      ExplicitHeight = 676
       object lblView0: TLabel
         Left = 1
         Top = 1
@@ -4214,7 +4210,6 @@ object FrmMain: TFrmMain
         Position = 50
         TabOrder = 0
         OnChange = ScrollBar1Change
-        ExplicitHeight = 645
       end
       object Panel5: TPanel
         Left = 1
@@ -4224,7 +4219,6 @@ object FrmMain: TFrmMain
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 659
         object ScrollBar1: TScrollBar
           Left = 0
           Top = 0
@@ -4443,7 +4437,6 @@ object FrmMain: TFrmMain
       item
         Width = 50
       end>
-    ExplicitTop = 703
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -5177,7 +5170,7 @@ object FrmMain: TFrmMain
     Left = 257
     Top = 98
     Bitmap = {
-      494C200627002C00200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200627002C00240010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000010000000C0020000010020000000000000B0
       00000000000000000000000000000000000090270800A0000000000000000000
       0000408A0700900000000000000000000000D09007009C000000000000000000
@@ -6850,7 +6843,7 @@ object FrmMain: TFrmMain
     Left = 288
     Top = 96
     Bitmap = {
-      494C200606000900200020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200606000900240020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000200000002001000001002000000000000090
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
