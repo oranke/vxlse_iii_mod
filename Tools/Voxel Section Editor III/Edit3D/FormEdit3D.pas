@@ -46,7 +46,8 @@ type
     CubicDrawID : GLuint;
 
   private
-    fRotX, fRotY, fFov, fDist,
+    fRotU, fRotV, // X, Y회전을 U, V로 개념변경. 
+    fFov, fDist,
     fNear, fFar: Single;
     fLookAtPos: TVector3f;
 
@@ -216,8 +217,8 @@ begin
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glTranslatef(0, 0, -fDist);
-  glRotatef(fRotX, 1, 0, 0);
-  glRotatef(fRotY, 0, 1, 0);
+  glRotatef(fRotU, 1, 0, 0);
+  glRotatef(fRotV, 0, 1, 0);
   glTranslatef(-fLookAtPos.X, -fLookAtPos.Y, -fLookAtPos.Z);
 
   glDisable(GL_LIGHT0);
@@ -302,8 +303,8 @@ end;
 
 procedure TFrmEdit3D.SetViewParams;
 begin
-  fRotX := 25;
-  fRotY := -45;
+  fRotU := 25;
+  fRotV := -45;
 
   fFov  := 45;
 
@@ -391,11 +392,11 @@ procedure TFrmEdit3D.RenderPaintMouseMove(Sender: TObject; Shift: TShiftState;
 begin
   if ssLeft in Shift then
   begin
-    fRotX := fRotX - (ugMDownPos.Y - Y) / 6;
-    if fRotX > 90 then fRotX := 90;
-    if fRotX < -90 then fRotX := -90;
+    fRotU := fRotU - (ugMDownPos.Y - Y) / 6;
+    if fRotU > 90 then fRotU := 90;
+    if fRotU < -90 then fRotU := -90;
 
-    fRotY := NormalizeDegAngle(fRotY - (ugMDownPos.X - X) / 6);
+    fRotV := NormalizeDegAngle(fRotV - (ugMDownPos.X - X) / 6);
   end;
 
   ugMDownPos := Point(X, Y);
