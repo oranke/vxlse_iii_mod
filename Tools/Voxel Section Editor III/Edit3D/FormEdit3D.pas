@@ -15,15 +15,21 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls,
+  Dialogs, ExtCtrls, Menus, Buttons, StdCtrls, 
 
+  Voxel,
   Voxel_Engine,
   //VectorUtil,
 
-  OpenGL15, StdCtrls, Menus, Buttons;
+  OpenGL15;
 
 type
-  F32 = Single; 
+  F32 = Single;
+
+  TSkinCell = record
+    X, Y, Z: Byte; 
+    Color: Byte;
+  end;  
 
   TFrmEdit3D = class(TForm)
     CtrlPanel: TPanel;
@@ -68,17 +74,23 @@ type
     //fOrgPanelWindowProc: TWndMethod;
     //procedure RenderPanelWindowProc(var Message: TMessage);
 
+    fSkinCellCount: Integer; 
+    fSkinCells: array of TSkinCell;
+     
     procedure RenderScene;
 
   protected
-    procedure WndProc(var Message: TMessage); override;
+    //procedure WndProc(var Message: TMessage); override;
   public
     { Public declarations }
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
 
     procedure SetViewParams;
+    procedure Update3dView(Vxl: TVoxelSection);
+
     procedure Idle(Sender: TObject);
+
   end;
 
 var
@@ -93,7 +105,7 @@ uses
 
   ogl3dview_engine,
 
-  FormMain, Voxel;
+  FormMain;
 
 
 procedure RenderAxis(aScale: Single);
@@ -200,7 +212,10 @@ begin
 
   //------------------
 
+  fSkinCellCount:= 0;
+
   SetViewParams;
+  Update3dView(ActiveSection);
 
 end;
 
@@ -215,18 +230,14 @@ begin
 end;
 
 procedure TFrmEdit3D.RenderScene;
-//const
-  //LightPosition : Array [0..3] of GLfloat = (1.5, 0.5, 1.0, 0.0);
 var
-  ix, iy, iz: Integer;
-  v: TVoxelUnpacked;
+  i: Integer;
   VoxelColor: TVector3f;
 begin
   // Set the projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(fFov, RenderPanel.Width/RenderPanel.Height, fNear, fFar);
-  //gluPerspective(fFov, RenderPaint.Width/RenderPaint.Height, 10, 1000);
 
   // Set up current camera
   glMatrixMode(GL_MODELVIEW);
@@ -264,55 +275,25 @@ begin
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
-  with ActiveSection do
+
+  for i := 0 to fSkinCellCount - 1 do
   begin
     glPushMatrix();
-    
-    for iz := 0 to Tailer.ZSize - 1 do
-    begin
-      //iz := 0;
 
-      glPushMatrix();
+    glTranslatef(fSkinCells[i].X, fSkinCells[i].Y, fSkinCells[i].Z);
+    VoxelColor := GetVXLColor(fSkinCells[i].Color, 0);
 
-      for iy := 0 to Tailer.YSize - 1 do
-      begin
-        //iy := 0;
-        glPushMatrix();
+    glColor3f(
+      VoxelColor.X,
+      VoxelColor.Y,
+      VoxelColor.Z
+    );
 
-        for ix := 0 to Tailer.XSize - 1 do
-        begin
-          GetVoxel(ix, iy, iz, v);
-          if v.Used then
-          begin
-            VoxelColor := GetVXLColor(v.Colour, 0);
-            glColor3f(
-              VoxelColor.X,
-              VoxelColor.Y,
-              VoxelColor.Z
-            );
+    //glScalef(0.5, 0.5, 0.5);
+    glCallList(CubicDrawID);
 
-            glPushMatrix();
-              //glScalef(0.5,0.5,0.5);
-              //glTranslatef(1,1,1);
-              glCallList(CubicDrawID);
-            glPopMatrix();
-          end;
-
-          glTranslatef(1, 0, 0);
-        end;
-
-        glPopMatrix();
-        glTranslatef(0, 1, 0);
-
-      end;
-
-      glPopMatrix();
-      glTranslatef(0, 0, 1); 
-    end;
-    
     glPopMatrix();
   end;
-
 
 end;
 
@@ -342,11 +323,46 @@ begin
   end;
 end;
 
+procedure TFrmEdit3D.Update3dView(Vxl: TVoxelSection);
+var
+  ix, iy, iz: Integer;
+  v: TVoxelUnpacked;
+begin
+  fSkinCellCount:= 0;
+  SetLength(fSkinCells, 0);
 
+  with Vxl do
+  for iz := 0 to Tailer.ZSize - 1 do
+  for iy := 0 to Tailer.YSize - 1 do
+  for ix := 0 to Tailer.XSize - 1 do
+  begin
+    GetVoxel(ix, iy, iz, v);
+    if v.Used then
+    if CheckFace(Vxl, ix, iy + 1, iz) or
+      CheckFace(Vxl, ix, iy - 1, iz) or
+      CheckFace(Vxl, ix, iy, iz + 1) or
+      CheckFace(Vxl, ix, iy, iz - 1) or
+      CheckFace(Vxl, ix - 1, iy, iz) or
+      CheckFace(Vxl, ix + 1, iy, iz) then
+    begin
+      SetLength(fSkinCells, fSkinCellCount+1);
+
+      fSkinCells[fSkinCellCount].X := ix;
+      fSkinCells[fSkinCellCount].Y := iy;
+      fSkinCells[fSkinCellCount].Z := iz;
+      fSkinCells[fSkinCellCount].Color := v.Colour; 
+
+      Inc(fSkinCellCount);
+    end;
+  end;
+end;
+
+{
 procedure TFrmEdit3D.WndProc(var Message: TMessage);
 begin
   inherited;
 end;
+}
 
 procedure TFrmEdit3D.Idle(Sender: TObject);
 begin

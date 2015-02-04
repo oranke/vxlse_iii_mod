@@ -1037,6 +1037,9 @@ begin
    begin
       p_Frm3DPreview^.Update3dView(ActiveSection);
    end;
+
+   if Assigned(FrmEdit3D) then
+    FrmEdit3D.Update3dView(ActiveSection); 
 end;
 
 Procedure TFrmMain.SetupSections;

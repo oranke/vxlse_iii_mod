@@ -17,7 +17,7 @@ type
     Faces: array[1..6] of boolean;
 
     // by oranke.
-    IsSkin: Boolean;
+    //IsSkin: Boolean;
   end;
 
   TVoxelBoxSection = record
@@ -712,7 +712,7 @@ var
   v: TVoxelUnpacked;
   Scale, MinBounds: TVector3f;
 
-  i: Integer;
+  //i: Integer;
 begin
   if not IsEditable then
     exit;
@@ -757,6 +757,7 @@ begin
           VoxelBoxGroup.Section[0].Box[VoxelBox_No].Color:=v.Colour;
           VoxelBoxGroup.Section[0].Box[VoxelBox_No].Normal:=v.Normal;
 
+          {
           // by oranke. Ω∫≈≤ºø ∞·¡§.
           with VoxelBoxGroup.Section[0].Box[VoxelBox_No] do
           begin
@@ -768,6 +769,7 @@ begin
                 Break;
               end;
           end;
+          }
 
           Inc(VoxelBox_No);
         end;

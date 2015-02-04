@@ -38,7 +38,7 @@ object FrmEdit3D: TFrmEdit3D
       ExplicitWidth = 240
     end
     object UpsideMenuBtn: TSpeedButton
-      Tag = 1
+      Tag = 2
       Left = 2
       Top = 3
       Width = 23
@@ -156,7 +156,6 @@ object FrmEdit3D: TFrmEdit3D
     object UpsideMenuY: TMenuItem
       Tag = 1
       Caption = 'Y'
-      Checked = True
       GroupIndex = 1
       RadioItem = True
       OnClick = UpsideMenuClick
@@ -164,6 +163,7 @@ object FrmEdit3D: TFrmEdit3D
     object UpsideMenuZ: TMenuItem
       Tag = 2
       Caption = 'Z'
+      Checked = True
       GroupIndex = 1
       RadioItem = True
       OnClick = UpsideMenuClick

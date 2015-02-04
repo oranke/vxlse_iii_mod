@@ -163,7 +163,7 @@ type
     procedure Update3dView(Vxl: TVoxelSection);
     procedure SetRotationAdders;
     procedure glPrint(text: pchar);
-    function GetVXLColor(Color, Normal: integer): TVector3f;
+    //function GetVXLColor(Color, Normal: integer): TVector3f;
     procedure ScreenShot(Filename: string);
     function ScreenShot_BitmapResult: TBitmap;
     procedure ScreenShotBMP(Filename: string);
@@ -476,6 +476,7 @@ begin
   Result:=Bitmap;
 end;
 
+{
 function TFrm3DPReview.GetVXLColor(Color, Normal: integer): TVector3f;
 begin
   if SpectrumMode = ModeColours then
@@ -485,6 +486,7 @@ begin
     Result:=SetVector(0.5, 0.5, 0.5);
   end;
 end;
+}
 
 {------------------------------------------------------------------}
 {  Function to draw the actual scene                               }
@@ -954,7 +956,7 @@ var
   Section: integer;
   Scale, MinBounds: TVector3f;
 
-  i: Integer;
+  //i: Integer;
 begin
   if not IsEditable then
     exit;
@@ -994,6 +996,7 @@ begin
               VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No].Color:=v.Colour;
               VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No].Normal:=v.Normal;
 
+              {
               // by oranke. Ω∫≈≤ºø ∞·¡§.
               with VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No] do
               begin
@@ -1005,6 +1008,7 @@ begin
                     Break;
                   end;
               end;
+              }
 
               Inc(VoxelBox_No);
 
@@ -1045,6 +1049,7 @@ begin
             VoxelBoxGroup3D.Section[0].Box[VoxelBox_No].Color:=v.Colour;
             VoxelBoxGroup3D.Section[0].Box[VoxelBox_No].Normal:=v.Normal;
 
+            {
             // by oranke. Ω∫≈≤ºø ∞·¡§.
             with VoxelBoxGroup3D.Section[0].Box[VoxelBox_No] do
             begin
@@ -1056,6 +1061,7 @@ begin
                   Break;
                 end;
             end;
+            }
 
             Inc(VoxelBox_No);
           end;
