@@ -19,12 +19,11 @@ uses
 
   Voxel,
   Voxel_Engine,
-  //VectorUtil,
+  VectorUtil,
 
   OpenGL15;
 
 type
-  F32 = Single;
 
   TSkinCell = record
     X, Y, Z: Byte; 
@@ -44,6 +43,7 @@ type
     AddButton: TSpeedButton;
     DelButton: TSpeedButton;
     ReplaceButton: TSpeedButton;
+    ResetViewButton: TSpeedButton;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -55,6 +55,7 @@ type
     procedure FormActivate(Sender: TObject);
     procedure UpsideMenuBtnClick(Sender: TObject);
     procedure UpsideMenuClick(Sender: TObject);
+    procedure ResetViewButtonClick(Sender: TObject);
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -66,18 +67,25 @@ type
     CubicDrawID : GLuint;
 
   private
-    fRotU, fRotV, // X, Y회전을 U, V로 개념변경. 
+    fRotU, fRotV, // X, Y회전을 U, V로 개념변경.
     fFov, fDist,
     fNear, fFar: Single;
-    fLookAtPos: TVector3f;
+    fLookAtPos: Voxel_Engine.TVector3f;
 
     //fOrgPanelWindowProc: TWndMethod;
     //procedure RenderPanelWindowProc(var Message: TMessage);
 
-    fSkinCellCount: Integer; 
+    fSkinCellCount: Integer;
     fSkinCells: array of TSkinCell;
-     
+
+    fHitIndex   : I32;
+    fHitFlags   : TVector3sb;
+
+    fMDownPos: TPoint;
+
+    procedure InitViewParams;
     procedure RenderScene;
+    procedure UnprojProc;
 
   protected
     //procedure WndProc(var Message: TMessage); override;
@@ -86,7 +94,6 @@ type
     constructor Create(aOwner: TComponent); override;
     destructor Destroy; override;
 
-    procedure SetViewParams;
     procedure Update3dView(Vxl: TVoxelSection);
 
     procedure Idle(Sender: TObject);
@@ -104,8 +111,10 @@ uses
   OGLUtil,
 
   ogl3dview_engine,
+  undo_engine,
 
   FormMain;
+
 
 
 procedure RenderAxis(aScale: Single);
@@ -209,12 +218,12 @@ begin
   glEnd();								// Done Drawing Quads
   glEndList();
 
-
   //------------------
 
   fSkinCellCount:= 0;
+  fMDownPos := Point(0,0); 
 
-  SetViewParams;
+  InitViewParams;
   Update3dView(ActiveSection);
 
 end;
@@ -229,10 +238,37 @@ begin
   inherited;
 end;
 
+procedure TFrmEdit3D.InitViewParams;
+begin
+  fRotU := 25;
+  fRotV := -45;
+
+  fFov  := 45;
+
+  //with VoxelFile.Section[0].Tailer do
+  with ActiveSection.Tailer do
+  begin
+    fLookAtPos.X := XSize / 2;
+    fLookAtPos.Y := YSize / 2;
+    fLookAtPos.Z := ZSize / 2;
+
+    fDist :=
+      Sqrt(
+        XSize * XSize +
+        YSize * YSize +
+        ZSize * ZSize
+      ) * 3;
+
+    fNear := fDist / 10;
+    fFar  := fDist * 10;
+  end;
+end;
+
+
 procedure TFrmEdit3D.RenderScene;
 var
   i: Integer;
-  VoxelColor: TVector3f;
+  VoxelColor: Voxel_Engine.TVector3f;
 begin
   // Set the projection matrix
   glMatrixMode(GL_PROJECTION);
@@ -244,7 +280,7 @@ begin
   glLoadIdentity();
   glTranslatef(0, 0, -fDist);
 
-  // 회전 적용 
+  // 회전 적용
   glRotatef(fRotU, 1, 0, 0);
   glRotatef(fRotV, 0, 1, 0);
 
@@ -270,7 +306,7 @@ begin
 
   RenderAxis(fDist / 3);
 
-  
+
   glEnable(GL_LIGHT0);
   glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
@@ -282,7 +318,7 @@ begin
 
     glTranslatef(fSkinCells[i].X, fSkinCells[i].Y, fSkinCells[i].Z);
     VoxelColor := GetVXLColor(fSkinCells[i].Color, 0);
-
+  
     glColor3f(
       VoxelColor.X,
       VoxelColor.Y,
@@ -292,36 +328,97 @@ begin
     //glScalef(0.5, 0.5, 0.5);
     glCallList(CubicDrawID);
 
+    if fHitIndex = i then
+    begin
+      glDepthFunc(GL_EQUAL);
+      glColor4f(1, 0, 0, 0.5);
+      //glPolygonOffset(1, 0.5);
+      glCallList(CubicDrawID);
+      //glPolygonOffset(0, 0);
+      glDepthFunc(GL_LESS); 
+    end;
+
     glPopMatrix();
   end;
 
+  {
+  if fHitIndex > 0 then
+  with fSkinCells[fHitIndex] do
+  begin
+  
+  end;
+  }
+
+
 end;
 
-procedure TFrmEdit3D.SetViewParams;
+
+
+procedure TFrmEdit3D.UnprojProc;
+var
+  ViewMat, ProjMat, VInvMat: VectorUtil.TMatrix4f;
+  EyePos, EyeDir: VectorUtil.TVector3f;
+
+
+  f, t: F32;
+  HitPos, tmpHitPos: VectorUtil.TVector3f; 
+
+  i: Integer;
 begin
-  fRotU := 25;
-  fRotV := -45;
+  // 뷰 행렬 얻고 역행렬 계산.
+  glGetFloatv(GL_MODELVIEW_MATRIX, @ViewMat);
+  VInvMat := InvertMatrixNoScale(ViewMat);
 
-  fFov  := 45;
+  // 프로젝션 행렬 얻기
+  glGetFloatv(GL_PROJECTION_MATRIX, @ProjMat);
 
-  //with VoxelFile.Section[0].Tailer do
-  with ActiveSection.Tailer do
+  // 역행렬의 이동성분은 관찰점.
+  EyePos := TZhMatrix(VInvMat).vT;
+
+  // 언프로젝션.
+  EyeDir[0] := ((((fMDownPos.X*2.0/RenderPanel.Width)-1.0)) - ProjMat[2,0]) / ProjMat[0,0];
+  EyeDir[1] := ((-((fMDownPos.Y*2.0/RenderPanel.Height)-1.0)) - ProjMat[2,1]) / ProjMat[1,1];
+  EyeDir[2] := -1;
+  // 세계공간으로 회전시키고 노멀라이즈.
+  EyeDir := VectorNormalize3f(RotateVector(EyeDir, VInvMat));
+
+  fHitIndex := -1;
+
+  t := C_BigValue;
+  for i := 0 to fSkinCellCount - 1 do
+  with fSkinCells[i] do
+  if CC_Ray_AABB(EyePos, EyeDir, MakeVector3f(X, Y, Z), MakeVector3f(X+1, Y+1, Z+1), tmpHitPos) then
   begin
-    fLookAtPos.X := XSize / 2;
-    fLookAtPos.Y := YSize / 2;
-    fLookAtPos.Z := ZSize / 2;
+    f := VectorNorm3f(VectorSubtract3f(tmpHitPos, EyePos));
+    if f < t then
+    begin
+      t := f;
+      fHitIndex := i;
+      HitPos   := tmpHitPos; 
+    end;
+  end;
 
-    fDist :=
-      Sqrt(
-        XSize * XSize +
-        YSize * YSize +
-        ZSize * ZSize
-      ) * 3;
-
-    fNear := fDist / 10;
-    fFar  := fDist * 10;
+  if fHitIndex > 0 then
+  with fSkinCells[fHitIndex] do
+  begin
+    fHitFlags[C_X] := Trunc((HitPos[C_X]-X-0.5)*2);
+    fHitFlags[C_Y] := Trunc((HitPos[C_Y]-Y-0.5)*2);
+    fHitFlags[C_Z] := Trunc((HitPos[C_Z]-Z-0.5)*2);
+    {
+    Caption := 'Hit : ' + Format('%d %d %d : %d %d %d',
+      [
+        X, Y, Z,
+        fHitFlags[C_X],
+        fHitFlags[C_Y],
+        fHitFlags[C_Z]
+      ]);
+     }
+  end else
+  begin
+    //Caption := 'NoHit';
   end;
 end;
+
 
 procedure TFrmEdit3D.Update3dView(Vxl: TVoxelSection);
 var
@@ -417,49 +514,133 @@ begin
 
   fFov := fFov + i;
 
-  if fFov < 20 then fFov := 20;
+  if fFov < 5 then fFov := 5;
   if fFov > 120 then fFov := 120;
 end;
 
 
-var
-  ugMDownPos: TPoint;
-
 procedure TFrmEdit3D.RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
+var
+  v: TVoxelUnpacked;
+  nx, ny, nz: I32; 
 begin
-  ugMDownPos := Point(X, Y);
-end;
+  fMDownPos := Point(X, Y);
 
-function NormalizeDegAngle(angle : F32) : F32;
-const
-  C_Inv_360    : F32 = 1/360;
-  C_360        : F32 = 360;
-  C_180        : F32 = 180;
-begin
-  Result:=angle-Int(angle*C_Inv_360) * C_360;
-  if Result> C_180 then
-    Result:=Result - C_360
-  else if Result<- C_180 then
-    Result:=Result+ C_360;
+  if (ssLeft in Shift) then
+  begin
+    if AddButton.Down then
+    if fHitIndex > 0 then
+    with fSkinCells[fHitIndex] do
+    begin
+      nx := X + fHitFlags[C_X];
+      ny := Y + fHitFlags[C_Y];
+      nz := Z + fHitFlags[C_Z];
+      //caption := 'Add ' + Format('%d %d %d , %d %d %d', [x, y, z, nx, ny, nz]); 
+      with ActiveSection.Tailer do
+      if (nx >= 0) and (nx < XSize) and
+         (ny >= 0) and (ny < YSize) and
+         (nz >= 0) and (nz < ZSize) then
+      begin
+        CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
 
+        v.Used := true;
+        v.Normal := ActiveNormal;
+        v.Colour := ActiveColour;
+        ActiveSection.SetVoxel(nx, ny, nz, v);
+
+        FrmMain.RefreshAll;
+        FrmMain.UpdateUndo_RedoState;
+
+        fHitIndex := -1; //UnprojProc;
+      end;
+    end;
+
+    if DelButton.Down then
+    if fHitIndex > 0 then
+    with fSkinCells[fHitIndex] do
+    begin
+      CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
+
+      v.Used := false;
+      ActiveSection.SetVoxel(X, Y, Z, v);
+
+      FrmMain.RefreshAll;
+      FrmMain.UpdateUndo_RedoState;
+
+      fHitIndex := -1; //UnprojProc;
+    end;
+
+    if ReplaceButton.Down then
+    if fHitIndex > 0 then
+    with fSkinCells[fHitIndex] do
+    begin
+      ActiveSection.GetVoxel(X, Y, Z, v);
+      if v.Colour <> ActiveColour then
+      begin
+        CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
+
+        v.Colour := ActiveColour;
+        ActiveSection.SetVoxel(X, Y, Z, v);
+
+        FrmMain.RefreshAll;
+        FrmMain.UpdateUndo_RedoState;
+      end;
+    end;
+
+
+
+
+  end; 
 end;
 
 
 procedure TFrmEdit3D.RenderPaintMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
+var
+  ViewMat: VectorUtil.TMatrix4f;
+  DirU, DirV: VectorUtil.TVector3f;
 begin
 
-  if ViewButton.Down and (ssLeft in Shift) then
+  if ( ViewButton.Down and (ssLeft in Shift) ) or
+    ( ssRight in Shift ) then
   begin
-    fRotU := fRotU - (ugMDownPos.Y - Y) / 6;
+    fRotU := fRotU - (fMDownPos.Y - Y) / 6;
     if fRotU > 90 then fRotU := 90;
     if fRotU < -90 then fRotU := -90;
 
-    fRotV := NormalizeDegAngle(fRotV - (ugMDownPos.X - X) / 6);
+    fRotV := NormalizeDegAngle(fRotV - (fMDownPos.X - X) / 6);
   end;
 
-  ugMDownPos := Point(X, Y);
+  if (ssMiddle in Shift) then
+  begin
+    glGetFloatv(GL_MODELVIEW_MATRIX, @ViewMat);
+
+    DirU := MakeVector3f( ViewMat[c_X,c_X], ViewMat[c_Y,c_X], ViewMat[c_Z,c_X]);
+    DirV := MakeVector3f(-ViewMat[c_X,c_Y],-ViewMat[c_Y,c_Y],-ViewMat[c_Z,c_Y]);
+{
+  Result[c_X,c_X]:= U[c_X]; Result[c_X,c_Y]:= V[c_X]; Result[c_X,c_Z]:= N[c_X]; Result[c_X,c_W]:= 0;
+  Result[c_Y,c_X]:= U[c_Y]; Result[c_Y,c_Y]:= V[c_Y]; Result[c_Y,c_Z]:= N[c_Y]; Result[c_Y,c_W]:= 0;
+  Result[c_Z,c_X]:= U[c_Z]; Result[c_Z,c_Y]:= V[c_Z]; Result[c_Z,c_Z]:= N[c_Z]; Result[c_Z,c_W]:= 0;
+
+}
+
+    fLookAtPos :=
+      Voxel_Engine.TVector3f(
+        VectorAdd3f(
+          VectorUtil.TVector3f(fLookAtPos),
+          VectorAdd3f(
+            VectorScale3f(DirU, (fMDownPos.X-X) * 1.0),
+            VectorScale3f(DirV, (fMDownPos.Y-Y) * 1.0)
+          )
+        )
+      );
+
+
+  end;
+
+  fMDownPos := Point(X, Y);
+  if not ViewButton.Down then UnprojProc();
 end;
 
 procedure TFrmEdit3D.RenderPaintMouseUp(Sender: TObject; Button: TMouseButton;
@@ -491,5 +672,12 @@ begin
   TMenuItem(Sender).Checked := true;
   UpsideMenuBtn.Tag := TMenuItem(Sender).Tag; 
 end;
+
+procedure TFrmEdit3D.ResetViewButtonClick(Sender: TObject);
+begin
+  InitViewParams;
+//
+end;
+
 
 end.
