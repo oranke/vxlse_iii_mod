@@ -42,8 +42,11 @@ type
     ViewButton: TSpeedButton;
     AddButton: TSpeedButton;
     DelButton: TSpeedButton;
-    ReplaceButton: TSpeedButton;
+    RepaintButton: TSpeedButton;
     ResetViewButton: TSpeedButton;
+    LinkXBtn: TSpeedButton;
+    LinkYBtn: TSpeedButton;
+    LinkZBtn: TSpeedButton;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -167,6 +170,9 @@ begin
   glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
   glEnable(GL_DEPTH_TEST); // Enable Depth Buffer
   glDepthFunc(GL_LESS); // The Type Of Depth Test To Do
+
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST); //Realy Nice perspective calculations
 
@@ -330,12 +336,17 @@ begin
 
     if fHitIndex = i then
     begin
+      //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+      //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
       glDepthFunc(GL_EQUAL);
       glColor4f(1, 0, 0, 0.5);
+      //glColor4f(1, 1, 1, 0.5);
+      //glColor4f(0, 0, 0, 0.5);
       //glPolygonOffset(1, 0.5);
       glCallList(CubicDrawID);
       //glPolygonOffset(0, 0);
-      glDepthFunc(GL_LESS); 
+      glDepthFunc(GL_LESS);
+      //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     end;
 
     glPopMatrix();
@@ -496,7 +507,7 @@ begin
     Ord('1'): ViewButton.Down := true;
     Ord('2'): AddButton.Down := true;
     Ord('3'): DelButton.Down := true;
-    Ord('4'): ReplaceButton.Down := true;
+    Ord('4'): RepaintButton.Down := true;
   end;
 //
 end;
@@ -523,12 +534,60 @@ procedure TFrmEdit3D.RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 var
   v: TVoxelUnpacked;
-  nx, ny, nz: I32; 
+  nx, ny, nz: I32;
+
+  procedure ProcSetVoxel(const ax, ay, az: I32; const aCheckUsedValue: Boolean);
+  var
+    i: Integer;
+    rv: TVoxelUnpacked;  
+  begin
+    ActiveSection.SetVoxel(ax, ay, az, v);
+
+    if LinkXBtn.Down then
+    for i := 0 to ActiveSection.Tailer.XSize - 1 do
+    begin
+      ActiveSection.GetVoxel(i, ay, az, rv);
+      if rv.Used = aCheckUsedValue then
+        ActiveSection.SetVoxel(i, ay, az, v);
+    end; 
+
+    if LinkYBtn.Down then
+    for i := 0 to ActiveSection.Tailer.YSize - 1 do
+    begin
+      ActiveSection.GetVoxel(ax, i, az, rv);
+      if rv.Used = aCheckUsedValue then
+        ActiveSection.SetVoxel(ax, i, az, v);
+    end;
+
+    if LinkZBtn.Down then
+    for i := 0 to ActiveSection.Tailer.ZSize - 1 do
+    begin
+      ActiveSection.GetVoxel(ax, ay, i, rv);
+      if rv.Used = aCheckUsedValue then
+        ActiveSection.SetVoxel(ax, ay, i, v);
+    end;
+  end;
+
 begin
   fMDownPos := Point(X, Y);
 
   if (ssLeft in Shift) then
   begin
+    if ViewButton.Down then
+    if ssCtrl in Shift then
+    begin
+      UnprojProc;
+      if fHitIndex > 0 then
+      with fSkinCells[fHitIndex] do
+      begin
+        ActiveSection.GetVoxel(X, Y, Z, v);
+        FrmMain.SetActiveColor(v.Colour, SpectrumMode = ModeColours);
+        FrmMain.SetActiveNormal(v.Normal, SpectrumMode = ModeColours);
+
+        fHitIndex := -1; 
+      end;
+    end;
+
     if AddButton.Down then
     if fHitIndex > 0 then
     with fSkinCells[fHitIndex] do
@@ -536,7 +595,7 @@ begin
       nx := X + fHitFlags[C_X];
       ny := Y + fHitFlags[C_Y];
       nz := Z + fHitFlags[C_Z];
-      //caption := 'Add ' + Format('%d %d %d , %d %d %d', [x, y, z, nx, ny, nz]); 
+      //caption := 'Add ' + Format('%d %d %d , %d %d %d', [x, y, z, nx, ny, nz]);
       with ActiveSection.Tailer do
       if (nx >= 0) and (nx < XSize) and
          (ny >= 0) and (ny < YSize) and
@@ -547,7 +606,8 @@ begin
         v.Used := true;
         v.Normal := ActiveNormal;
         v.Colour := ActiveColour;
-        ActiveSection.SetVoxel(nx, ny, nz, v);
+        //ActiveSection.SetVoxel(nx, ny, nz, v);
+        ProcSetVoxel(nx, ny, nz, false);
 
         FrmMain.RefreshAll;
         FrmMain.UpdateUndo_RedoState;
@@ -563,7 +623,7 @@ begin
       CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
 
       v.Used := false;
-      ActiveSection.SetVoxel(X, Y, Z, v);
+      ProcSetVoxel(X, Y, Z, true);
 
       FrmMain.RefreshAll;
       FrmMain.UpdateUndo_RedoState;
@@ -571,17 +631,17 @@ begin
       fHitIndex := -1; //UnprojProc;
     end;
 
-    if ReplaceButton.Down then
+    if RepaintButton.Down then
     if fHitIndex > 0 then
     with fSkinCells[fHitIndex] do
     begin
       ActiveSection.GetVoxel(X, Y, Z, v);
-      if v.Colour <> ActiveColour then
+      if (ssCtrl in Shift) or (v.Colour <> ActiveColour) then
       begin
         CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
 
         v.Colour := ActiveColour;
-        ActiveSection.SetVoxel(X, Y, Z, v);
+        ProcSetVoxel(X, Y, Z, true);
 
         FrmMain.RefreshAll;
         FrmMain.UpdateUndo_RedoState;

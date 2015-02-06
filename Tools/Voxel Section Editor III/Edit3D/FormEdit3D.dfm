@@ -83,6 +83,7 @@ object FrmEdit3D: TFrmEdit3D
       Width = 23
       Height = 22
       Hint = '1: View'
+      AllowAllUp = True
       GroupIndex = 1
       Down = True
       Caption = 'V'
@@ -92,11 +93,12 @@ object FrmEdit3D: TFrmEdit3D
     end
     object AddButton: TSpeedButton
       Tag = 1
-      Left = 79
+      Left = 78
       Top = 3
       Width = 23
       Height = 22
       Hint = '2: Add voxel'
+      AllowAllUp = True
       GroupIndex = 1
       Caption = 'A'
       Flat = True
@@ -105,24 +107,26 @@ object FrmEdit3D: TFrmEdit3D
     end
     object DelButton: TSpeedButton
       Tag = 1
-      Left = 103
+      Left = 101
       Top = 3
       Width = 23
       Height = 22
       Hint = '3: Delete voxel'
+      AllowAllUp = True
       GroupIndex = 1
       Caption = 'D'
       Flat = True
       ParentShowHint = False
       ShowHint = True
     end
-    object ReplaceButton: TSpeedButton
+    object RepaintButton: TSpeedButton
       Tag = 1
-      Left = 127
+      Left = 124
       Top = 3
       Width = 23
       Height = 22
-      Hint = '4: Replace voxel'
+      Hint = '4: Repaint voxel'
+      AllowAllUp = True
       GroupIndex = 1
       Caption = 'R'
       Flat = True
@@ -166,6 +170,48 @@ object FrmEdit3D: TFrmEdit3D
       ParentShowHint = False
       ShowHint = True
       OnClick = ResetViewButtonClick
+    end
+    object LinkXBtn: TSpeedButton
+      Tag = 1
+      Left = 173
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = 'X Axis Linkage'
+      AllowAllUp = True
+      GroupIndex = 2
+      Caption = 'Lx'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object LinkYBtn: TSpeedButton
+      Tag = 1
+      Left = 196
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = 'Y Axis Linkage'
+      AllowAllUp = True
+      GroupIndex = 3
+      Caption = 'Ly'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
+    end
+    object LinkZBtn: TSpeedButton
+      Tag = 1
+      Left = 219
+      Top = 3
+      Width = 23
+      Height = 22
+      Hint = 'Z Axis Linkage'
+      AllowAllUp = True
+      GroupIndex = 4
+      Caption = 'Lz'
+      Flat = True
+      ParentShowHint = False
+      ShowHint = True
     end
   end
   object RenderPanel: TPanel
