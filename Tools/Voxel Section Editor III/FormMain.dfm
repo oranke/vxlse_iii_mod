@@ -33,7 +33,6 @@ object FrmMain: TFrmMain
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitHeight = 723
     object LeftPanel: TPanel
       Left = 1
       Top = 26
@@ -41,11 +40,10 @@ object FrmMain: TFrmMain
       Height = 716
       Align = alLeft
       TabOrder = 0
-      ExplicitHeight = 696
       object lblSection: TLabel
         Left = 1
         Top = 1
-        Width = 150
+        Width = 42
         Height = 13
         Align = alTop
         Caption = '  Section'
@@ -57,12 +55,11 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 42
       end
       object lblTools: TLabel
         Left = 1
         Top = 55
-        Width = 150
+        Width = 32
         Height = 13
         Align = alTop
         Caption = '  Tools'
@@ -74,12 +71,11 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 32
       end
       object lblpalette: TLabel
         Left = 1
         Top = 257
-        Width = 150
+        Width = 39
         Height = 13
         Align = alTop
         Caption = '  Palette'
@@ -91,7 +87,6 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 39
       end
       object cnvPalette: TPaintBox
         Left = 1
@@ -105,7 +100,7 @@ object FrmMain: TFrmMain
       object lblLayer: TLabel
         Left = 1
         Top = 177
-        Width = 150
+        Width = 37
         Height = 13
         Align = alTop
         Caption = '  Layers'
@@ -117,12 +112,11 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 37
       end
       object lblBrush: TLabel
         Left = 1
         Top = 129
-        Width = 150
+        Width = 33
         Height = 13
         Align = alTop
         Caption = '  Brush'
@@ -134,7 +128,6 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 33
       end
       object Panel3: TPanel
         Left = 1
@@ -150,7 +143,7 @@ object FrmMain: TFrmMain
           Width = 137
           Height = 21
           ImeName = 'Microsoft IME 2010'
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
           OnChange = SectionComboChange
         end
@@ -1188,7 +1181,6 @@ object FrmMain: TFrmMain
       Height = 716
       Align = alRight
       TabOrder = 1
-      ExplicitHeight = 696
       object CnvView2: TPaintBox
         Left = 1
         Top = 230
@@ -1214,7 +1206,7 @@ object FrmMain: TFrmMain
       object lblView1: TLabel
         Left = 1
         Top = 1
-        Width = 203
+        Width = 63
         Height = 13
         Align = alTop
         Caption = '  View : Right'
@@ -1228,12 +1220,11 @@ object FrmMain: TFrmMain
         ParentFont = False
         PopupMenu = mnuDirectionPopup
         OnClick = lblView1Click
-        ExplicitWidth = 63
       end
       object lblView2: TLabel
         Left = 1
         Top = 217
-        Width = 203
+        Width = 57
         Height = 13
         Align = alTop
         Caption = '  View : Top'
@@ -1247,12 +1238,11 @@ object FrmMain: TFrmMain
         ParentFont = False
         PopupMenu = mnuDirectionPopup
         OnClick = lblView2Click
-        ExplicitWidth = 57
       end
       object lbl3dview: TLabel
         Left = 1
         Top = 433
-        Width = 203
+        Width = 46
         Height = 13
         Align = alTop
         Caption = '  3D View'
@@ -1264,7 +1254,6 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
-        ExplicitWidth = 46
       end
       object OGL3DPreview: TPanel
         Left = 1
@@ -1488,11 +1477,10 @@ object FrmMain: TFrmMain
       Height = 716
       Align = alClient
       TabOrder = 2
-      ExplicitHeight = 696
       object lblView0: TLabel
         Left = 1
         Top = 1
-        Width = 501
+        Width = 98
         Height = 13
         Align = alTop
         Caption = '  Editing View : Back'
@@ -1505,7 +1493,6 @@ object FrmMain: TFrmMain
         ParentColor = False
         ParentFont = False
         PopupMenu = mnuDirectionPopup
-        ExplicitWidth = 98
       end
       object CnvView0: TPaintBox
         Left = 1
@@ -4214,7 +4201,6 @@ object FrmMain: TFrmMain
         Position = 50
         TabOrder = 0
         OnChange = ScrollBar1Change
-        ExplicitHeight = 665
       end
       object Panel5: TPanel
         Left = 1
@@ -4224,7 +4210,6 @@ object FrmMain: TFrmMain
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 679
         object ScrollBar1: TScrollBar
           Left = 0
           Top = 0
@@ -4443,7 +4428,6 @@ object FrmMain: TFrmMain
       item
         Width = 50
       end>
-    ExplicitTop = 723
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -4549,6 +4533,13 @@ object FrmMain: TFrmMain
         Caption = 'Paste'
         ShortCut = 16460
         OnClick = Paste1Click
+      end
+      object N25: TMenuItem
+        Caption = '-'
+      end
+      object ImportSectionBitmap1: TMenuItem
+        Caption = 'Import Section Bitmap'
+        OnClick = ImportSectionBitmap1Click
       end
     end
     object View1: TMenuItem
@@ -5177,7 +5168,7 @@ object FrmMain: TFrmMain
     Left = 257
     Top = 98
     Bitmap = {
-      494C200627002C002C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200627002C00340010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000010000000C0020000010020000000000000B0
       00000000000000000000000000000000000090270800A0000000000000000000
       0000408A0700900000000000000000000000D09007009C000000000000000000
@@ -6850,7 +6841,7 @@ object FrmMain: TFrmMain
     Left = 288
     Top = 96
     Bitmap = {
-      494C2006060009002C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200606000900340020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000200000002001000001002000000000000090
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

@@ -335,6 +335,8 @@ type
     CCFilefront1: TMenuItem;
     N20: TMenuItem;
     Edit3DWindow1: TMenuItem;
+    N25: TMenuItem;
+    ImportSectionBitmap1: TMenuItem;
     procedure CCFilefront1Click(Sender: TObject);
     procedure CNCNZcom1Click(Sender: TObject);
     procedure ProjectSVN1Click(Sender: TObject);
@@ -525,6 +527,8 @@ type
     procedure ClearUndoSystem1Click(Sender: TObject);
     procedure PasteFull1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
+    procedure ImportSectionBitmap1Click(Sender: TObject);
+
     function LoadCScheme : integer;
     procedure blank2Click(Sender: TObject);
     procedure About2Click(Sender: TObject);
@@ -631,6 +635,7 @@ begin
    Application.OnIdle := nil; //Idle;
    CheckVXLChanged;
 
+   OpenVXLDialog.Filter := 'Voxel (*.VXL)|*.vxl';
    if OpenVXLDialog.Execute then
       SetIsEditable(LoadVoxel(OpenVXLDialog.FileName));
 
@@ -3564,6 +3569,99 @@ begin
    VXLChanged := true;
 end;
 
+procedure TFrmMain.ImportSectionBitmap1Click(Sender: TObject);
+var
+  Bmp: TBitmap;
+  //sx, sy: Integer;
+  iu, iv: Integer;
+  
+  v: TVoxelUnpacked;
+begin
+  OpenVXLDialog.Filter := 'Bitmap|*.bmp';
+  if not OpenVXLDialog.Execute then Exit;
+
+
+  Bmp:= TBitmap.Create;
+  try
+    Bmp.LoadFromFile(OpenVXLDialog.FileName);
+    if Bmp.Empty then Exit;
+
+    CreateVXLRestorePoint(ActiveSection,Undo);
+    v.Used := true;
+
+    case ActiveSection.View[0].GetOrient of
+      oriX:
+      with ActiveSection.Tailer do
+      for iu := 0 to YSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
+
+        for iv := 0 to ZSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
+
+          v.Colour := GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(ActiveSection.X, iu, ZSize-iv-1, v);
+            dirAway   : ActiveSection.SetVoxel(ActiveSection.X, YSize-iu-1, ZSize-iv-1, v);
+          end;
+        end;
+      end;
+
+      oriY:
+      with ActiveSection.Tailer do
+      for iu := 0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
+
+        for iv := 0 to ZSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
+
+          v.Colour := GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, ActiveSection.Y, ZSize-iv-1, v);
+            dirAway   : ActiveSection.SetVoxel(XSize-iu-1, ActiveSection.Y, ZSize-iv-1, v);
+          end;
+
+        end;
+      end;
+
+      oriZ:
+      with ActiveSection.Tailer do
+      for iu := 0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
+
+        for iv := 0 to YSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
+
+          v.Colour := GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, YSize-iv-1, ActiveSection.Z, v);
+            dirAway   : ActiveSection.SetVoxel(XSize-iu-1, YSize-iv-1, ActiveSection.Z, v);
+          end;
+
+        end;
+      end;
+    end;
+
+
+    RefreshAll;
+    UpdateUndo_RedoState;
+
+  finally
+    Bmp.Free;
+  end;
+  //ActiveSection.X
+  //ActiveSection.View[0].GetOrient 
+
+end;
+
 procedure firstlastword(const words : string; var first,rest : string);
 var
    x,w : integer;
@@ -4258,6 +4356,7 @@ begin
       VXLChanged := true;
    end;
 end;
+
 
 procedure TFrmMain.Resize1Click(Sender: TObject);
 var

@@ -232,6 +232,8 @@ begin
   InitViewParams;
   Update3dView(ActiveSection);
 
+  fHitIndex := -1; 
+
 end;
 
 destructor TFrmEdit3D.Destroy;
