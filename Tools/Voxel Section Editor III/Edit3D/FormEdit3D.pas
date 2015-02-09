@@ -169,7 +169,7 @@ begin
 
   glShadeModel(GL_SMOOTH); // Enables Smooth Color Shading
   glEnable(GL_DEPTH_TEST); // Enable Depth Buffer
-  glDepthFunc(GL_LESS); // The Type Of Depth Test To Do
+  glDepthFunc(GL_LEQUAL); // The Type Of Depth Test To Do
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -340,14 +340,14 @@ begin
     begin
       //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
       //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-      glDepthFunc(GL_EQUAL);
+      //glDepthFunc(GL_EQUAL);
       glColor4f(1, 0, 0, 0.5);
       //glColor4f(1, 1, 1, 0.5);
       //glColor4f(0, 0, 0, 0.5);
       //glPolygonOffset(1, 0.5);
       glCallList(CubicDrawID);
       //glPolygonOffset(0, 0);
-      glDepthFunc(GL_LESS);
+      //glDepthFunc(GL_LEQUAL);
       //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     end;
 
