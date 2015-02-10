@@ -763,11 +763,6 @@ type
     procedure merge_run(v, u_l, u_r: I32);
   end;
 
-  TPolygons = class (TList)
-  private
-    procedure Notify(Ptr: Pointer; Action: TListNotification); override;
-  end;
-
 { TMonotoneMesh }
 
 constructor TMonotoneMesh.Create(c, v, ul, ur: I32);
@@ -779,7 +774,7 @@ begin
 
   SetLength(Right, 1);
   Right[0][0] := ur;
-  Right[0][1] := v; 
+  Right[0][1] := v;
 end;
 
 procedure TMonotoneMesh.close_off(v: I32);
@@ -828,13 +823,33 @@ begin
   end;
 end;
 
+type
+  TPolygons = class (TList)
+  private
+    procedure Notify(Ptr: Pointer; Action: TListNotification); override;
+  end;
+
+
 { TPolygons }
 
 procedure TPolygons.Notify(Ptr: Pointer; Action: TListNotification);
 begin
   inherited;
-  if Action = lnDeleted then
-    TObject(Ptr).Free;
+  if Action = lnDeleted then TObject(Ptr).Free;
+end;
+
+type
+  TRecords = class (TList)
+  private
+    procedure Notify(Ptr: Pointer; Action: TListNotification); override;
+  end;
+
+{ TRecords }
+
+procedure TRecords.Notify(Ptr: Pointer; Action: TListNotification);
+begin
+  inherited;
+  if Action = lnDeleted then Dispose(Ptr); 
 end;
 
 
@@ -867,11 +882,30 @@ var
 
   mp, np: TMonotoneMesh;
   p_l, p_r, p_c, r_l, r_r, r_c: I32;
+  flipped: Boolean;
 
+  //y: VectorUtil.TVector3f;
+  z: TMeshSide; 
+
+  yp: VectorUtil.PVector3f;
+  Vertices: TRecords;
+  Faces: TRecords; 
+
+  bottom, top, l_i, r_i: I32;
+  side: Boolean;
+
+  n_side: Boolean;
+  l, r: TMeshSide;
+  idx: I32;
+  vert: TMeshSide;
+  det: I32;
+  face: VectorUtil.PVector4i;     
 begin
   AllocConsole;
 
   Polygons:= TPolygons.Create;
+  Vertices:= TRecords.Create;
+  Faces:= TRecords.Create; ; 
 
   with ActiveSection.Tailer do
   begin
@@ -885,11 +919,11 @@ begin
   while d < 3 do
   begin
     u := (d+1) mod 3;  //u and v are orthogonal directions to d
-    v := (d+2) mod 3; 
+    v := (d+2) mod 3;
 
-    FillChar(x, SizeOf(I32)*3, #0); 
+    FillChar(x, SizeOf(I32)*3, #0);
     FillChar(q, SizeOf(I32)*3, #0);
-    
+
     SetLength(runs, 2 * (dims[u]+1) );
     //FillChar(runs, 2 * (dims[u]+1) * SizeOf(I32), #0);
     SetLength(frontier, dims[u]);
@@ -1015,11 +1049,11 @@ begin
             //Check if we need to advance the run pointer
             if (r_r <= p_r) then
             begin
-              if r_c <> 0 then //(!!r_c) {
-              //if r_c = 0 then
+              //if r_c <> 0 then //(!!r_c) {
+              if Boolean(r_c) then
               begin
                 np := TMonotoneMesh.Create(r_c, x[v], r_l, r_r);
-                WriteLn('MonotoneMesh Created!');
+                //WriteLn('MonotoneMesh Created!');
                 next_frontier[fp] := Polygons.Count;
                 Inc(fp);
                 Polygons.Add(np);
@@ -1056,11 +1090,11 @@ begin
           r_r  := runs[j+2];
           r_c  := runs[j+1];
 
-          if r_c <> 0 then //(!!r_c) {
-          //if r_c = 0 then
+          //if r_c <> 0 then //(!!r_c) {
+          if Boolean(r_c) then
           begin
             np := TMonotoneMesh.Create(r_c, x[v], r_l, r_r);
-            WriteLn('MonotoneMesh Created2!');
+            //WriteLn('MonotoneMesh Created2!');
             next_frontier[fp] := Polygons.Count;
             Inc(fp);
             Polygons.Add(np);
@@ -1087,16 +1121,191 @@ begin
       Inc(x[d]);
 
       //Now we just need to triangulate each monotone polygon
+      for i := 0 to Polygons.Count - 1 do
+      begin
+        mp := Polygons[i];
+        c := mp.Color;
+        flipped := false;
 
-      // 자바스크립트의 for문에서 전위/후위 연산자의 순서 확인필요
-      // 자바스크립티의 배열시작이 어디인지 확인 필요
+        if c < 0 then
+        begin
+          flipped := true;
+          c := -c;
+        end;
+
+        for j := 0 to Length(mp.Left) - 1 do
+        begin
+          left_index[j] := Vertices.Count;
+
+          new(yp);
+          yp^ := MakeVector3f(0.0, 0.0, 0.0);
+          z := mp.Left[j];
+
+          yp^[d] := x[d];
+          yp^[u] := z[0];
+          yp^[v] := z[1];
+
+          Vertices.Add(yp);
+        end;
+
+        for j := 0 to Length(mp.Right) - 1 do
+        begin
+          right_index[j] := Vertices.Count;
+
+          new(yp);
+          yp^ := MakeVector3f(0.0, 0.0, 0.0);
+          z := mp.Right[j];
+
+          yp^[d] := x[d];
+          yp^[u] := z[0];
+          yp^[v] := z[1];
+
+          Vertices.Add(yp);
+        end;
+
+        //Triangulate the monotone polygon
+        bottom := 0;
+        top := 0;
+        l_i := 1;
+        r_i := 1;
+        side := true;  //true = right, false = left
+
+        stack[top] := left_index[0];
+        Inc(top);
+        stack[top] := mp.left[0][0];
+        Inc(top);
+        stack[top] := mp.left[0][1];
+        Inc(top);
+
+        stack[top] := right_index[0];
+        Inc(top);
+        stack[top] := mp.right[0][0];
+        Inc(top);
+        stack[top] := mp.right[0][1];
+        Inc(top);
+
+        while (l_i < Length(mp.left)) or (r_i < Length(mp.right)) do
+        begin
+          n_side := false;
+
+          if (l_i = Length(mp.left)) then
+            n_side := true
+          else if (r_i <> Length(mp.Right)) then
+          begin
+            l := mp.left[l_i];
+            r := mp.right[r_i];
+            n_side := l[1] > r[1];
+          end;
+
+          if n_side then
+          begin
+            idx := right_index[r_i];
+            vert := mp.Right[r_i];
+          end else
+          begin
+            idx := left_index[l_i];
+            vert := mp.Left[l_i];
+          end;
+
+          if (n_side <> side) then
+          begin
+            //Opposite side
+            while bottom+3 < top do
+            begin
+              New(face);
+
+              if(flipped = n_side) then
+              begin
+                face^[0] := stack[bottom];
+                face^[1] := stack[bottom+3];
+                face^[2] := idx;
+                face^[3] := c;
+                //faces.push([ stack[bottom], stack[bottom+3], idx, c]);
+              end else
+              begin
+                face^[0] := stack[bottom+3];
+                face^[1] := stack[bottom];
+                face^[2] := idx;
+                face^[3] := c;
+                //faces.push([ stack[bottom+3], stack[bottom], idx, c]);
+              end;
+
+              Faces.Add(face);
+
+              Inc(bottom, 3);
+            end;
+
+          end else
+          begin
+            //Same side
+            while bottom+3 < top do
+            begin
+              for j := 0 to 2 - 1 do
+              for k := 0 to 2 - 1 do
+                delta[j][k] := stack[top-3*(j+1)+k+1] - vert[k];
+
+              det := delta[0][0] * delta[1][1] - delta[1][0] * delta[0][1];
+              if n_side = (det > 0) then Break;
+
+              if (det <> 0) then
+              begin
+                New(face);
+
+                if (flipped = n_side) then
+                begin
+                  face^[0] := stack[top-3];
+                  face^[1] := stack[top-6];
+                  face^[2] := idx;
+                  face^[3] := c;
+                  //faces.push([ stack[top-3], stack[top-6], idx, c ]);
+                end else
+                begin
+                  face^[0] := stack[top-6];
+                  face^[1] := stack[top-3];
+                  face^[2] := idx;
+                  face^[3] := c;
+                  //faces.push([ stack[top-6], stack[top-3], idx, c ]);
+                end;
+                
+                Faces.Add(face);
+              end;
+
+              Dec(top, 3);
+            end;
+          end;
+
+          //Push vertex
+          stack[top] := idx;
+          Inc(top);
+          stack[top] := vert[0];
+          Inc(top);
+          stack[top] := vert[1];
+          Inc(top);
+
+          //Update loop index
+          if n_side then
+            Inc(r_i)
+          else
+            inc(l_i);
+
+          side := n_side; 
+        end;
+      end;
     end;
 
 
-    Inc(d); 
+    Inc(d);
   end;
 
+
+  WriteLn('Polygons ', Polygons.Count);
+  WriteLn('Vertices ', Vertices.Count);
+  WriteLn('Faces ', Faces.Count);
+  WriteLn('CurSkin ', fSkinCellCount); 
+
   Polygons.Free;
+  Vertices.Free;
+  Faces.Free;  
 //
 end;
 
