@@ -220,6 +220,22 @@ object FrmEdit3D: TFrmEdit3D
       Height = 22
       OnClick = SpeedButton1Click
     end
+    object CheckBox1: TCheckBox
+      Left = 328
+      Top = 8
+      Width = 73
+      Height = 17
+      Caption = 'Monotone'
+      TabOrder = 0
+    end
+    object CheckBox2: TCheckBox
+      Left = 407
+      Top = 8
+      Width = 73
+      Height = 17
+      Caption = 'Wireframe'
+      TabOrder = 1
+    end
   end
   object RenderPanel: TPanel
     Left = 0

@@ -48,6 +48,8 @@ type
     LinkYBtn: TSpeedButton;
     LinkZBtn: TSpeedButton;
     SpeedButton1: TSpeedButton;
+    CheckBox1: TCheckBox;
+    CheckBox2: TCheckBox;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -70,6 +72,7 @@ type
     fRC: HGLRC; // Rendering Context
 
     CubicDrawID : GLuint;
+    MonotoneDrawID : GLuint;
 
   private
     fRotU, fRotV, // X, Y회전을 U, V로 개념변경.
@@ -160,8 +163,7 @@ constructor TFrmEdit3D.Create(aOwner: TComponent);
 begin
   inherited;
 
-  FormStyle := fsNormal;
-  //DoubleBuffered := true;
+  //FormStyle := fsNormal;
 
   //RenderPanel.DoubleBuffered := true;
   //fOrgPanelWindowProc := RenderPanel.WindowProc;
@@ -231,6 +233,10 @@ begin
 
   //------------------
 
+  MonotoneDrawID :=  glGenLists(1);
+
+  //------------------
+
   fSkinCellCount:= 0;
   fMDownPos := Point(0,0); 
 
@@ -245,6 +251,7 @@ destructor TFrmEdit3D.Destroy;
 begin
 
   glDeleteLists(CubicDrawID, 1);
+  glDeleteLists(MonotoneDrawID, 1);
 
   CloseOpenGL(RenderPanel.Handle, fDC, fRC);
 
@@ -320,43 +327,54 @@ begin
   RenderAxis(fDist / 3);
 
 
-  glEnable(GL_LIGHT0);
-  glEnable(GL_LIGHTING);
   glEnable(GL_DEPTH_TEST);
 
+  if CheckBox2.Checked then
+    glPolygonMode( GL_FRONT_AND_BACK, GL_LINE )
+  else
+    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
-  for i := 0 to fSkinCellCount - 1 do
+  if CheckBox1.Checked then
   begin
-    glPushMatrix();
+    glCallList(MonotoneDrawID);
+  end else
+  begin
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHTING);
 
-    glTranslatef(fSkinCells[i].X, fSkinCells[i].Y, fSkinCells[i].Z);
-    VoxelColor := GetVXLColor(fSkinCells[i].Color, 0);
-  
-    glColor3f(
-      VoxelColor.X,
-      VoxelColor.Y,
-      VoxelColor.Z
-    );
-
-    //glScalef(0.5, 0.5, 0.5);
-    glCallList(CubicDrawID);
-
-    if fHitIndex = i then
+    for i := 0 to fSkinCellCount - 1 do
     begin
-      //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-      //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-      //glDepthFunc(GL_EQUAL);
-      glColor4f(1, 0, 0, 0.5);
-      //glColor4f(1, 1, 1, 0.5);
-      //glColor4f(0, 0, 0, 0.5);
-      //glPolygonOffset(1, 0.5);
-      glCallList(CubicDrawID);
-      //glPolygonOffset(0, 0);
-      //glDepthFunc(GL_LEQUAL);
-      //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    end;
+      glPushMatrix();
 
-    glPopMatrix();
+      glTranslatef(fSkinCells[i].X, fSkinCells[i].Y, fSkinCells[i].Z);
+      VoxelColor := GetVXLColor(fSkinCells[i].Color, 0);
+
+      glColor3f(
+        VoxelColor.X,
+        VoxelColor.Y,
+        VoxelColor.Z
+      );
+
+      //glScalef(0.5, 0.5, 0.5);
+      glCallList(CubicDrawID);
+
+      if fHitIndex = i then
+      begin
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        //glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+        //glDepthFunc(GL_EQUAL);
+        glColor4f(1, 0, 0, 0.5);
+        //glColor4f(1, 1, 1, 0.5);
+        //glColor4f(0, 0, 0, 0.5);
+        //glPolygonOffset(1, 0.5);
+        glCallList(CubicDrawID);
+        //glPolygonOffset(0, 0);
+        //glDepthFunc(GL_LEQUAL);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      end;
+
+      glPopMatrix();
+    end;
   end;
 
   {
@@ -899,7 +917,9 @@ var
   idx: I32;
   vert: TMeshSide;
   det: I32;
-  face: VectorUtil.PVector4i;     
+  facep: VectorUtil.PVector4i;
+
+  VoxelColor: Voxel_Engine.TVector3f;
 begin
   AllocConsole;
 
@@ -1215,25 +1235,25 @@ begin
             //Opposite side
             while bottom+3 < top do
             begin
-              New(face);
+              New(facep);
 
               if(flipped = n_side) then
               begin
-                face^[0] := stack[bottom];
-                face^[1] := stack[bottom+3];
-                face^[2] := idx;
-                face^[3] := c;
+                facep^[0] := stack[bottom];
+                facep^[1] := stack[bottom+3];
+                facep^[2] := idx;
+                facep^[3] := c-1;
                 //faces.push([ stack[bottom], stack[bottom+3], idx, c]);
               end else
               begin
-                face^[0] := stack[bottom+3];
-                face^[1] := stack[bottom];
-                face^[2] := idx;
-                face^[3] := c;
+                facep^[0] := stack[bottom+3];
+                facep^[1] := stack[bottom];
+                facep^[2] := idx;
+                facep^[3] := c-1;
                 //faces.push([ stack[bottom+3], stack[bottom], idx, c]);
               end;
 
-              Faces.Add(face);
+              Faces.Add(facep);
 
               Inc(bottom, 3);
             end;
@@ -1252,25 +1272,25 @@ begin
 
               if (det <> 0) then
               begin
-                New(face);
+                New(facep);
 
                 if (flipped = n_side) then
                 begin
-                  face^[0] := stack[top-3];
-                  face^[1] := stack[top-6];
-                  face^[2] := idx;
-                  face^[3] := c;
+                  facep^[0] := stack[top-3];
+                  facep^[1] := stack[top-6];
+                  facep^[2] := idx;
+                  facep^[3] := c;
                   //faces.push([ stack[top-3], stack[top-6], idx, c ]);
                 end else
                 begin
-                  face^[0] := stack[top-6];
-                  face^[1] := stack[top-3];
-                  face^[2] := idx;
-                  face^[3] := c;
+                  facep^[0] := stack[top-6];
+                  facep^[1] := stack[top-3];
+                  facep^[2] := idx;
+                  facep^[3] := c;
                   //faces.push([ stack[top-6], stack[top-3], idx, c ]);
                 end;
                 
-                Faces.Add(face);
+                Faces.Add(facep);
               end;
 
               Dec(top, 3);
@@ -1304,10 +1324,51 @@ begin
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces'); 
   WriteLn('Vertices ', Vertices.Count);
   WriteLn('Faces ', Faces.Count);
+  //{
+  for i := 0 to Faces.Count - 1 do
+  begin
+    WriteLn(
+      Format(
+        '%d: %d %d %d. %d',
+        [
+          i,
+          VectorUtil.PVector4i(Faces[i])^[0],
+          VectorUtil.PVector4i(Faces[i])^[1],
+          VectorUtil.PVector4i(Faces[i])^[2],
+          VectorUtil.PVector4i(Faces[i])^[3]
+        ]
+      )
+    );
+  end;
+  {}
+
+  glNewList(MonotoneDrawID, GL_COMPILE);
+  glBegin(GL_TRIANGLES);
+
+  for i := 0 to Faces.Count - 1 do
+  begin
+    VoxelColor := GetVXLColor(VectorUtil.PVector4i(Faces[i])^[3], 0);
+
+    glColor3f(
+      VoxelColor.X,
+      VoxelColor.Y,
+      VoxelColor.Z
+    );
+
+    for j := 0 to 3 - 1 do
+    begin
+      yp := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
+      glVertex3f(yp^[C_X], yp^[C_Y], yp^[C_Z]);
+    end;
+
+  end;
+
+  glEnd();
+  glEndList();
 
   Polygons.Free;
   Vertices.Free;
-  Faces.Free;  
+  Faces.Free;
 //
 end;
 
