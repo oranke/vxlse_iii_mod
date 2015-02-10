@@ -938,9 +938,11 @@ begin
     //FillChar(stack, 24 * dims[v] * SizeOf(I32), #0);
 
     //FillChar(delta, SizeOf(I32) * 2 * 2, #0);
-    
+
     //q points along d-direction
     q[d] := 1;
+
+    //Initialize sentinel
     x[d] := -1;
     while x[d] < dims[d] do
     begin
@@ -950,20 +952,20 @@ begin
 
       Polygons.clear;
 
-      x[v] := 0; 
-
+      x[v] := 0;
       while x[v] < dims[v] do
       begin
         //Make one pass over the u-scan line of the volume to run-length encode polygon
         nr := 0;
-        //p := 0; c := 0;
         // js 예제에서는 0이 빈 곳을 나타냄. 여기서는 사용되지 않는 복셀은 -1로.
-        // -->> 0 그대로 쓰고 칼라값에 1을 더해 쓰자. 
+        // -->> 0 그대로 쓰고 칼라값에 1을 더해 쓰자.
         p := 0; //c := 0;
-        x[u] := 0;
 
+        x[u] := 0;
         while x[u] < dims[u] do
         begin
+          //p := c;
+          
           //Compute the type for this face
           a := 0;
           if 0 <= x[d] then
@@ -982,9 +984,10 @@ begin
           end;
 
           c := a;
-          if (a=0) and (b=0) then
+          //!! Check!
+          if Boolean(a) = Boolean(b) then
             c := 0
-          else if a=0 then
+          else if not Boolean(a) then
             c := -b;
 
           //If cell type doesn't match, start a new run
@@ -993,12 +996,15 @@ begin
             runs[nr] := x[u];
             inc(nr);
             runs[nr] := c;
-            inc(nr); 
+            inc(nr);
           end;
 
-          p := c;
           Inc(x[u]);
+
+          p := c;
         end;
+        //p := c;
+
         //Add sentinel run
         runs[nr] := dims[u];
         inc(nr);
@@ -1031,19 +1037,16 @@ begin
           //Check if we can merge run with polygon
           if (r_r > p_l) and (p_r > r_l) and (r_c = p_c) then
           begin
+            //Merge run
             if Assigned(mp) then
-            begin
-              //Merge run
               mp.merge_run(x[v], r_l, r_r);
-              //Insert polygon into frontier
-              next_frontier[fp] := frontier[i];
-              Inc(fp);
+              
+            //Insert polygon into frontier
+            next_frontier[fp] := frontier[i];
+            Inc(fp);
 
-            end;
-            Inc(i);
-            //WriteLn('Inc i-1. ', i);
+            Inc(i);
             Inc(j, 2);
-
           end else
           begin
             //Check if we need to advance the run pointer
@@ -1076,7 +1079,6 @@ begin
         end;
 
         //Close off any residual polygons
-        Inc(i);
         while i < nf do
         begin
           TMonotoneMesh(Polygons[frontier[i]]).close_off(x[v]);
@@ -1101,7 +1103,7 @@ begin
           end;
           Inc(j, 2);
         end;
-        
+
         //Swap frontiers
         tmp := next_frontier;
         next_frontier := frontier;
@@ -1113,8 +1115,9 @@ begin
 
       //Close off frontier
       for i := 0 to nf-1 do
-        //TMonotoneMesh(Polygons[frontier[i+1]]).close_off(dims[v]);
         TMonotoneMesh(Polygons[frontier[i]]).close_off(dims[v]);
+
+      //WriteLn('Polygons ', Polygons.Count, ', ', x[d], ', ', dims[d]);
 
       // --- Monotone subdivision of polygon is complete at this point ---
 
@@ -1138,7 +1141,7 @@ begin
           left_index[j] := Vertices.Count;
 
           new(yp);
-          yp^ := MakeVector3f(0.0, 0.0, 0.0);
+          //yp^ := MakeVector3f(0.0, 0.0, 0.0);
           z := mp.Left[j];
 
           yp^[d] := x[d];
@@ -1153,7 +1156,7 @@ begin
           right_index[j] := Vertices.Count;
 
           new(yp);
-          yp^ := MakeVector3f(0.0, 0.0, 0.0);
+          //yp^ := MakeVector3f(0.0, 0.0, 0.0);
           z := mp.Right[j];
 
           yp^[d] := x[d];
@@ -1298,10 +1301,9 @@ begin
   end;
 
 
-  WriteLn('Polygons ', Polygons.Count);
+  WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces'); 
   WriteLn('Vertices ', Vertices.Count);
   WriteLn('Faces ', Faces.Count);
-  WriteLn('CurSkin ', fSkinCellCount); 
 
   Polygons.Free;
   Vertices.Free;
