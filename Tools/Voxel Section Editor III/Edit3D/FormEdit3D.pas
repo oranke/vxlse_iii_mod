@@ -1279,14 +1279,14 @@ begin
                   facep^[0] := stack[top-3];
                   facep^[1] := stack[top-6];
                   facep^[2] := idx;
-                  facep^[3] := c;
+                  facep^[3] := c-1;
                   //faces.push([ stack[top-3], stack[top-6], idx, c ]);
                 end else
                 begin
                   facep^[0] := stack[top-6];
                   facep^[1] := stack[top-3];
                   facep^[2] := idx;
-                  facep^[3] := c;
+                  facep^[3] := c-1;
                   //faces.push([ stack[top-6], stack[top-3], idx, c ]);
                 end;
                 
