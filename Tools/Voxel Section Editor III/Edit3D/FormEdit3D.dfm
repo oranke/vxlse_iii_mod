@@ -213,6 +213,13 @@ object FrmEdit3D: TFrmEdit3D
       ParentShowHint = False
       ShowHint = True
     end
+    object SpeedButton1: TSpeedButton
+      Left = 272
+      Top = 3
+      Width = 23
+      Height = 22
+      OnClick = SpeedButton1Click
+    end
   end
   object RenderPanel: TPanel
     Left = 0
