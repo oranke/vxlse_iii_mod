@@ -29,6 +29,9 @@ type
   end;
 
 
+// º¹¼¿ -> Monotone.
+// http://0fps.net/2012/07/07/meshing-minecraft-part-2/
+// https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
 procedure BuildMesh(aVertices, aFaces: TRecords);
 
 implementation
