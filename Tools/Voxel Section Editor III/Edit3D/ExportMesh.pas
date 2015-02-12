@@ -34,6 +34,8 @@ type
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
 procedure BuildMesh(aVertices, aFaces: TRecords);
 
+procedure ExportToObjFile(const aFileName: String); 
+
 implementation
 
 { TObjects }
@@ -164,7 +166,7 @@ var
   //y: VectorUtil.TVector3f;
   z: TMeshSide; 
 
-  yp: VectorUtil.PVector3i;
+  yp: VectorUtil.PVector4i;
   //Vertices: TRecords;
   //Faces: TRecords;
 
@@ -420,7 +422,7 @@ begin
           yp^[d] := x[d];
           yp^[u] := z[0];
           yp^[v] := z[1];
-          //yp^[C_W] := 0;
+          yp^[C_W] := -1;
 
           aVertices.Add(yp);
         end;
@@ -434,7 +436,7 @@ begin
           yp^[d] := x[d];
           yp^[u] := z[0];
           yp^[v] := z[1];
-          //yp^[C_W] := 0; 
+          yp^[C_W] := -1; 
 
           aVertices.Add(yp);
         end;
@@ -542,7 +544,7 @@ begin
                   facep^[3] := c-1;
                   //faces.push([ stack[top-6], stack[top-3], idx, c ]);
                 end;
-                
+
                 aFaces.Add(facep);
               end;
 
@@ -564,7 +566,7 @@ begin
           else
             inc(l_i);
 
-          side := n_side; 
+          side := n_side;
         end;
       end;
     end;
@@ -572,8 +574,90 @@ begin
     Inc(d);
   end;
 
-  Polygons.Free;  
+  // 중복정점 마킹
+  for i := 0 to aVertices.Count-2 do
+  for j := i+1 to aVertices.Count - 1 do
+  if VectorUtil.PVector4i(aVertices[j])^[C_W] < 0 then
+  if CompareMem(aVertices[i], aVertices[j], SizeOf(I32) * 3) then
+  begin
+    yp := aVertices[j];
+    yp^[C_W] := i;
+  end;
+
+  // 중복 정점을 사용한 면의 정점 인덱스 수정.
+  for i := 0 to aFaces.Count - 1 do
+  begin
+    facep := aFaces[i];
+    for j := 0 to 3 - 1 do
+    begin
+      yp := aVertices[facep^[j]];
+      if yp^[C_W] >= 0 then
+        facep^[j] := yp^[C_W];
+    end;
+  end;
+
+  // 중복 정점 제거. 해당 인덱스를 가진 면의 정점인덱스 감소.
+  for i := aVertices.Count-1 downto 0 do
+  begin
+    yp := aVertices[i];
+    if yp^[C_W] >= 0 then
+    begin
+      for j := 0 to aFaces.Count - 1 do
+      begin
+        facep := aFaces[j];
+        for k := 0 to 3 - 1 do
+        if facep^[k] > i then
+        begin
+          Dec(facep^[k]);
+        end;
+      end;
+
+      aVertices.Delete(i);
+    end;
+
+  end;
+
+  Polygons.Free;
 end;
+
+
+procedure ExportToObjFile(const aFileName: String);
+var
+  F: TextFile;
+  Vt: VectorUtil.PVector3i;
+  //Fc: VectorUtil.PVector4i
+  Vertices: TRecords;
+  Faces: TRecords;
+
+  i: Integer;
+begin
+  Vertices:= TRecords.Create;
+  Faces:= TRecords.Create; ;
+
+  BuildMesh(Vertices, Faces);
+
+  AssignFile(F, aFileName);
+  Rewrite(F);
+
+  Writeln(F, '# Voxel Section Editor III Wavefront OBJ Exporter v0.01 - by oranke');
+  Write(F, '# File Created: ');
+  Write(F, DateToStr(Now));
+  WriteLn(F, ' ', TimeToStr(Now));
+  WriteLn(F, '');  
+
+  for i := 0 to Vertices.Count - 1 do
+  begin
+    Vt := Vertices[i];
+    WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0], Vt^[1], Vt^[2]])); 
+  end;
+  
+  CloseFile(F);
+
+  Vertices.Free;
+  Faces.Free;
+  
+end;
+
 
 
 initialization

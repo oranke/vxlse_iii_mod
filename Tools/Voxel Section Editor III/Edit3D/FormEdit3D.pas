@@ -769,7 +769,8 @@ end;
 
 procedure TFrmEdit3D.SpeedButton1Click(Sender: TObject);
 var
-  yp: VectorUtil.PVector3i;
+  yp: VectorUtil.PVector4i;
+  //facep: VectorUtil.PVector3i;
   Vertices: TRecords;
   Faces: TRecords;
 
@@ -785,10 +786,25 @@ begin
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);
+  {j:=0;
+  for i := 0 to Vertices.Count - 1 do
+  begin
+    yp := Vertices[i];
+    WriteLn(Format(' %d, %d %d %d, %d', [i, yp^[0], yp^[1], yp^[2], yp^[3]]));
+    if yp^[3] >= 0 then
+      Inc(j);
+  end;
+  WriteLn('Dup Vt : ', j);}
   WriteLn('Faces ', Faces.Count);
+  {
+  for i := 0 to Faces.Count - 1 do
+  begin
+    facep := Faces[i];
+    WriteLn(Format('%d, %d %d %d', [i, facep^[0], facep^[1], facep^[2]]));
+  end;
+  }
 
-
-  // 모노톤 드로아이디 생성. 
+  // 모노톤 드로아이디 생성.
   glNewList(MonotoneDrawID, GL_COMPILE);
   glBegin(GL_TRIANGLES);
 

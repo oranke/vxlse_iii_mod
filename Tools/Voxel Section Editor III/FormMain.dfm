@@ -4494,7 +4494,7 @@ object FrmMain: TFrmMain
         Caption = '-'
       end
       object ExportOBJ1: TMenuItem
-        Caption = 'Export OBJ'
+        Caption = 'Export to OBJ'
         OnClick = ExportOBJ1Click
       end
       object N7: TMenuItem

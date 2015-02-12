@@ -592,6 +592,7 @@ uses
   OGLUtil,
   
   FormEdit3D,
+  ExportMesh,
 
   FormHeaderUnit,LoadForm,FormNewSectionSizeUnit,FormPalettePackAbout,HVA,
   FormReplaceColour,FormVoxelTexture,FormHVA,FormBoundsManager,
@@ -1028,6 +1029,7 @@ begin
    N6.Enabled := IsEditable;
    SaveAs1.Enabled := IsEditable;
    Save1.Enabled := IsEditable;
+   ExportOBJ1.Enabled := IsEditable; 
 
    if not iseditable then
       OGL3DPreview.Refresh;
@@ -2636,7 +2638,9 @@ begin
   SaveVXLDialog.DefaultExt := 'obj';
   SaveVXLDialog.Filter:= 'WaveFront OBJ (*.OBJ)|*.obj';
 
-  if not SaveVXLDialog.Execute then Exit; 
+  if not SaveVXLDialog.Execute then Exit;
+
+  ExportToObjFile(SaveVXLDialog.FileName);  
 
 end;
 
