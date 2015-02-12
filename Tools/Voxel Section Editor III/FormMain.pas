@@ -337,6 +337,8 @@ type
     Edit3DWindow1: TMenuItem;
     N25: TMenuItem;
     ImportSectionBitmap1: TMenuItem;
+    N26: TMenuItem;
+    ExportOBJ1: TMenuItem;
     procedure CCFilefront1Click(Sender: TObject);
     procedure CNCNZcom1Click(Sender: TObject);
     procedure ProjectSVN1Click(Sender: TObject);
@@ -465,6 +467,7 @@ type
     procedure Save1Click(Sender: TObject);
     procedure Exit1Click(Sender: TObject);
     procedure SaveAs1Click(Sender: TObject);
+    procedure ExportOBJ1Click(Sender: TObject);
     procedure VoxelHeader1Click(Sender: TObject);
     procedure N6Click(Sender: TObject);
     Procedure UpdateUndo_RedoState;
@@ -2613,6 +2616,10 @@ begin
    {$ifdef DEBUG_FILE}
    DebugFile.Add('FrmMain: SaveAs1Click');
    {$endif}
+
+   SaveVXLDialog.DefaultExt := 'vxl';
+   SaveVXLDialog.Filter:= 'Voxel (*.VXL)|*.vxl';
+
    if SaveVXLDialog.Execute then
    begin
       VoxelFile.SaveToFile(SaveVXLDialog.Filename);
@@ -2623,6 +2630,16 @@ begin
       UpdateHistoryMenu;
    end;
 end;
+
+procedure TFrmMain.ExportOBJ1Click(Sender: TObject);
+begin
+  SaveVXLDialog.DefaultExt := 'obj';
+  SaveVXLDialog.Filter:= 'WaveFront OBJ (*.OBJ)|*.obj';
+
+  if not SaveVXLDialog.Execute then Exit; 
+
+end;
+
 
 procedure TFrmMain.VoxelHeader1Click(Sender: TObject);
 var
