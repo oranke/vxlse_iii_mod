@@ -163,6 +163,7 @@ function VectorAdd3f(const v1, v2 : TVector3f) : TVector3f; register;
 function VectorSubtract3f(const v1, v2 : TVector3f): TVector3f; register;
 function VectorScale3f(const v: TVector3f; factor: F32): TVector3f; register;
 function VectorDotProduct3f(const v1, v2 : TVector3f): F32; register;
+function VectorCrossProduct3f(const v1, v2 : TVector3f): TVector3f; register;
 function VectorNorm3f(const v : TVector3f) : F32; register;
 function VectorNormalize3f(const v : TVector3f): TVector3f; register;
 
@@ -252,6 +253,13 @@ asm
   FLD DWORD PTR [EAX + 8]
   FMUL DWORD PTR [EDX + 8]
   FADDP
+end;
+
+function VectorCrossProduct3f(const v1, v2 : TVector3f): TVector3f;
+begin
+  Result[c_X]:=v1[c_Y] * v2[c_Z] - v1[c_Z] * v2[c_Y];
+  Result[c_Y]:=v1[c_Z] * v2[c_X] - v1[c_X] * v2[c_Z];
+  Result[c_Z]:=v1[c_X] * v2[c_Y] - v1[c_Y] * v2[c_X];
 end;
 
 function VectorNorm3f(const v : TVector3f) : F32; register;

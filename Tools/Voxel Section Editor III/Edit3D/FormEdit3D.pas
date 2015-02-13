@@ -336,13 +336,16 @@ begin
   else
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
 
+  glEnable(GL_LIGHT0);
+  glEnable(GL_LIGHTING);
+  
   if CheckBox1.Checked then
   begin
     glCallList(MonotoneDrawID);
   end else
   begin
-    glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHTING);
+    //glEnable(GL_LIGHT0);
+    //glEnable(GL_LIGHTING);
 
     for i := 0 to fSkinCellCount - 1 do
     begin
@@ -769,12 +772,16 @@ end;
 
 procedure TFrmEdit3D.SpeedButton1Click(Sender: TObject);
 var
-  yp: VectorUtil.PVector4i;
+  vps: array [0..2] of VectorUtil.PVector4i;
+
+
   //facep: VectorUtil.PVector3i;
   Vertices: TRecords;
   Faces: TRecords;
 
   VoxelColor: Voxel_Engine.TVector3f;
+  v0, v1: VectorUtil.TVector3f;
+  Normal: VectorUtil.TVector3f;
   i, j: Integer;
 begin
   AllocConsole;
@@ -810,19 +817,56 @@ begin
 
   for i := 0 to Faces.Count - 1 do
   begin
-    VoxelColor := GetVXLColor(VectorUtil.PVector4i(Faces[i])^[3], 0);
-
+    // 색상. 
+    VoxelColor:= GetVXLColor(VectorUtil.PVector4i(Faces[i])^[3], 0);
     glColor3f(
       VoxelColor.X,
       VoxelColor.Y,
       VoxelColor.Z
     );
 
+    // 정점좌표 포인터 얻고
+    for j := 0 to 3 - 1 do
+      vps[j] := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
+
+
+    // 노멀. 0->1, 0->2 의 외적 계산.
+    v0 :=
+      MakeVector3f(
+        vps[1]^[C_X] - vps[0]^[C_X],
+        vps[1]^[C_Y] - vps[0]^[C_Y],
+        vps[1]^[C_Z] - vps[0]^[C_Z]
+      );
+    v1 :=
+      MakeVector3f(
+        vps[2]^[C_X] - vps[0]^[C_X],        
+        vps[2]^[C_Y] - vps[0]^[C_Y],
+        vps[2]^[C_Z] - vps[0]^[C_Z]
+      );
+    Normal := VectorNormalize3f(VectorCrossProduct3f(v0, v1));
+
+    //v1
+    glNormal3f(Normal[C_X], Normal[C_Y], Normal[C_Z]); 
+
+
+    // 버텍스.
+    for j := 0 to 3 - 1 do
+      glVertex3f(vps[j]^[C_X], vps[j]^[C_Y], vps[j]^[C_Z]);
+
+    {
+    // 노멀. 0->1, 0->2 의 외적 계산.
+    vp0 := Vertices[VectorUtil.PVector4i(Faces[i])^[0]];
+    vp1 := Vertices[VectorUtil.PVector4i(Faces[i])^[1]];
+    vp2 := Vertices[VectorUtil.PVector4i(Faces[i])^[2]];
+
+
+    // 버텍스.
     for j := 0 to 3 - 1 do
     begin
-      yp := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
-      glVertex3f(yp^[C_X], yp^[C_Y], yp^[C_Z]);
+      vp0 := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
+      glVertex3f(vp0^[C_X], vp0^[C_Y], vp0^[C_Z]);
     end;
+    }
   end;
 
   glEnd();
