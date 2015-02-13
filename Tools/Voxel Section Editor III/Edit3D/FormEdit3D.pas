@@ -782,7 +782,7 @@ begin
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create; ;
 
-  BuildMesh(Vertices, Faces);
+  BuildMesh(Vertices, Faces, false);
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);

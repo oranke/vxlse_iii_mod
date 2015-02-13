@@ -32,7 +32,7 @@ type
 // 복셀 -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
-procedure BuildMesh(aVertices, aFaces: TRecords);
+procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 
 procedure ExportToObjFile(const aFileName: String); 
 
@@ -132,7 +132,7 @@ begin
 end;
 
 
-procedure BuildMesh(aVertices, aFaces: TRecords);
+procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 var
   dims: array [0..2] of U8;
 
@@ -574,6 +574,10 @@ begin
     Inc(d);
   end;
 
+  Polygons.Free;
+
+  if not aEraseDupVt then Exit;
+
   // 중복정점 마킹
   for i := 0 to aVertices.Count-2 do
   for j := i+1 to aVertices.Count - 1 do
@@ -614,18 +618,16 @@ begin
 
       aVertices.Delete(i);
     end;
-
   end;
 
-  Polygons.Free;
 end;
 
 
 procedure ExportToObjFile(const aFileName: String);
 var
   F: TextFile;
-  Vt: VectorUtil.PVector3i;
-  //Fc: VectorUtil.PVector4i
+  Vt: VectorUtil.PVector4i;
+  Fc: VectorUtil.PVector3i;
   Vertices: TRecords;
   Faces: TRecords;
 
@@ -634,7 +636,7 @@ begin
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create; ;
 
-  BuildMesh(Vertices, Faces);
+  BuildMesh(Vertices, Faces, true);
 
   AssignFile(F, aFileName);
   Rewrite(F);
@@ -648,9 +650,20 @@ begin
   for i := 0 to Vertices.Count - 1 do
   begin
     Vt := Vertices[i];
-    WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0], Vt^[1], Vt^[2]])); 
+    //WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0]*100, Vt^[1]*100, Vt^[2]*100])); 
+    WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0], Vt^[1], Vt^[2]]));
   end;
-  
+
+  WriteLn(F, '');  
+
+  for i := 0 to Faces.Count - 1 do
+  begin
+    Fc := Faces[i];
+    //WriteLn(F, Format('f %d %d %d', [Fc^[0], Fc^[1], Fc^[2]])); 
+    WriteLn(F, Format('f %d %d %d', [Fc^[0]+1, Fc^[1]+1, Fc^[2]+1]));
+
+  end;
+
   CloseFile(F);
 
   Vertices.Free;
