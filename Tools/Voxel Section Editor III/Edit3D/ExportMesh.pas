@@ -11,13 +11,28 @@ unit ExportMesh;
 interface
 
 uses
-  Windows, SysUtils, Classes, Graphics, Controls, 
+  Windows, SysUtils, Classes, Graphics, Controls,
 
   Voxel,
   Voxel_Engine,
   VectorUtil;
 
 type
+  PVxVertex = ^TVxVertex;
+  TVxVertex = record
+    DupIndex: I32;
+    case Integer of
+      0: (x, y, z: I32);
+      1: (Arr: array[0..2] of I32); 
+  end;
+
+  PVxFace = ^TVxFace;
+  TVxFace = record
+    v0, v1, v2: I32;
+    c: I32; 
+  end;
+
+
   TObjects = class (TList)
   protected
     procedure Notify(Ptr: Pointer; Action: TListNotification); override;
