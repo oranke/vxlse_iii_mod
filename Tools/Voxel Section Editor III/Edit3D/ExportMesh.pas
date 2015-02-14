@@ -17,19 +17,37 @@ uses
   Voxel_Engine,
   VectorUtil;
 
+const
+  CUBIC_NORMALS : packed array [0..6-1] of TVector3sb = (
+    // Front face
+    ( 0, 0, 1 ),
+    // Back Face
+    ( 0, 0,-1 ),
+    // Top Face
+    ( 0, 1, 0 ),
+    // Bottom Face
+    ( 0,-1, 0 ),
+    // Right face
+    ( 1, 0, 0 ),
+    // Left Face
+    (-1, 0, 0 )
+  );
+
 type
   PVxVertex = ^TVxVertex;
   TVxVertex = record
     DupIndex: I32;
     case Integer of
       0: (x, y, z: I32);
-      1: (Arr: array[0..2] of I32); 
+      1: (Arr: array [0..2] of I32);
   end;
 
   PVxFace = ^TVxFace;
   TVxFace = record
-    v0, v1, v2: I32;
-    c: I32; 
+    c, n: I32;
+    case Integer of
+      0: (v0, v1, v2: I32);
+      1: (Arr: array [0..2] of I32);
   end;
 
 
@@ -43,15 +61,21 @@ type
     procedure Notify(Ptr: Pointer; Action: TListNotification); override;
   end;
 
-
 // 복셀 -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
 procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 
-procedure ExportToObjFile(const aFileName: String); 
+
+procedure ExportToObjFile(const aFileName: String);
+function GetCubicNormalIndex(const aNormal: TVector3f): I32;
+
 
 implementation
+
+uses
+  ogl3dview_engine, 
+  pngimage;
 
 { TObjects }
 
@@ -146,6 +170,20 @@ begin
   end;
 end;
 
+function GetCubicNormalIndex(const aNormal: TVector3f): I32;
+begin
+  if aNormal[C_Z] > 0 then Result := 0 else
+  if aNormal[C_Z] < 0 then Result := 1 else
+
+  if aNormal[C_Y] > 0 then Result := 2 else
+  if aNormal[C_Y] < 0 then Result := 3 else
+
+  if aNormal[C_X] > 0 then Result := 4 else
+  if aNormal[C_X] < 0 then Result := 5 else
+
+  Result := -1;
+end;
+
 
 procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 var
@@ -178,12 +216,9 @@ var
   p_l, p_r, p_c, r_l, r_r, r_c: I32;
   flipped: Boolean;
 
-  //y: VectorUtil.TVector3f;
   z: TMeshSide; 
 
-  yp: VectorUtil.PVector4i;
-  //Vertices: TRecords;
-  //Faces: TRecords;
+  vp: PVxVertex;
 
   bottom, top, l_i, r_i: I32;
   side: Boolean;
@@ -193,9 +228,13 @@ var
   idx: I32;
   vert: TMeshSide;
   det: I32;
-  facep: VectorUtil.PVector4i;
+  facep: PVxFace;
 
-  VoxelColor: Voxel_Engine.TVector3f;
+  //VoxelColor: Voxel_Engine.TVector3f;
+  vps: array [0..2] of PVxVertex;
+  v0, v1: VectorUtil.TVector3f;
+  Normal: VectorUtil.TVector3f;
+  
 begin
   Polygons:= TObjects.Create;
 
@@ -433,13 +472,13 @@ begin
           left_index[j] := aVertices.Count;
           z := mp.Left[j];
 
-          new(yp);
-          yp^[d] := x[d];
-          yp^[u] := z[0];
-          yp^[v] := z[1];
-          yp^[C_W] := -1;
+          new(vp);
+          vp^.Arr[d] := x[d];
+          vp^.Arr[u] := z[0];
+          vp^.Arr[v] := z[1];
+          vp^.DupIndex := -1;
 
-          aVertices.Add(yp);
+          aVertices.Add(vp);
         end;
 
         for j := 0 to Length(mp.Right) - 1 do
@@ -447,13 +486,13 @@ begin
           right_index[j] := aVertices.Count;
           z := mp.Right[j];
 
-          new(yp);
-          yp^[d] := x[d];
-          yp^[u] := z[0];
-          yp^[v] := z[1];
-          yp^[C_W] := -1; 
+          new(vp);
+          vp^.Arr[d] := x[d];
+          vp^.Arr[u] := z[0];
+          vp^.Arr[v] := z[1];
+          vp^.DupIndex := -1; 
 
-          aVertices.Add(yp);
+          aVertices.Add(vp);
         end;
 
         //Triangulate the monotone polygon
@@ -509,17 +548,17 @@ begin
 
               if(flipped = n_side) then
               begin
-                facep^[0] := stack[bottom];
-                facep^[1] := stack[bottom+3];
-                facep^[2] := idx;
-                facep^[3] := c-1;
+                facep^.v0 := stack[bottom];
+                facep^.v1 := stack[bottom+3];
+                facep^.v2 := idx;
+                facep^.c := c-1;
                 //faces.push([ stack[bottom], stack[bottom+3], idx, c]);
               end else
               begin
-                facep^[0] := stack[bottom+3];
-                facep^[1] := stack[bottom];
-                facep^[2] := idx;
-                facep^[3] := c-1;
+                facep^.v0 := stack[bottom+3];
+                facep^.v1 := stack[bottom];
+                facep^.v2 := idx;
+                facep^.c := c-1;
                 //faces.push([ stack[bottom+3], stack[bottom], idx, c]);
               end;
 
@@ -546,17 +585,17 @@ begin
 
                 if (flipped = n_side) then
                 begin
-                  facep^[0] := stack[top-3];
-                  facep^[1] := stack[top-6];
-                  facep^[2] := idx;
-                  facep^[3] := c-1;
+                  facep^.v0 := stack[top-3];
+                  facep^.v1 := stack[top-6];
+                  facep^.v2 := idx;
+                  facep^.c := c-1;
                   //faces.push([ stack[top-3], stack[top-6], idx, c ]);
                 end else
                 begin
-                  facep^[0] := stack[top-6];
-                  facep^[1] := stack[top-3];
-                  facep^[2] := idx;
-                  facep^[3] := c-1;
+                  facep^.v0 := stack[top-6];
+                  facep^.v1 := stack[top-3];
+                  facep^.v2 := idx;
+                  facep^.c := c-1;
                   //faces.push([ stack[top-6], stack[top-3], idx, c ]);
                 end;
 
@@ -596,12 +635,9 @@ begin
   // 중복정점 마킹
   for i := 0 to aVertices.Count-2 do
   for j := i+1 to aVertices.Count - 1 do
-  if VectorUtil.PVector4i(aVertices[j])^[C_W] < 0 then
-  if CompareMem(aVertices[i], aVertices[j], SizeOf(I32) * 3) then
-  begin
-    yp := aVertices[j];
-    yp^[C_W] := i;
-  end;
+  if PVxVertex(aVertices[j])^.DupIndex < 0 then
+  if CompareMem(@TVxVertex(aVertices[i]^).Arr, @TVxVertex(aVertices[j]^).Arr, SizeOf(I32) * 3) then
+    PVxVertex(aVertices[j])^.DupIndex := i;
 
   // 중복 정점을 사용한 면의 정점 인덱스 수정.
   for i := 0 to aFaces.Count - 1 do
@@ -609,25 +645,25 @@ begin
     facep := aFaces[i];
     for j := 0 to 3 - 1 do
     begin
-      yp := aVertices[facep^[j]];
-      if yp^[C_W] >= 0 then
-        facep^[j] := yp^[C_W];
+      vp := aVertices[facep^.Arr[j]];
+      if vp^.DupIndex >= 0 then
+        facep^.Arr[j] := vp^.DupIndex;
     end;
   end;
 
   // 중복 정점 제거. 해당 인덱스를 가진 면의 정점인덱스 감소.
   for i := aVertices.Count-1 downto 0 do
   begin
-    yp := aVertices[i];
-    if yp^[C_W] >= 0 then
+    vp := aVertices[i];
+    if vp^.DupIndex >= 0 then
     begin
       for j := 0 to aFaces.Count - 1 do
       begin
         facep := aFaces[j];
         for k := 0 to 3 - 1 do
-        if facep^[k] > i then
+        if facep^.Arr[k] > i then
         begin
-          Dec(facep^[k]);
+          Dec(facep^.Arr[k]);
         end;
       end;
 
@@ -635,14 +671,83 @@ begin
     end;
   end;
 
+  // 면의 큐빅노멀 설정.
+  for i := 0 to aFaces.Count - 1 do
+  begin
+    facep := aFaces[i];
+    // 정점좌표 포인터 얻고
+    for j := 0 to 3 - 1 do
+      vps[j] := aVertices[facep^.Arr[j]];
+
+    // 노멀. 0->1, 0->2 의 외적 계산.
+    v0 :=
+      MakeVector3f(
+        vps[1]^.x - vps[0]^.x,
+        vps[1]^.y - vps[0]^.y,
+        vps[1]^.z - vps[0]^.z
+      );
+    v1 :=
+      MakeVector3f(
+        vps[2]^.x - vps[0]^.x,
+        vps[2]^.y - vps[0]^.y,
+        vps[2]^.z - vps[0]^.z
+      );
+    Normal := VectorNormalize3f(VectorCrossProduct3f(v0, v1));
+
+    facep^.n := GetCubicNormalIndex(Normal);
+  end;
 end;
 
+function ExtractJustName(const FileName: String): String;
+begin
+  Result := ExtractFileName(FileName);
+  SetLength(Result, Length(Result) - Length(ExtractFileExt(FileName)));
+end;
+
+procedure BuildTexture(const aObjFileName: String);
+var
+  TextureFileName: String;
+  Bmp: TBitmap;
+  PNGImage: TPNGObject;
+  i: Integer;
+  VoxelColor: Voxel_Engine.TVector3f;
+begin
+  TextureFileName :=
+    ExtractFilePath(aObjFileName) + 
+    ExtractJustName(aObjFileName) + '.png';
+
+  Bmp:= TBitmap.Create;
+  PNGImage:= TPNGObject.Create;
+  try
+    Bmp.SetSize(16, 16);
+    Bmp.PixelFormat := pf32bit;
+    for i := 0 to 16*16 - 1 do
+    begin
+      VoxelColor := //GetVXLColor(i, 0);
+                    GetCorrectColour(i, RemapColour);
+      Bmp.Canvas.Pixels[i div 16, i mod 16] :=
+        RGB(
+          Round(VoxelColor.X * 255),
+          Round(VoxelColor.Y * 255),
+          Round(VoxelColor.Z * 255)
+        );
+
+    end;
+
+
+    PNGImage.Assign(Bmp);
+    PNGImage.SaveToFile(TextureFileName);
+  finally
+    Bmp.Free;
+    PNGImage.Free;
+  end;
+
+
+end;
 
 procedure ExportToObjFile(const aFileName: String);
 var
   F: TextFile;
-  Vt: VectorUtil.PVector4i;
-  Fc: VectorUtil.PVector3i;
   Vertices: TRecords;
   Faces: TRecords;
 
@@ -652,6 +757,7 @@ begin
   Faces:= TRecords.Create; ;
 
   BuildMesh(Vertices, Faces, true);
+  BuildTexture(aFileName); 
 
   AssignFile(F, aFileName);
   Rewrite(F);
@@ -663,21 +769,31 @@ begin
   WriteLn(F, '');  
 
   for i := 0 to Vertices.Count - 1 do
-  begin
-    Vt := Vertices[i];
-    //WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0]*100, Vt^[1]*100, Vt^[2]*100])); 
-    WriteLn(F, Format('v %d.0 %d.0 %d.0', [Vt^[0], Vt^[1], Vt^[2]]));
-  end;
-
-  WriteLn(F, '');  
-
+  with PVxVertex(Vertices[i])^ do
+    WriteLn(F, Format('v %d.0 %d.0 %d.0', [x, y, z]));
+  WriteLn(F, '');
+  //{
+  for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
+    WriteLn(F,
+      Format('vn %d.0 %d.0 %d.0',
+        [
+          CUBIC_NORMALS[i][C_x],
+          CUBIC_NORMALS[i][C_y],
+          CUBIC_NORMALS[i][C_z]
+        ]
+      )
+    );
+  WriteLn(F, '');
+  //}
   for i := 0 to Faces.Count - 1 do
-  begin
-    Fc := Faces[i];
-    //WriteLn(F, Format('f %d %d %d', [Fc^[0], Fc^[1], Fc^[2]])); 
-    WriteLn(F, Format('f %d %d %d', [Fc^[0]+1, Fc^[1]+1, Fc^[2]+1]));
+  with PVxFace(Faces[i])^ do
+    WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
+    //WriteLn(F, Format('f %d %d %d', [v0+1, v1+1, v2+1]));
+    //WriteLn(F, Format('f %d %d %d', [Arr[0]+1, Arr[1]+1, Arr[2]+1]));
+    //WriteLn(F, Format('f %d/%d/%d %d/%d/%d %d/%d/%d', [v0+1, c+1, n+1, v1+1, c+1, n+1, v2+1, c+1, n+1]));
 
-  end;
+
+  WriteLn(F, '');
 
   CloseFile(F);
 

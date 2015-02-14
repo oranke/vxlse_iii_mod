@@ -772,16 +772,17 @@ end;
 
 procedure TFrmEdit3D.SpeedButton1Click(Sender: TObject);
 var
-  vps: array [0..2] of VectorUtil.PVector4i;
+  //vps: array [0..2] of PVxVertex;
+  vp: PVxVertex; 
 
-
-  //facep: VectorUtil.PVector3i;
   Vertices: TRecords;
   Faces: TRecords;
 
   VoxelColor: Voxel_Engine.TVector3f;
+  {
   v0, v1: VectorUtil.TVector3f;
   Normal: VectorUtil.TVector3f;
+  }
   i, j: Integer;
 begin
   AllocConsole;
@@ -789,7 +790,8 @@ begin
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create; ;
 
-  BuildMesh(Vertices, Faces, false);
+  //BuildMesh(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
+  BuildMesh(Vertices, Faces, true);
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);
@@ -805,11 +807,12 @@ begin
   WriteLn('Faces ', Faces.Count);
   {
   for i := 0 to Faces.Count - 1 do
+  with PVxFace(Faces[i])^ do
   begin
-    facep := Faces[i];
-    WriteLn(Format('%d, %d %d %d', [i, facep^[0], facep^[1], facep^[2]]));
+    WriteLn(Format('%d, %d %d %d, %d %d', [i, v0, v1, v2, c, n]));
   end;
   }
+
 
   // 모노톤 드로아이디 생성.
   glNewList(MonotoneDrawID, GL_COMPILE);
@@ -817,61 +820,59 @@ begin
 
   for i := 0 to Faces.Count - 1 do
   begin
-    // 색상. 
-    VoxelColor:= GetVXLColor(VectorUtil.PVector4i(Faces[i])^[3], 0);
+    // 색상.
+    VoxelColor:=// GetVXLColor(PVxFace(Faces[i])^.c, 0);
+                  GetCorrectColour(PVxFace(Faces[i])^.c, RemapColour);
     glColor3f(
       VoxelColor.X,
       VoxelColor.Y,
       VoxelColor.Z
     );
 
+    {
     // 정점좌표 포인터 얻고
     for j := 0 to 3 - 1 do
-      vps[j] := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
+      vps[j] := Vertices[PVxFace(Faces[i])^.Arr[j]];
+    }
 
+    // 노멀
+    with PVxFace(Faces[i])^ do
+      glNormal3f(
+        CUBIC_NORMALS[n][0],
+        CUBIC_NORMALS[n][1],
+        CUBIC_NORMALS[n][2]
+      );
+
+    {
 
     // 노멀. 0->1, 0->2 의 외적 계산.
     v0 :=
       MakeVector3f(
-        vps[1]^[C_X] - vps[0]^[C_X],
-        vps[1]^[C_Y] - vps[0]^[C_Y],
-        vps[1]^[C_Z] - vps[0]^[C_Z]
+        vps[1]^.x - vps[0]^.x,
+        vps[1]^.y - vps[0]^.y,
+        vps[1]^.z - vps[0]^.z
       );
     v1 :=
       MakeVector3f(
-        vps[2]^[C_X] - vps[0]^[C_X],        
-        vps[2]^[C_Y] - vps[0]^[C_Y],
-        vps[2]^[C_Z] - vps[0]^[C_Z]
+        vps[2]^.x - vps[0]^.x,
+        vps[2]^.y - vps[0]^.y,
+        vps[2]^.z - vps[0]^.z
       );
     Normal := VectorNormalize3f(VectorCrossProduct3f(v0, v1));
-
-    //v1
     glNormal3f(Normal[C_X], Normal[C_Y], Normal[C_Z]); 
-
-
-    // 버텍스.
-    for j := 0 to 3 - 1 do
-      glVertex3f(vps[j]^[C_X], vps[j]^[C_Y], vps[j]^[C_Z]);
-
-    {
-    // 노멀. 0->1, 0->2 의 외적 계산.
-    vp0 := Vertices[VectorUtil.PVector4i(Faces[i])^[0]];
-    vp1 := Vertices[VectorUtil.PVector4i(Faces[i])^[1]];
-    vp2 := Vertices[VectorUtil.PVector4i(Faces[i])^[2]];
-
-
+    }
     // 버텍스.
     for j := 0 to 3 - 1 do
     begin
-      vp0 := Vertices[VectorUtil.PVector4i(Faces[i])^[j]];
-      glVertex3f(vp0^[C_X], vp0^[C_Y], vp0^[C_Z]);
+      //glVertex3f(vps[j]^.x, vps[j]^.y, vps[j]^.z);
+      vp := Vertices[PVxFace(Faces[i])^.Arr[j]];
+      glVertex3f(vp^.x, vp^.y, vp^.z);
     end;
-    }
   end;
 
   glEnd();
   glEndList();
-  
+
 
   //Polygons.Free;
   Vertices.Free;
