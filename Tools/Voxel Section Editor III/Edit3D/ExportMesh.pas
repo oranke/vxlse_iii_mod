@@ -725,6 +725,7 @@ begin
     begin
       VoxelColor := //GetVXLColor(i, 0);
                     GetCorrectColour(i, RemapColour);
+      //Bmp.Canvas.Pixels[i div 16, 15- (i mod 16)] :=
       Bmp.Canvas.Pixels[i div 16, i mod 16] :=
         RGB(
           Round(VoxelColor.X * 255),
@@ -741,23 +742,94 @@ begin
     Bmp.Free;
     PNGImage.Free;
   end;
+end;
+
+procedure BuildMerterial(const aObjFileName: String);
+var
+  TextureName: String; 
+  MerterialFileName: String;
+
+  F: TextFile;
+begin
+  TextureName := ExtractJustName(aObjFileName) + '.png';
+  MerterialFileName :=
+    ExtractFilePath(aObjFileName) + 
+    ExtractJustName(aObjFileName) + '.mtl';
+
+  AssignFile(F, MerterialFileName);
+  Rewrite(F);
+
+  Writeln(F, '# Voxel Section Editor III Wavefront MTL Exporter v0.01 - by oranke');
+  Write(F, '# File Created: ');
+  Write(F, DateToStr(Now));
+  WriteLn(F, ' ', TimeToStr(Now));
+  WriteLn(F, '');
+  WriteLn(F, 'newmtl material_0');
+  WriteLn(F, 'Ka 1 1 1');
+  WriteLn(F, 'Kd 1 1 1');
+  WriteLn(F, 'Ks 1 1 1');
+  WriteLn(F, 'Ns 1000');
+  WriteLn(F, 'map_Kd ', TextureName);
 
 
+  WriteLn(F, '');
+  CloseFile(F);
 end;
 
 procedure ExportToObjFile(const aFileName: String);
+type
+  PUsedColorRec = ^TUsedColorRec;
+  TUsedColorRec = packed record
+    Used: Boolean;
+    RealIndex: I32;
+  end;
+  
 var
   F: TextFile;
   Vertices: TRecords;
   Faces: TRecords;
 
-  i: Integer;
+  UsedColor: PUsedColorRec;
+  UsedColors: TRecords;
+
+  i, j: Integer;
 begin
+  AllocConsole; 
+
   Vertices:= TRecords.Create;
-  Faces:= TRecords.Create; ;
+  Faces:= TRecords.Create;
+  UsedColors:= TRecords.Create;
 
   BuildMesh(Vertices, Faces, true);
-  BuildTexture(aFileName); 
+  BuildTexture(aFileName);
+  BuildMerterial(aFileName); 
+
+  // 사용된 색상만 마킹. 
+  for i := 0 to 16*16 - 1 do
+  begin
+    New(UsedColor);
+    UsedColor^.Used := false;
+    UsedColor^.RealIndex := -1;
+    UsedColors.Add(UsedColor);
+  end;
+
+  for i := 0 to Faces.Count - 1 do
+  with PVxFace(Faces[i])^ do
+  if (c >= 0) and (c < 16*16) then
+  begin
+    PUsedColorRec(UsedColors[c])^.Used := true;
+  end;
+
+  WriteLn('-------');
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  with PUsedColorRec(UsedColors[i])^ do
+  if Used then
+  begin
+    WriteLn('i: ', i, ', RealIndex: ', j, '  -> ', i div 16, ', ', i mod 16); 
+    RealIndex := j;
+    Inc(j);
+  end; 
 
   AssignFile(F, aFileName);
   Rewrite(F);
@@ -768,11 +840,37 @@ begin
   WriteLn(F, ' ', TimeToStr(Now));
   WriteLn(F, '');  
 
+  WriteLn(F, 'mtllib ', ExtractJustName(aFileName) + '.mtl');  
+  WriteLn(F, '');
+
   for i := 0 to Vertices.Count - 1 do
   with PVxVertex(Vertices[i])^ do
     WriteLn(F, Format('v %d.0 %d.0 %d.0', [x, y, z]));
+  WriteLn(F, '# Vertexs ', Vertices.Count);
   WriteLn(F, '');
+
+  WriteLn(F, 'usemtl material_0');
+  WriteLn(F, '');
+
   //{
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  if PUsedColorRec(UsedColors[i])^.Used then
+  begin
+    WriteLn(F,
+      Format('vt %.4f %.4f',
+        [
+          (i div 16 + 0.5) / 16,
+          (15 - i mod 16 + 0.5) / 16 // Y축은 뒤집어준다. 
+        ]
+      )
+    );
+    WriteLn(F, '# ', i div 16, ' ', i mod 16); 
+    Inc(j);
+  end;
+  WriteLn(F, '# Texture Coods ', j); 
+  WriteLn(F, '');
+  
   for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
     WriteLn(F,
       Format('vn %d.0 %d.0 %d.0',
@@ -783,15 +881,26 @@ begin
         ]
       )
     );
+  WriteLn(F, '# Normals ', High(CUBIC_NORMALS) - Low(CUBIC_NORMALS) +1);
   WriteLn(F, '');
+
+
   //}
   for i := 0 to Faces.Count - 1 do
   with PVxFace(Faces[i])^ do
-    WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
+  begin
+    if (c >= 0) and (c < 16*16) then
+      j := PUsedColorRec(UsedColors[c])^.RealIndex +1
+    else
+      j := -1;
+
+    if j < 0 then j := 0;
+
+    //WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
     //WriteLn(F, Format('f %d %d %d', [v0+1, v1+1, v2+1]));
     //WriteLn(F, Format('f %d %d %d', [Arr[0]+1, Arr[1]+1, Arr[2]+1]));
-    //WriteLn(F, Format('f %d/%d/%d %d/%d/%d %d/%d/%d', [v0+1, c+1, n+1, v1+1, c+1, n+1, v2+1, c+1, n+1]));
-
+    WriteLn(F, Format('f %d/%d/%d %d/%d/%d %d/%d/%d', [v0+1, j, n+1, v1+1, j, n+1, v2+1, j, n+1]));
+  end;
 
   WriteLn(F, '');
 
@@ -799,6 +908,8 @@ begin
 
   Vertices.Free;
   Faces.Free;
+  UsedColors.Free;
+  
   
 end;
 
