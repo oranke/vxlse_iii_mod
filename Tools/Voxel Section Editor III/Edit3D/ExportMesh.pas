@@ -765,6 +765,7 @@ begin
   WriteLn(F, ' ', TimeToStr(Now));
   WriteLn(F, '');
   WriteLn(F, 'newmtl material_0');
+  WriteLn(F, 'illum 1');
   WriteLn(F, 'Ka 1 1 1');
   WriteLn(F, 'Kd 1 1 1');
   WriteLn(F, 'Ks 1 1 1');
@@ -794,7 +795,7 @@ var
 
   i, j: Integer;
 begin
-  AllocConsole; 
+  //AllocConsole; 
 
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create;
@@ -820,13 +821,13 @@ begin
     PUsedColorRec(UsedColors[c])^.Used := true;
   end;
 
-  WriteLn('-------');
+  //WriteLn('-------');
   j := 0;
   for i := 0 to UsedColors.Count - 1 do
   with PUsedColorRec(UsedColors[i])^ do
   if Used then
   begin
-    WriteLn('i: ', i, ', RealIndex: ', j, '  -> ', i div 16, ', ', i mod 16); 
+    //WriteLn('i: ', i, ', RealIndex: ', j, '  -> ', i div 16, ', ', i mod 16); 
     RealIndex := j;
     Inc(j);
   end; 
@@ -865,7 +866,7 @@ begin
         ]
       )
     );
-    WriteLn(F, '# ', i div 16, ' ', i mod 16); 
+    //WriteLn(F, '# ', i div 16, ' ', i mod 16); 
     Inc(j);
   end;
   WriteLn(F, '# Texture Coods ', j); 
@@ -873,7 +874,8 @@ begin
   
   for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
     WriteLn(F,
-      Format('vn %d.0 %d.0 %d.0',
+      //Format('vn %d.0 %d.0 %d.0',
+      Format('vn %d %d %d',
         [
           CUBIC_NORMALS[i][C_x],
           CUBIC_NORMALS[i][C_y],
@@ -899,7 +901,11 @@ begin
     //WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
     //WriteLn(F, Format('f %d %d %d', [v0+1, v1+1, v2+1]));
     //WriteLn(F, Format('f %d %d %d', [Arr[0]+1, Arr[1]+1, Arr[2]+1]));
+    //WriteLn(F, Format('f %d/%d %d/%d %d/%d', [v0+1, j, v1+1, j, v2+1, j]));
     WriteLn(F, Format('f %d/%d/%d %d/%d/%d %d/%d/%d', [v0+1, j, n+1, v1+1, j, n+1, v2+1, j, n+1]));
+
+
+    //WriteLn(F, Format('f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d', [v0+1, j, n+1, v1+1, j, n+1, v2+1, j, n+1, v0+1, j, n+1]));
   end;
 
   WriteLn(F, '');
