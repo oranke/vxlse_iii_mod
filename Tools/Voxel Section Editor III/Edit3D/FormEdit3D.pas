@@ -51,6 +51,7 @@ type
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
     Optimize2Btn: TSpeedButton;
+    Button1: TButton;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -68,6 +69,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OptimizeBtnClick(Sender: TObject);
     procedure Optimize2BtnClick(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
   private
     { Private declarations }
     fDC: HDC; // Device Context
@@ -162,6 +164,58 @@ begin
 end;
 
 { TFrmEdit3D }
+
+procedure TFrmEdit3D.Button1Click(Sender: TObject);
+{var
+  ix, iy, iz: Integer;
+  v: TVoxelUnpacked;
+  EV: PVxVertex;
+  EVList: TRecords;} 
+begin
+  {
+  //fSkinCellCount:= 0;
+  //SetLength(fSkinCells, 0);
+
+  EVList:= TRecords.Create;
+
+  with ActiveSection do
+  for iz := 0 to Tailer.ZSize - 1 do
+  for iy := 0 to Tailer.YSize - 1 do
+  for ix := 0 to Tailer.XSize - 1 do
+  begin
+    GetVoxel(ix, iy, iz, v);
+    if v.Used then
+    if CheckFace(ActiveSection, ix, iy + 1, iz) or
+      CheckFace(ActiveSection, ix, iy - 1, iz) or
+      CheckFace(ActiveSection, ix, iy, iz + 1) or
+      CheckFace(ActiveSection, ix, iy, iz - 1) or
+      CheckFace(ActiveSection, ix - 1, iy, iz) or
+      CheckFace(ActiveSection, ix + 1, iy, iz) then
+    begin
+    end else
+    begin
+      //v.Used := false;
+      //SetVoxel(ix, iy, iz, v);
+      new(EV);
+      EV^.x := ix;
+      EV^.y := iy;
+      EV^.z := iz;
+      EVList.Add(EV);
+    end;
+  end;
+
+  v.Used := false;
+  for ix := 0 to EVList.Count - 1 do
+  with PVxVertex(EVList[ix])^ do
+  begin
+    ActiveSection.SetVoxel(x, y, z, v);
+  end;
+
+  EVList.Free; 
+
+  Update3dView(ActiveSection);
+  }
+end;
 
 constructor TFrmEdit3D.Create(aOwner: TComponent);
 begin
@@ -860,8 +914,8 @@ begin
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create; ;
 
-  BuildMonotone(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
-  //BuildMonotone(Vertices, Faces, true);
+  //BuildMonotone(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
+  BuildMonotone(Vertices, Faces, true);
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);

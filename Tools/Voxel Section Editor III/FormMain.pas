@@ -2640,7 +2640,8 @@ begin
 
   if not SaveVXLDialog.Execute then Exit;
 
-  ExportToObjFile(SaveVXLDialog.FileName);  
+  //ExportToMonotoneObjFile(SaveVXLDialog.FileName);
+  ExportToGreedyObjFile(SaveVXLDialog.FileName);
 
 end;
 

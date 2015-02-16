@@ -74,6 +74,8 @@ type
     procedure Notify(Ptr: Pointer; Action: TListNotification); override;
   end;
 
+function GetCubicNormalIndex(const aNormal: TVector3f): I32;
+
 // 복셀 -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
@@ -84,9 +86,8 @@ procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/greedy.js
 procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 
-procedure ExportToObjFile(const aFileName: String);
-function GetCubicNormalIndex(const aNormal: TVector3f): I32;
-
+procedure ExportToMonotoneObjFile(const aFileName: String);
+procedure ExportToGreedyObjFile(const aFileName: String);
 
 implementation
 
@@ -1057,10 +1058,12 @@ begin
   WriteLn(F, '');
   WriteLn(F, 'newmtl material_0');
   WriteLn(F, 'illum 1');
-  WriteLn(F, 'Ka 1 1 1');
-  WriteLn(F, 'Kd 1 1 1');
-  WriteLn(F, 'Ks 1 1 1');
+
+  WriteLn(F, 'Ka 0.000 0.000 0.000');
+  WriteLn(F, 'Kd 1.000 1.000 1.000');
+  WriteLn(F, 'Ks 0.000 0.000 0.000');
   WriteLn(F, 'Ns 1000');
+  
   WriteLn(F, 'map_Kd ', TextureName);
 
 
@@ -1068,14 +1071,14 @@ begin
   CloseFile(F);
 end;
 
-procedure ExportToObjFile(const aFileName: String);
 type
   PUsedColorRec = ^TUsedColorRec;
   TUsedColorRec = packed record
     Used: Boolean;
     RealIndex: I32;
   end;
-  
+
+procedure ExportToMonotoneObjFile(const aFileName: String);
 var
   F: TextFile;
   Vertices: TRecords;
@@ -1086,7 +1089,7 @@ var
 
   i, j: Integer;
 begin
-  //AllocConsole; 
+  //AllocConsole;
 
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create;
@@ -1206,14 +1209,160 @@ begin
   Vertices.Free;
   Faces.Free;
   UsedColors.Free;
-  
-  
 end;
 
+
+
+procedure ExportToGreedyObjFile(const aFileName: String);
+var
+  F: TextFile;
+  Vertices: TRecords;
+  Faces: TRecords;
+
+  UsedColor: PUsedColorRec;
+  UsedColors: TRecords;
+
+  i, j: Integer;
+begin
+  //AllocConsole;
+
+  Vertices:= TRecords.Create;
+  Faces:= TRecords.Create;
+  UsedColors:= TRecords.Create;
+
+  BuildGreedy(Vertices, Faces, true);
+  BuildTexture(aFileName);
+  BuildMerterial(aFileName);
+
+  // 사용된 색상만 마킹.
+  for i := 0 to 16*16 - 1 do
+  begin
+    New(UsedColor);
+    UsedColor^.Used := false;
+    UsedColor^.RealIndex := -1;
+    UsedColors.Add(UsedColor);
+  end;
+
+  for i := 0 to Faces.Count - 1 do
+  with PVxMtFace(Faces[i])^ do
+  if (c >= 0) and (c < 16*16) then
+  begin
+    PUsedColorRec(UsedColors[c])^.Used := true;
+  end;
+
+  //WriteLn('-------');
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  with PUsedColorRec(UsedColors[i])^ do
+  if Used then
+  begin
+    //WriteLn('i: ', i, ', RealIndex: ', j, '  -> ', i div 16, ', ', i mod 16); 
+    RealIndex := j;
+    Inc(j);
+  end; 
+
+  AssignFile(F, aFileName);
+  Rewrite(F);
+
+  Writeln(F, '# Voxel Section Editor III Wavefront OBJ Exporter v0.01 - by oranke');
+  Write(F, '# File Created: ');
+  Write(F, DateToStr(Now));
+  WriteLn(F, ' ', TimeToStr(Now));
+  WriteLn(F, '');  
+
+  WriteLn(F, 'mtllib ', ExtractJustName(aFileName) + '.mtl');  
+  WriteLn(F, '');
+
+  for i := 0 to Vertices.Count - 1 do
+  with PVxVertex(Vertices[i])^ do
+    WriteLn(F, Format('v %d.0 %d.0 %d.0', [x, y, z]));
+  WriteLn(F, '# Vertexs ', Vertices.Count);
+  WriteLn(F, '');
+
+  WriteLn(F, 'usemtl material_0');
+  WriteLn(F, '');
+
+  //{
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  if PUsedColorRec(UsedColors[i])^.Used then
+  begin
+    WriteLn(F,
+      Format('vt %.4f %.4f',
+        [
+          (i div 16 + 0.5) / 16,
+          (15 - i mod 16 + 0.5) / 16 // Y축은 뒤집어준다. 
+        ]
+      )
+    );
+    //WriteLn(F, '# ', i div 16, ' ', i mod 16); 
+    Inc(j);
+  end;
+  WriteLn(F, '# Texture Coods ', j); 
+  WriteLn(F, '');
+  
+  for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
+    WriteLn(F,
+      Format('vn %d.0000 %d.0000 %d.0000',
+      //Format('vn %d %d %d',
+        [
+          CUBIC_NORMALS[i][C_x],
+          CUBIC_NORMALS[i][C_y],
+          CUBIC_NORMALS[i][C_z]
+        ]
+      )
+    );
+  WriteLn(F, '# Normals ', High(CUBIC_NORMALS) - Low(CUBIC_NORMALS) +1);
+  WriteLn(F, '');
+
+
+  //}
+  WriteLn(F, 'g object');
+  WriteLn(F, 's off');
+  
+  for i := 0 to Faces.Count - 1 do
+  with PVxGdFace(Faces[i])^ do
+  begin
+    if (c >= 0) and (c < 16*16) then
+      j := PUsedColorRec(UsedColors[c])^.RealIndex +1
+    else
+      j := -1;
+
+    if j < 0 then j := 0;
+
+    //WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
+    //WriteLn(F, Format('f %d %d %d', [v0+1, v1+1, v2+1]));
+    //WriteLn(F, Format('f %d %d %d', [Arr[0]+1, Arr[1]+1, Arr[2]+1]));
+    //WriteLn(F, Format('f %d/%d %d/%d %d/%d', [v0+1, j, v1+1, j, v2+1, j]));
+
+    //WriteLn(F, 's ', i+1);
+    //WriteLn(F, 's off');
+
+    WriteLn(F,
+      Format(
+        'f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d',
+        [
+          v0+1, j, n+1,
+          v1+1, j, n+1,
+          v2+1, j, n+1,
+          v3+1, j, n+1
+        ]
+      )
+    );
+  end;
+
+  WriteLn(F, '');
+
+  CloseFile(F);
+
+  Vertices.Free;
+  Faces.Free;
+  UsedColors.Free;
+end;
 
 
 initialization
 
 finalization
 
-end. 
+end.

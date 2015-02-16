@@ -257,10 +257,20 @@ object FrmEdit3D: TFrmEdit3D
     OnMouseMove = RenderPaintMouseMove
     OnMouseUp = RenderPaintMouseUp
     OnResize = RenderPanelResize
+    object Button1: TButton
+      Left = 8
+      Top = 8
+      Width = 33
+      Height = 25
+      Caption = 'Button1'
+      TabOrder = 0
+      Visible = False
+      OnClick = Button1Click
+    end
   end
   object UpsidePopup: TPopupMenu
-    Left = 8
-    Top = 32
+    Left = 120
+    Top = 40
     object UpsideMenuX: TMenuItem
       Caption = 'X'
       GroupIndex = 1
