@@ -47,9 +47,10 @@ type
     LinkXBtn: TSpeedButton;
     LinkYBtn: TSpeedButton;
     LinkZBtn: TSpeedButton;
-    SpeedButton1: TSpeedButton;
+    OptimizeBtn: TSpeedButton;
     CheckBox1: TCheckBox;
     CheckBox2: TCheckBox;
+    Optimize2Btn: TSpeedButton;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -65,14 +66,15 @@ type
     procedure FormMouseWheel(Sender: TObject; Shift: TShiftState;
       WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure OptimizeBtnClick(Sender: TObject);
+    procedure Optimize2BtnClick(Sender: TObject);
   private
     { Private declarations }
     fDC: HDC; // Device Context
     fRC: HGLRC; // Rendering Context
 
     CubicDrawID : GLuint;
-    MonotoneDrawID : GLuint;
+    OptimizedDrawID : GLuint;
 
   private
     fRotU, fRotV, // X, Y회전을 U, V로 개념변경.
@@ -235,7 +237,7 @@ begin
 
   //------------------
 
-  MonotoneDrawID :=  glGenLists(1);
+  OptimizedDrawID :=  glGenLists(1);
 
   //------------------
 
@@ -253,7 +255,7 @@ destructor TFrmEdit3D.Destroy;
 begin
 
   glDeleteLists(CubicDrawID, 1);
-  glDeleteLists(MonotoneDrawID, 1);
+  glDeleteLists(OptimizedDrawID, 1);
 
   CloseOpenGL(RenderPanel.Handle, fDC, fRC);
 
@@ -341,7 +343,7 @@ begin
   
   if CheckBox1.Checked then
   begin
-    glCallList(MonotoneDrawID);
+    glCallList(OptimizedDrawID);
   end else
   begin
     //glEnable(GL_LIGHT0);
@@ -770,10 +772,78 @@ begin
 end;
 
 
-procedure TFrmEdit3D.SpeedButton1Click(Sender: TObject);
+procedure TFrmEdit3D.Optimize2BtnClick(Sender: TObject);
+var
+  Vertices: TRecords;
+  Faces: TRecords;
+
+  VoxelColor: Voxel_Engine.TVector3f;
+  vp: PVxVertex;
+
+  i, j: I32; 
+begin
+  AllocConsole;
+
+  Vertices:= TRecords.Create;
+  Faces:= TRecords.Create; ;
+
+  //BuildGreedy(Vertices, Faces, false);
+  BuildGreedy(Vertices, Faces, true);
+
+  WriteLn('Vertices ', Vertices.Count);
+  {for i := 0 to Vertices.Count - 1 do
+  with PVxVertex(Vertices[i])^ do
+    WriteLn(Format(' %d, %d %d %d, %d', [i, x, y, z, DupIndex]));}
+
+  WriteLn('Faces ', Faces.Count);
+  {for i := 0 to Faces.Count - 1 do
+  with PVxGdFace(Faces[i])^ do
+    WriteLn(Format(' %d, %d %d %d %d', [i, v0, v1, v2, v3]));}
+
+  // 그리디 드로아이디 생성. 사각의 배열. 
+  glNewList(OptimizedDrawID, GL_COMPILE);
+  glBegin(GL_QUADS);
+
+  for i := 0 to Faces.Count - 1 do
+  begin
+    // 색상.
+    VoxelColor:= GetCorrectColour(PVxMtFace(Faces[i])^.c, RemapColour);
+    glColor3f(
+      VoxelColor.X,
+      VoxelColor.Y,
+      VoxelColor.Z
+    );
+
+    // 노멀
+    with PVxGdFace(Faces[i])^ do
+      glNormal3f(
+        CUBIC_NORMALS[n][0],
+        CUBIC_NORMALS[n][1],
+        CUBIC_NORMALS[n][2]
+      );
+
+    // 버텍스.
+    for j := 0 to 4 - 1 do
+    begin
+      //glVertex3f(vps[j]^.x, vps[j]^.y, vps[j]^.z);
+      vp := Vertices[PVxMtFace(Faces[i])^.Arr[j]];
+      glVertex3f(vp^.x, vp^.y, vp^.z);
+    end;
+  end;
+
+  glEnd();
+  glEndList();
+
+
+  Vertices.Free;
+  Faces.Free;
+//
+end;
+
+procedure TFrmEdit3D.OptimizeBtnClick(Sender: TObject);
 var
   //vps: array [0..2] of PVxVertex;
-  vp: PVxVertex; 
+  vp: PVxVertex;
 
   Vertices: TRecords;
   Faces: TRecords;
@@ -790,8 +860,8 @@ begin
   Vertices:= TRecords.Create;
   Faces:= TRecords.Create; ;
 
-  //BuildMesh(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
-  BuildMesh(Vertices, Faces, true);
+  BuildMonotone(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
+  //BuildMonotone(Vertices, Faces, true);
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);
@@ -815,14 +885,14 @@ begin
 
 
   // 모노톤 드로아이디 생성.
-  glNewList(MonotoneDrawID, GL_COMPILE);
+  glNewList(OptimizedDrawID, GL_COMPILE);
   glBegin(GL_TRIANGLES);
 
   for i := 0 to Faces.Count - 1 do
   begin
     // 색상.
     VoxelColor:=// GetVXLColor(PVxFace(Faces[i])^.c, 0);
-                  GetCorrectColour(PVxFace(Faces[i])^.c, RemapColour);
+                  GetCorrectColour(PVxMtFace(Faces[i])^.c, RemapColour);
     glColor3f(
       VoxelColor.X,
       VoxelColor.Y,
@@ -832,11 +902,11 @@ begin
     {
     // 정점좌표 포인터 얻고
     for j := 0 to 3 - 1 do
-      vps[j] := Vertices[PVxFace(Faces[i])^.Arr[j]];
+      vps[j] := Vertices[PVxMtFace(Faces[i])^.Arr[j]];
     }
 
     // 노멀
-    with PVxFace(Faces[i])^ do
+    with PVxMtFace(Faces[i])^ do
       glNormal3f(
         CUBIC_NORMALS[n][0],
         CUBIC_NORMALS[n][1],
@@ -865,7 +935,7 @@ begin
     for j := 0 to 3 - 1 do
     begin
       //glVertex3f(vps[j]^.x, vps[j]^.y, vps[j]^.z);
-      vp := Vertices[PVxFace(Faces[i])^.Arr[j]];
+      vp := Vertices[PVxMtFace(Faces[i])^.Arr[j]];
       glVertex3f(vp^.x, vp^.y, vp^.z);
     end;
   end;

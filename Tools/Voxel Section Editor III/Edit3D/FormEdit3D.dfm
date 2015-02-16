@@ -213,19 +213,26 @@ object FrmEdit3D: TFrmEdit3D
       ParentShowHint = False
       ShowHint = True
     end
-    object SpeedButton1: TSpeedButton
-      Left = 272
+    object OptimizeBtn: TSpeedButton
+      Left = 260
       Top = 3
       Width = 23
       Height = 22
-      OnClick = SpeedButton1Click
+      OnClick = OptimizeBtnClick
+    end
+    object Optimize2Btn: TSpeedButton
+      Left = 289
+      Top = 3
+      Width = 23
+      Height = 22
+      OnClick = Optimize2BtnClick
     end
     object CheckBox1: TCheckBox
       Left = 328
       Top = 8
       Width = 73
       Height = 17
-      Caption = 'Monotone'
+      Caption = 'Optimized'
       TabOrder = 0
     end
     object CheckBox2: TCheckBox

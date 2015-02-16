@@ -42,13 +42,26 @@ type
       1: (Arr: array [0..2] of I32);
   end;
 
-  PVxFace = ^TVxFace;
-  TVxFace = record
+  // 모노톤 면
+  PVxMtFace = ^TVxMtFace;
+  TVxMtFace = record
     c, n: I32;
     case Integer of
       0: (v0, v1, v2: I32);
       1: (Arr: array [0..2] of I32);
   end;
+
+  // 그리디 면
+  PVxGdFace = ^TVxGdFace;
+  TVxGdFace = record
+    c, n: I32;
+    case Integer of
+      0: (v0, v1, v2, v3: I32);
+      1: (Arr: array [0..3] of I32);
+  end;
+
+
+
 
 
   TObjects = class (TList)
@@ -64,8 +77,12 @@ type
 // 복셀 -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
-procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 
+
+// 복셀 -> Greedy
+// https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/greedy.js
+procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 
 procedure ExportToObjFile(const aFileName: String);
 function GetCubicNormalIndex(const aNormal: TVector3f): I32;
@@ -185,7 +202,7 @@ begin
 end;
 
 
-procedure BuildMesh(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
 var
   dims: array [0..2] of U8;
 
@@ -228,7 +245,7 @@ var
   idx: I32;
   vert: TMeshSide;
   det: I32;
-  facep: PVxFace;
+  facep: PVxMtFace;
 
   //VoxelColor: Voxel_Engine.TVector3f;
   vps: array [0..2] of PVxVertex;
@@ -630,6 +647,33 @@ begin
 
   Polygons.Free;
 
+
+  // 면의 큐빅노멀 설정.
+  for i := 0 to aFaces.Count - 1 do
+  begin
+    facep := aFaces[i];
+    // 정점좌표 포인터 얻고
+    for j := 0 to 3 - 1 do
+      vps[j] := aVertices[facep^.Arr[j]];
+
+    // 노멀. 0->1, 0->2 의 외적 계산.
+    v0 :=
+      MakeVector3f(
+        vps[1]^.x - vps[0]^.x,
+        vps[1]^.y - vps[0]^.y,
+        vps[1]^.z - vps[0]^.z
+      );
+    v1 :=
+      MakeVector3f(
+        vps[2]^.x - vps[0]^.x,
+        vps[2]^.y - vps[0]^.y,
+        vps[2]^.z - vps[0]^.z
+      );
+    Normal := VectorNormalize3f(VectorCrossProduct3f(v0, v1));
+
+    facep^.n := GetCubicNormalIndex(Normal);
+  end;
+  
   if not aEraseDupVt then Exit;
 
   // 중복정점 마킹
@@ -671,13 +715,217 @@ begin
     end;
   end;
 
+end;
+
+
+procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+var
+  dims: array [0..2] of U8;
+
+  d,
+  i, j, k, l, w, h: I32;
+  u, v: I32;
+  x, q: array [0..2] of I32;
+
+  n : I32; 
+
+  a, b, c: I32;
+  vxl: TVoxelUnpacked;
+  
+  mask: array of I32;
+
+  done: Boolean;
+
+  du, dv: array [0..2] of I32;
+
+  vp: PVxVertex;
+  fp: PVxGdFace;   
+
+  vps: array [0..2] of PVxVertex;
+  v0, v1: VectorUtil.TVector3f;
+  Normal: VectorUtil.TVector3f;
+begin
+  with ActiveSection.Tailer do
+  begin
+    dims[0] := XSize;
+    dims[1] := YSize;
+    dims[2] := ZSize;
+  end;
+
+
+  //Sweep over 3-axes
+  d := 0;
+  while d < 3 do
+  begin
+    u := (d+1) mod 3;
+    v := (d+2) mod 3;
+
+    FillChar(x, SizeOf(I32)*3, #0);
+    FillChar(q, SizeOf(I32)*3, #0);
+
+    if Length(mask) < dims[u] * dims[v] then
+      SetLength(mask, dims[u] * dims[v]);
+
+    q[d] := 1;
+    x[d] := -1;
+    while x[d] < dims[d] do
+    begin
+      //Compute mask
+      n := 0;
+      x[v] := 0;
+      while x[v] < dims[v] do
+      begin
+        x[u] := 0;
+        while x[u] < dims[u] do
+        begin
+          a := 0;
+          if 0 <= x[d] then
+          begin
+            ActiveSection.GetVoxel(x[0], x[1], x[2], vxl);
+            if vxl.Used then
+              a := vxl.Colour +1
+          end;
+
+          b := 0;
+          if x[d] < dims[d]-1 then
+          begin
+            ActiveSection.GetVoxel(x[0]+q[0], x[1]+q[1], x[2]+q[2], vxl);
+            if vxl.Used then
+              b := vxl.Colour +1
+          end;
+
+          if Boolean(a) = Boolean(b) then
+            mask[n] := 0
+          else if Boolean(a) then
+            mask[n] := a
+          else
+            mask[n] := -b; 
+
+          Inc(x[u]);
+          Inc(n);
+        end;
+        inc(x[v]);
+      end;
+
+
+      //Increment x[d]
+      Inc(x[d]);
+
+      //Generate mesh for mask using lexicographic ordering
+      n := 0;
+      for j := 0 to dims[v]-1 do
+      begin
+        i := 0;
+        while i < dims[u] do
+        begin
+          c := mask[n];
+          if Boolean(c) then
+          begin
+            //Compute width
+            w := 1;
+            while (c = mask[n+w]) and ((i+w) < dims[u]) do
+              Inc(w);
+            //Compute height (this is slightly awkward
+            done := false;
+            h := 1;
+            while (j+h) < dims[v] do
+            begin
+              for k := 0 to w - 1 do
+              if c <> mask[n+k+h*dims[u]] then
+              begin
+                done := true;
+                Break;
+              end;
+
+              if done then Break;
+              Inc(h);
+            end;
+
+            //Add quad
+            x[u] := i; x[v] := j; 
+
+            FillChar(du, SizeOf(I32)*3, #0);
+            FillChar(dv, SizeOf(I32)*3, #0);
+
+            if c > 0 then
+            begin
+              dv[v] := h;
+              du[u] := w;
+            end else
+            begin
+              c := -c;
+              du[v] := h;
+              dv[u] := w;
+            end;
+
+            l := aVertices.Count; 
+
+            New(vp);
+            vp^.x := x[0];
+            vp^.y := x[1];
+            vp^.z := x[2];
+            vp^.DupIndex := -1; 
+            aVertices.Add(vp);
+
+            New(vp);
+            vp^.x := x[0]+du[0];
+            vp^.y := x[1]+du[1];
+            vp^.z := x[2]+du[2];
+            vp^.DupIndex := -1; 
+            aVertices.Add(vp);
+
+            New(vp);
+            vp^.x := x[0]+du[0]+dv[0];
+            vp^.y := x[1]+du[1]+dv[1];
+            vp^.z := x[2]+du[2]+dv[2];
+            vp^.DupIndex := -1; 
+            aVertices.Add(vp);
+
+            New(vp);
+            vp^.x := x[0]      +dv[0];
+            vp^.y := x[1]      +dv[1];
+            vp^.z := x[2]      +dv[2];
+            vp^.DupIndex := -1; 
+            aVertices.Add(vp);
+
+            New(fp);
+            fp^.c := c-1;
+            fp^.v0 := l;
+            fp^.v1 := l+1;
+            fp^.v2 := l+2;
+            fp^.v3 := l+3;
+            aFaces.Add(fp);
+
+
+            //Zero-out mask
+            for l := 0 to h - 1 do
+            for k := 0 to w - 1 do
+              mask[n+k+l*dims[u]] := 0;
+
+            //Increment counters and continue
+            inc(i, w);
+            Inc(n, w);
+          end else
+          begin
+            Inc(i);
+            Inc(n);
+          end;
+        end;
+
+      end;
+    end;
+
+    Inc(d);
+  end;
+
+
   // 면의 큐빅노멀 설정.
   for i := 0 to aFaces.Count - 1 do
   begin
-    facep := aFaces[i];
+    fp := aFaces[i];
     // 정점좌표 포인터 얻고
     for j := 0 to 3 - 1 do
-      vps[j] := aVertices[facep^.Arr[j]];
+      vps[j] := aVertices[fp^.Arr[j]];
 
     // 노멀. 0->1, 0->2 의 외적 계산.
     v0 :=
@@ -694,8 +942,51 @@ begin
       );
     Normal := VectorNormalize3f(VectorCrossProduct3f(v0, v1));
 
-    facep^.n := GetCubicNormalIndex(Normal);
+    fp^.n := GetCubicNormalIndex(Normal);
   end;
+
+  if not aEraseDupVt then Exit;
+
+  // 중복정점 마킹
+  for i := 0 to aVertices.Count-2 do
+  for j := i+1 to aVertices.Count - 1 do
+  if PVxVertex(aVertices[j])^.DupIndex < 0 then
+  if CompareMem(@TVxVertex(aVertices[i]^).Arr, @TVxVertex(aVertices[j]^).Arr, SizeOf(I32) * 3) then
+    PVxVertex(aVertices[j])^.DupIndex := i;
+
+  // 중복 정점을 사용한 면의 정점 인덱스 수정.
+  for i := 0 to aFaces.Count - 1 do
+  begin
+    fp := aFaces[i];
+    for j := 0 to 4 - 1 do
+    begin
+      vp := aVertices[fp^.Arr[j]];
+      if vp^.DupIndex >= 0 then
+        fp^.Arr[j] := vp^.DupIndex;
+    end;
+  end;
+
+  // 중복 정점 제거. 해당 인덱스를 가진 면의 정점인덱스 감소.
+  for i := aVertices.Count-1 downto 0 do
+  begin
+    vp := aVertices[i];
+    if vp^.DupIndex >= 0 then
+    begin
+
+      for j := 0 to aFaces.Count - 1 do
+      begin
+        fp := aFaces[j];
+        for k := 0 to 4 - 1 do
+        if fp^.Arr[k] > i then
+        begin
+          Dec(fp^.Arr[k]);
+        end;
+      end;
+
+      aVertices.Delete(i);
+    end;
+  end;
+
 end;
 
 function ExtractJustName(const FileName: String): String;
@@ -801,7 +1092,7 @@ begin
   Faces:= TRecords.Create;
   UsedColors:= TRecords.Create;
 
-  BuildMesh(Vertices, Faces, true);
+  BuildMonotone(Vertices, Faces, true);
   BuildTexture(aFileName);
   BuildMerterial(aFileName); 
 
@@ -815,7 +1106,7 @@ begin
   end;
 
   for i := 0 to Faces.Count - 1 do
-  with PVxFace(Faces[i])^ do
+  with PVxMtFace(Faces[i])^ do
   if (c >= 0) and (c < 16*16) then
   begin
     PUsedColorRec(UsedColors[c])^.Used := true;
@@ -889,7 +1180,7 @@ begin
 
   //}
   for i := 0 to Faces.Count - 1 do
-  with PVxFace(Faces[i])^ do
+  with PVxMtFace(Faces[i])^ do
   begin
     if (c >= 0) and (c < 16*16) then
       j := PUsedColorRec(UsedColors[c])^.RealIndex +1
