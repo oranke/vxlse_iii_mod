@@ -269,8 +269,8 @@ object FrmEdit3D: TFrmEdit3D
     end
   end
   object UpsidePopup: TPopupMenu
-    Left = 120
-    Top = 40
+    Left = 48
+    Top = 32
     object UpsideMenuX: TMenuItem
       Caption = 'X'
       GroupIndex = 1

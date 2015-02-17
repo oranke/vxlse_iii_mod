@@ -398,6 +398,19 @@ begin
   if CheckBox1.Checked then
   begin
     glCallList(OptimizedDrawID);
+    {
+    if fHitIndex >= 0 then
+    begin
+      i := fHitIndex;
+      glPushMatrix();
+
+      glTranslatef(fSkinCells[i].X, fSkinCells[i].Y, fSkinCells[i].Z);
+      glColor4f(1, 0, 0, 0.5);
+      glCallList(CubicDrawID);
+
+      glPopMatrix;
+    end;
+    }
   end else
   begin
     //glEnable(GL_LIGHT0);
