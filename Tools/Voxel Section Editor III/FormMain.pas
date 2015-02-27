@@ -339,6 +339,10 @@ type
     ImportSectionBitmap1: TMenuItem;
     N26: TMenuItem;
     ExportOBJ1: TMenuItem;
+    LoadPallette1: TMenuItem;
+    SavePallette1: TMenuItem;
+    EditPallette1: TMenuItem;
+    N27: TMenuItem;
     procedure CCFilefront1Click(Sender: TObject);
     procedure CNCNZcom1Click(Sender: TObject);
     procedure ProjectSVN1Click(Sender: TObject);
@@ -511,6 +515,11 @@ type
     procedure BarReopenClick(Sender: TObject);
     procedure iberianSunPalette1Click(Sender: TObject);
     procedure RedAlert2Palette1Click(Sender: TObject);
+
+    procedure LoadPallette1Click(Sender: TObject);
+    procedure SavePallette1Click(Sender: TObject);
+    procedure EditPallette1Click(Sender: TObject);
+
     procedure LoadPalettes;
     procedure blank1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -3424,6 +3433,31 @@ begin
   RefreshAll;
 end;
 
+procedure TFrmMain.LoadPallette1Click(Sender: TObject);
+begin
+  OpenVXLDialog.Filter:= 'Pallette (*.PAL)|*.pal';
+  if not OpenVXLDialog.Execute then Exit;
+
+  LoadPaletteFromFile(OpenVXLDialog.FileName);
+  cnvPalette.Repaint;
+  RefreshAll;
+end;
+
+procedure TFrmMain.SavePallette1Click(Sender: TObject);
+begin
+  SaveVXLDialog.DefaultExt:= 'pal';
+  SaveVXLDialog.Filter:= 'Pallette (*.PAL)|*.pal';
+  if not SaveVXLDialog.Execute then Exit;
+
+  SavePaletteToFile(SaveVXLDialog.FileName);
+end;
+
+procedure TFrmMain.EditPallette1Click(Sender: TObject);
+begin
+//
+end;
+
+
 procedure TFrmMain.LoadPalettes;
 var
   f: TSearchRec;
@@ -3714,7 +3748,7 @@ begin
               if iv >= Bmp.Height then
                 Break;
 
-              v.Colour:=GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
               case ActiveSection.View[0].getDir of
                 dirTowards: ActiveSection.SetVoxel(ActiveSection.X, iu, ZSize - iv - 1, v);
@@ -3735,7 +3769,7 @@ begin
               if iv >= Bmp.Height then
                 Break;
 
-              v.Colour:=GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
               case ActiveSection.View[0].getDir of
                 dirTowards: ActiveSection.SetVoxel(iu, ActiveSection.Y, ZSize - iv - 1, v);
@@ -3757,7 +3791,7 @@ begin
               if iv >= Bmp.Height then
                 Break;
 
-              v.Colour:=GetRValue(Bmp.Canvas.Pixels[iu, iv]);
+              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
               case ActiveSection.View[0].getDir of
                 dirTowards: ActiveSection.SetVoxel(iu, YSize - iv - 1, ActiveSection.Z, v);
@@ -4723,6 +4757,7 @@ begin
   if @Application.OnIdle = nil then
     Application.OnIdle:=Idle;
 end;
+
 
 procedure TFrmMain.NewAutoNormals1Click(Sender: TObject);
 begin
