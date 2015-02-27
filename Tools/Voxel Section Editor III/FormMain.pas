@@ -3414,12 +3414,14 @@ procedure TFrmMain.iberianSunPalette1Click(Sender: TObject);
 begin
   LoadPaletteFromFile(ExtractFileDir(ParamStr(0)) + '\palettes\TS\unittem.pal');
   cnvPalette.Repaint;
+  RefreshAll;
 end;
 
 procedure TFrmMain.RedAlert2Palette1Click(Sender: TObject);
 begin
   LoadPaletteFromFile(ExtractFileDir(ParamStr(0)) + '\palettes\RA2\unittem.pal');
   cnvPalette.Repaint;
+  RefreshAll;
 end;
 
 procedure TFrmMain.LoadPalettes;
@@ -3428,7 +3430,7 @@ var
   path: string;
   item: TMenuItem;
 begin
-  //Exit;
+  Exit;
 
 {$IFDEF DEBUG_FILE}
   DebugFile.Add('FrmMain: LoadPalettes');
