@@ -52,6 +52,7 @@ type
     CheckBox2: TCheckBox;
     Optimize2Btn: TSpeedButton;
     Button1: TButton;
+    CheckBox3: TCheckBox;
     procedure RenderPaintMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure RenderPaintMouseMove(Sender: TObject; Shift: TShiftState; X,
@@ -855,7 +856,7 @@ begin
   Faces:= TRecords.Create; ;
 
   //BuildGreedy(Vertices, Faces, false);
-  BuildGreedy(Vertices, Faces, true);
+  BuildGreedy(Vertices, Faces, true, CheckBox3.Checked);
 
   WriteLn('Vertices ', Vertices.Count);
   {for i := 0 to Vertices.Count - 1 do
@@ -928,19 +929,21 @@ begin
   Faces:= TRecords.Create; ;
 
   //BuildMonotone(Vertices, Faces, false); // 중복정점검사는 시간이 걸리므로... 여기서는 제외.
-  BuildMonotone(Vertices, Faces, true);
+  BuildMonotone(Vertices, Faces, true, CheckBox3.Checked);
 
   WriteLn('SkinCells ', fSkinCellCount, ' -> ', fSkinCellCount*6*2, ' faces');
   WriteLn('Vertices ', Vertices.Count);
   {j:=0;
   for i := 0 to Vertices.Count - 1 do
   begin
-    yp := Vertices[i];
-    WriteLn(Format(' %d, %d %d %d, %d', [i, yp^[0], yp^[1], yp^[2], yp^[3]]));
-    if yp^[3] >= 0 then
+    vp := Vertices[i];
+    //WriteLn(Format(' %d, %d %d %d, %d', [i, yp^[0], yp^[1], yp^[2], yp^[3]]));
+    if vp^.DupIndex <> 0 then
       Inc(j);
   end;
-  WriteLn('Dup Vt : ', j);}
+  WriteLn('Extrude Vt : ', j);}
+
+  
   WriteLn('Faces ', Faces.Count);
   {
   for i := 0 to Faces.Count - 1 do

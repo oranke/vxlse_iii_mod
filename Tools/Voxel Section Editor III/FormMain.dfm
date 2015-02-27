@@ -3,7 +3,7 @@ object FrmMain: TFrmMain
   Top = 0
   ActiveControl = pnlActiveColour
   Caption = 'Application Title'
-  ClientHeight = 802
+  ClientHeight = 822
   ClientWidth = 862
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -29,23 +29,23 @@ object FrmMain: TFrmMain
     Left = 0
     Top = 0
     Width = 862
-    Height = 783
+    Height = 803
     Align = alClient
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitHeight = 763
+    ExplicitHeight = 783
     object LeftPanel: TPanel
       Left = 1
       Top = 26
       Width = 152
-      Height = 756
+      Height = 776
       Align = alLeft
       TabOrder = 0
-      ExplicitHeight = 736
+      ExplicitHeight = 756
       object lblSection: TLabel
         Left = 1
         Top = 1
-        Width = 42
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Section'
@@ -57,11 +57,12 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 42
       end
       object lblTools: TLabel
         Left = 1
         Top = 55
-        Width = 32
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Tools'
@@ -73,11 +74,12 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 32
       end
       object lblpalette: TLabel
         Left = 1
         Top = 257
-        Width = 39
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Palette'
@@ -89,6 +91,7 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 39
       end
       object cnvPalette: TPaintBox
         Left = 1
@@ -102,7 +105,7 @@ object FrmMain: TFrmMain
       object lblLayer: TLabel
         Left = 1
         Top = 177
-        Width = 37
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Layers'
@@ -114,11 +117,12 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 37
       end
       object lblBrush: TLabel
         Left = 1
         Top = 129
-        Width = 33
+        Width = 150
         Height = 13
         Align = alTop
         Caption = '  Brush'
@@ -130,6 +134,7 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 33
       end
       object Panel3: TPanel
         Left = 1
@@ -145,7 +150,7 @@ object FrmMain: TFrmMain
           Width = 137
           Height = 21
           ImeName = 'Microsoft IME 2010'
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 0
           OnChange = SectionComboChange
         end
@@ -1180,10 +1185,10 @@ object FrmMain: TFrmMain
       Left = 656
       Top = 26
       Width = 205
-      Height = 756
+      Height = 776
       Align = alRight
       TabOrder = 1
-      ExplicitHeight = 736
+      ExplicitHeight = 756
       object CnvView2: TPaintBox
         Left = 1
         Top = 230
@@ -1209,7 +1214,7 @@ object FrmMain: TFrmMain
       object lblView1: TLabel
         Left = 1
         Top = 1
-        Width = 63
+        Width = 203
         Height = 13
         Align = alTop
         Caption = '  View : Right'
@@ -1223,11 +1228,12 @@ object FrmMain: TFrmMain
         ParentFont = False
         PopupMenu = mnuDirectionPopup
         OnClick = lblView1Click
+        ExplicitWidth = 63
       end
       object lblView2: TLabel
         Left = 1
         Top = 217
-        Width = 57
+        Width = 203
         Height = 13
         Align = alTop
         Caption = '  View : Top'
@@ -1241,11 +1247,12 @@ object FrmMain: TFrmMain
         ParentFont = False
         PopupMenu = mnuDirectionPopup
         OnClick = lblView2Click
+        ExplicitWidth = 57
       end
       object lbl3dview: TLabel
         Left = 1
         Top = 433
-        Width = 46
+        Width = 203
         Height = 13
         Align = alTop
         Caption = '  3D View'
@@ -1257,6 +1264,7 @@ object FrmMain: TFrmMain
         Font.Style = []
         ParentColor = False
         ParentFont = False
+        ExplicitWidth = 46
       end
       object OGL3DPreview: TPanel
         Left = 1
@@ -1477,14 +1485,14 @@ object FrmMain: TFrmMain
       Left = 153
       Top = 26
       Width = 503
-      Height = 756
+      Height = 776
       Align = alClient
       TabOrder = 2
-      ExplicitHeight = 736
+      ExplicitHeight = 756
       object lblView0: TLabel
         Left = 1
         Top = 1
-        Width = 98
+        Width = 501
         Height = 13
         Align = alTop
         Caption = '  Editing View : Back'
@@ -1497,12 +1505,13 @@ object FrmMain: TFrmMain
         ParentColor = False
         ParentFont = False
         PopupMenu = mnuDirectionPopup
+        ExplicitWidth = 98
       end
       object CnvView0: TPaintBox
         Left = 1
         Top = 14
         Width = 485
-        Height = 725
+        Height = 745
         Align = alClient
         PopupMenu = MainViewPopup
         OnMouseDown = CnvView0MouseDown
@@ -1511,7 +1520,6 @@ object FrmMain: TFrmMain
         OnPaint = CnvView0Paint
         ExplicitLeft = 0
         ExplicitTop = 8
-        ExplicitHeight = 727
       end
       object TopBarImageHolder: TImage
         Left = 0
@@ -4196,7 +4204,7 @@ object FrmMain: TFrmMain
         Left = 486
         Top = 14
         Width = 16
-        Height = 725
+        Height = 745
         Align = alRight
         Ctl3D = False
         Kind = sbVertical
@@ -4205,17 +4213,17 @@ object FrmMain: TFrmMain
         Position = 50
         TabOrder = 0
         OnChange = ScrollBar1Change
-        ExplicitHeight = 705
+        ExplicitHeight = 725
       end
       object Panel5: TPanel
         Left = 1
-        Top = 739
+        Top = 759
         Width = 501
         Height = 16
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 719
+        ExplicitTop = 739
         object ScrollBar1: TScrollBar
           Left = 0
           Top = 0
@@ -4418,7 +4426,7 @@ object FrmMain: TFrmMain
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Top = 783
+    Top = 803
     Width = 862
     Height = 19
     Panels = <
@@ -4434,7 +4442,7 @@ object FrmMain: TFrmMain
       item
         Width = 50
       end>
-    ExplicitTop = 763
+    ExplicitTop = 783
   end
   object MainMenu1: TMainMenu
     Images = ImageList1
@@ -5182,7 +5190,7 @@ object FrmMain: TFrmMain
     Left = 257
     Top = 98
     Bitmap = {
-      494C200627002C00440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C200627002C004C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       000000000000360000002800000010000000C0020000010020000000000000B0
       00000000000000000000000000000000000090270800A0000000000000000000
       0000408A0700900000000000000000000000D09007009C000000000000000000
@@ -6855,7 +6863,7 @@ object FrmMain: TFrmMain
     Left = 288
     Top = 96
     Bitmap = {
-      494C200606000900440020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C2006060009004C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000200000002001000001002000000000000090
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

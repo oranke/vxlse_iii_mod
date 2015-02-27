@@ -4,7 +4,9 @@
  Date:      2015-02-12
  Purpose:
  History:
------------------------------------------------------------------------------}
+ -----------------------------------------------------------------------------}
+
+
 
 unit ExportMesh;
 
@@ -79,12 +81,12 @@ function GetCubicNormalIndex(const aNormal: TVector3f): I32;
 // 복셀 -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
-procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 
 
 // 복셀 -> Greedy
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/greedy.js
-procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 
 procedure ExportToMonotoneObjFile(const aFileName: String);
 procedure ExportToGreedyObjFile(const aFileName: String);
@@ -202,8 +204,29 @@ begin
   Result := -1;
 end;
 
+function IsSkillCell(const ix, iy, iz: I32): Boolean;
+var
+  v: TVoxelUnpacked;
+begin
+  Result := false;
 
-procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+  ActiveSection.GetVoxel(ix, iy, iz, v);
+
+  if v.Used then
+  if CheckFace(ActiveSection, ix, iy + 1, iz) or
+    CheckFace(ActiveSection, ix, iy - 1, iz) or
+    CheckFace(ActiveSection, ix, iy, iz + 1) or
+    CheckFace(ActiveSection, ix, iy, iz - 1) or
+    CheckFace(ActiveSection, ix - 1, iy, iz) or
+    CheckFace(ActiveSection, ix + 1, iy, iz) then
+  begin
+    Result := true;
+    Exit;
+  end;
+end;
+
+
+procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 var
   dims: array [0..2] of U8;
 
@@ -234,7 +257,7 @@ var
   p_l, p_r, p_c, r_l, r_r, r_c: I32;
   flipped: Boolean;
 
-  z: TMeshSide; 
+  z: TMeshSide;
 
   vp: PVxVertex;
 
@@ -252,7 +275,7 @@ var
   vps: array [0..2] of PVxVertex;
   v0, v1: VectorUtil.TVector3f;
   Normal: VectorUtil.TVector3f;
-  
+
 begin
   Polygons:= TObjects.Create;
 
@@ -321,6 +344,8 @@ begin
           begin
             ActiveSection.GetVoxel(x[0], x[1], x[2], vxl);
             if vxl.Used then
+            // 2015-02-27. 옵셋위치 방향이 실제 스킨일때만 처리 
+            if (not aChkSkin) or CheckFace(ActiveSection, x[0]+q[0], x[1]+q[1], x[2]+q[2]) then
               a := vxl.Colour +1
           end;
 
@@ -329,6 +354,8 @@ begin
           begin
             ActiveSection.GetVoxel(x[0]+q[0], x[1]+q[1], x[2]+q[2], vxl);
             if vxl.Used then
+            // 2015-02-27. 옵셋위치에서 기준방향쪽이 실제 스킨일때만 처리. 
+            if (not aChkSkin) or CheckFace(ActiveSection, x[0], x[1], x[2]) then
               b := vxl.Colour +1
           end;
 
@@ -674,7 +701,7 @@ begin
 
     facep^.n := GetCubicNormalIndex(Normal);
   end;
-  
+
   if not aEraseDupVt then Exit;
 
   // 중복정점 마킹
@@ -716,10 +743,12 @@ begin
     end;
   end;
 
+
+  
 end;
 
 
-procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt: Boolean);
+procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 var
   dims: array [0..2] of U8;
 
@@ -728,11 +757,11 @@ var
   u, v: I32;
   x, q: array [0..2] of I32;
 
-  n : I32; 
+  n : I32;
 
   a, b, c: I32;
   vxl: TVoxelUnpacked;
-  
+
   mask: array of I32;
 
   done: Boolean;
@@ -740,7 +769,7 @@ var
   du, dv: array [0..2] of I32;
 
   vp: PVxVertex;
-  fp: PVxGdFace;   
+  fp: PVxGdFace;
 
   vps: array [0..2] of PVxVertex;
   v0, v1: VectorUtil.TVector3f;
@@ -767,6 +796,8 @@ begin
     if Length(mask) < dims[u] * dims[v] then
       SetLength(mask, dims[u] * dims[v]);
 
+    //for i:=0 to Length(mask)-1 do mask[i] := 0; 
+      
     q[d] := 1;
     x[d] := -1;
     while x[d] < dims[d] do
@@ -784,6 +815,9 @@ begin
           begin
             ActiveSection.GetVoxel(x[0], x[1], x[2], vxl);
             if vxl.Used then
+            // 2015-02-27. 옵셋위치 방향이 실제 스킨일때만 처리 
+            if (not aChkSkin) or CheckFace(ActiveSection, x[0]+q[0], x[1]+q[1], x[2]+q[2]) then
+            //if CheckFace(ActiveSection, x[0], x[1], x[2]+1) then
               a := vxl.Colour +1
           end;
 
@@ -792,6 +826,8 @@ begin
           begin
             ActiveSection.GetVoxel(x[0]+q[0], x[1]+q[1], x[2]+q[2], vxl);
             if vxl.Used then
+            // 2015-02-27. 옵셋위치에서 기준방향쪽이 실제 스킨일때만 처리. 
+            if (not aChkSkin) or CheckFace(ActiveSection, x[0], x[1], x[2]) then
               b := vxl.Colour +1
           end;
 
@@ -1095,7 +1131,7 @@ begin
   Faces:= TRecords.Create;
   UsedColors:= TRecords.Create;
 
-  BuildMonotone(Vertices, Faces, true);
+  BuildMonotone(Vertices, Faces, true, true);
   BuildTexture(aFileName);
   BuildMerterial(aFileName); 
 
@@ -1230,7 +1266,7 @@ begin
   Faces:= TRecords.Create;
   UsedColors:= TRecords.Create;
 
-  BuildGreedy(Vertices, Faces, true);
+  BuildGreedy(Vertices, Faces, true, true);
   BuildTexture(aFileName);
   BuildMerterial(aFileName);
 
@@ -1366,3 +1402,6 @@ initialization
 finalization
 
 end.
+
+
+

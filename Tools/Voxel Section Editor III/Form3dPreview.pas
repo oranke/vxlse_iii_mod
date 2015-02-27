@@ -909,7 +909,6 @@ begin
               VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No].Position.Z:=(MinBounds.Z + (Z * Scale.Z));
               VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No].Color:=v.Colour;
               VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No].Normal:=v.Normal;
-
               {
               // by oranke. Ω∫≈≤ºø ∞·¡§.
               with VoxelBoxGroup3D.Section[Section].Box[VoxelBox_No] do
@@ -923,7 +922,6 @@ begin
                   end;
               end;
               }
-
               Inc(VoxelBox_No);
 
             end;

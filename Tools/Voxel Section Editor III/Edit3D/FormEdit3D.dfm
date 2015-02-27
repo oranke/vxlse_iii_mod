@@ -173,7 +173,7 @@ object FrmEdit3D: TFrmEdit3D
     end
     object LinkXBtn: TSpeedButton
       Tag = 1
-      Left = 173
+      Left = 154
       Top = 3
       Width = 23
       Height = 22
@@ -187,7 +187,7 @@ object FrmEdit3D: TFrmEdit3D
     end
     object LinkYBtn: TSpeedButton
       Tag = 1
-      Left = 196
+      Left = 177
       Top = 3
       Width = 23
       Height = 22
@@ -201,7 +201,7 @@ object FrmEdit3D: TFrmEdit3D
     end
     object LinkZBtn: TSpeedButton
       Tag = 1
-      Left = 219
+      Left = 200
       Top = 3
       Width = 23
       Height = 22
@@ -214,34 +214,42 @@ object FrmEdit3D: TFrmEdit3D
       ShowHint = True
     end
     object OptimizeBtn: TSpeedButton
-      Left = 260
+      Left = 238
       Top = 3
       Width = 23
       Height = 22
       OnClick = OptimizeBtnClick
     end
     object Optimize2Btn: TSpeedButton
-      Left = 289
+      Left = 267
       Top = 3
       Width = 23
       Height = 22
       OnClick = Optimize2BtnClick
     end
     object CheckBox1: TCheckBox
-      Left = 328
-      Top = 8
+      Left = 337
+      Top = 6
       Width = 73
       Height = 17
       Caption = 'Optimized'
       TabOrder = 0
     end
     object CheckBox2: TCheckBox
-      Left = 407
-      Top = 8
+      Left = 416
+      Top = 6
       Width = 73
       Height = 17
       Caption = 'Wireframe'
       TabOrder = 1
+    end
+    object CheckBox3: TCheckBox
+      Left = 293
+      Top = 6
+      Width = 41
+      Height = 17
+      Caption = 'Skin'
+      TabOrder = 2
     end
   end
   object RenderPanel: TPanel
