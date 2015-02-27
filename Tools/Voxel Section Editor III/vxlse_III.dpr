@@ -6,7 +6,6 @@ program vxlse_III;
 
 uses
   FastMM4,
-
   Forms,
   Voxel_Engine in 'Voxel_Engine.pas',
   ogl3dview_engine in 'ogl3dview_engine.pas',

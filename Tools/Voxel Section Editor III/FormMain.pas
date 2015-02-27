@@ -601,6 +601,7 @@ uses
   OGLUtil,
 
   FormEdit3D,
+  FormEditPalette, 
   ExportMesh,
 
   FormHeaderUnit, LoadForm, FormNewSectionSizeUnit, FormPalettePackAbout, HVA,
@@ -3454,6 +3455,15 @@ end;
 
 procedure TFrmMain.EditPallette1Click(Sender: TObject);
 begin
+  with TTFrmEditPallette.Create(nil) do
+  try
+    if not ShowModal = mrOK then Exit; 
+
+    cnvPalette.Repaint;
+    RefreshAll;
+  finally
+    Free; 
+  end;
 //
 end;
 

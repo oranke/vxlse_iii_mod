@@ -4754,16 +4754,15 @@ object FrmMain: TFrmMain
         Caption = '-'
       end
       object LoadPallette1: TMenuItem
-        Caption = 'Load Pallette'
+        Caption = 'Load Palette'
         OnClick = LoadPallette1Click
       end
       object SavePallette1: TMenuItem
-        Caption = 'Save Pallette'
+        Caption = 'Save Palette'
         OnClick = SavePallette1Click
       end
       object EditPallette1: TMenuItem
-        Caption = 'Edit Pallette'
-        Enabled = False
+        Caption = 'Edit Palette'
         OnClick = EditPallette1Click
       end
       object N18: TMenuItem
