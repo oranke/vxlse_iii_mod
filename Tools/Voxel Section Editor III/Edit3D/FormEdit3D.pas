@@ -961,8 +961,8 @@ begin
   for i := 0 to Faces.Count - 1 do
   begin
     // 색상.
-    VoxelColor:=// GetVXLColor(PVxFace(Faces[i])^.c, 0);
-                  GetCorrectColour(PVxMtFace(Faces[i])^.c, RemapColour);
+    VoxelColor:= //GetVXLColor(PVxFace(Faces[i])^.c, 0);
+                 GetCorrectColour(PVxMtFace(Faces[i])^.c, RemapColour);
     glColor3f(
       VoxelColor.X,
       VoxelColor.Y,

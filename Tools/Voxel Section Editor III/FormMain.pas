@@ -3459,7 +3459,8 @@ begin
   try
     if not ShowModal = mrOK then Exit; 
 
-    cnvPalette.Repaint;
+    //cnvPalette.Repaint;
+    PaintPalette(cnvPalette, true);
     RefreshAll;
   finally
     Free; 

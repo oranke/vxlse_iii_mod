@@ -35,12 +35,15 @@ type
     SelectButton: TButton;
     ImportButton: TButton;
     ColorDialog1: TColorDialog;
+    OpenDialog1: TOpenDialog;
     procedure cnvPaletteMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
     procedure cnvPalettePaint(Sender: TObject);
     procedure BtOKClick(Sender: TObject);
     procedure Image1MouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure SelectButtonClick(Sender: TObject);
+    procedure ImportButtonClick(Sender: TObject);
   private
     { Private declarations }
     fEditPalette: TPalette;
@@ -154,7 +157,7 @@ procedure TTFrmEditPallette.Image1MouseUp(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
   fEditPalette[fActiveColour] := Image1.Canvas.Pixels[x, y];
-  PaintPalette(); 
+  PaintPalette();
 //
 end;
 
@@ -164,6 +167,80 @@ begin
   PaintPalette();
 //
 end;
+
+
+procedure TTFrmEditPallette.SelectButtonClick(Sender: TObject);
+begin
+  ColorDialog1.Color := fEditPalette[fActiveColour];
+  if ColorDialog1.Execute then
+    fEditPalette[fActiveColour] := ColorDialog1.Color;
+  PaintPalette(); 
+//
+end;
+
+procedure TTFrmEditPallette.ImportButtonClick(Sender: TObject);
+var
+  Pal: PLogPalette;
+  //HPal: hPalette;
+  Bmp: TBitmap;
+  NewColor: TColor;
+
+  BitmapPalEntries: DWORD;
+  i, j: Integer;
+
+  function IsBasicColor(const aColor: TColor): Boolean;
+  var
+    m: Integer;
+  begin
+    Result := false;
+    for m := 0 to 16 - 1 do
+    if fEditPalette[m] = aColor then
+    begin
+      Result := true;
+      Exit;
+    end;
+
+  end;
+begin
+  OpenDialog1.Filter:= 'Bitmap|*.bmp';
+  if not OpenDialog1.Execute then Exit;
+
+  Bmp := TBitmap.Create;
+  GetMem( Pal, Sizeof( TLogPalette ) + Sizeof( TPaletteEntry ) * 255 );
+  try
+    Bmp.LoadFromFile(OpenDialog1.FileName);
+
+    Pal^.palVersion := $300;
+    Pal^.palNumEntries := 256;
+
+    BitmapPalEntries := GetPaletteEntries( Bmp.Palette, 0, 256, Pal^.palPalEntry[ 0 ] );
+
+    // 0~15 까지는 기본색상. 16~31 까지는 팀색상.
+    // 새로운 팔래트값이 기존 색상에 존재하지 않는 경우만 추가해 간다.
+    j := 32;
+    for i := 0 to BitmapPalEntries - 1 do
+    begin
+      //fEditPalette[j] :=
+      NewColor :=
+        Pal^.PalPalEntry[ i ].PeBlue shl 16 +
+        Pal^.PalPalEntry[ i ].PeGreen shl 8 +
+        Pal^.PalPalEntry[ i ].PeRed;
+
+      if IsBasicColor(NewColor) then Continue;
+      fEditPalette[j] := NewColor; 
+      Inc(j);
+
+      if j >= Length(fEditPalette) then Break;
+    end;
+  finally
+    Bmp.Free;
+    FreeMem(Pal);
+  end;
+  
+  PaintPalette();
+//
+end;
+
 
 
 

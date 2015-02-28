@@ -3583,6 +3583,7 @@ object TFrmEditPallette: TTFrmEditPallette
     Caption = 'Select'
     TabOrder = 3
     TabStop = False
+    OnClick = SelectButtonClick
   end
   object ImportButton: TButton
     Left = 85
@@ -3592,9 +3593,15 @@ object TFrmEditPallette: TTFrmEditPallette
     Caption = 'Import'
     TabOrder = 4
     TabStop = False
+    OnClick = ImportButtonClick
   end
   object ColorDialog1: TColorDialog
+    Options = [cdFullOpen]
     Left = 8
+    Top = 8
+  end
+  object OpenDialog1: TOpenDialog
+    Left = 40
     Top = 8
   end
 end
