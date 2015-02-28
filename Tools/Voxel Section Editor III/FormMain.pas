@@ -3460,7 +3460,7 @@ begin
     if not ShowModal = mrOK then Exit; 
 
     //cnvPalette.Repaint;
-    PaintPalette(cnvPalette, true);
+    PaintPalette(Self.cnvPalette, true);
     RefreshAll;
   finally
     Free; 
