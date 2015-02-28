@@ -343,6 +343,7 @@ type
     SavePallette1: TMenuItem;
     EditPallette1: TMenuItem;
     N27: TMenuItem;
+    ImportSectionHeightMap1: TMenuItem;
     procedure CCFilefront1Click(Sender: TObject);
     procedure CNCNZcom1Click(Sender: TObject);
     procedure ProjectSVN1Click(Sender: TObject);
@@ -540,6 +541,7 @@ type
     procedure PasteFull1Click(Sender: TObject);
     procedure Paste1Click(Sender: TObject);
     procedure ImportSectionBitmap1Click(Sender: TObject);
+    procedure ImportSectionHeightMap1Click(Sender: TObject);
 
     function LoadCScheme: integer;
     procedure blank2Click(Sender: TObject);
@@ -3728,9 +3730,7 @@ end;
 procedure TFrmMain.ImportSectionBitmap1Click(Sender: TObject);
 var
   Bmp: TBitmap;
-  //sx, sy: Integer;
   iu, iv: Integer;
-
   v: TVoxelUnpacked;
 begin
   OpenVXLDialog.Filter:= 'Bitmap|*.bmp';
@@ -3748,69 +3748,63 @@ begin
 
     case ActiveSection.View[0].GetOrient of
       oriX:
-        with ActiveSection.Tailer do
-          for iu:=0 to YSize - 1 do
-          begin
-            if iu >= Bmp.Width then
-              Break;
+      with ActiveSection.Tailer do
+      for iu:=0 to YSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
 
-            for iv:=0 to ZSize - 1 do
-            begin
-              if iv >= Bmp.Height then
-                Break;
+        for iv:=0 to ZSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
 
-              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
+          v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
-              case ActiveSection.View[0].getDir of
-                dirTowards: ActiveSection.SetVoxel(ActiveSection.X, iu, ZSize - iv - 1, v);
-                dirAway: ActiveSection.SetVoxel(ActiveSection.X, YSize - iu - 1, ZSize - iv - 1, v);
-              end;
-            end;
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(ActiveSection.X, iu, ZSize - iv - 1, v);
+            dirAway: ActiveSection.SetVoxel(ActiveSection.X, YSize - iu - 1, ZSize - iv - 1, v);
           end;
+        end;
+      end;
 
       oriY:
-        with ActiveSection.Tailer do
-          for iu:=0 to XSize - 1 do
-          begin
-            if iu >= Bmp.Width then
-              Break;
+      with ActiveSection.Tailer do
+      for iu:=0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
 
-            for iv:=0 to ZSize - 1 do
-            begin
-              if iv >= Bmp.Height then
-                Break;
+        for iv:=0 to ZSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
 
-              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
+          v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
-              case ActiveSection.View[0].getDir of
-                dirTowards: ActiveSection.SetVoxel(iu, ActiveSection.Y, ZSize - iv - 1, v);
-                dirAway: ActiveSection.SetVoxel(XSize - iu - 1, ActiveSection.Y, ZSize - iv - 1, v);
-              end;
-
-            end;
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, ActiveSection.Y, ZSize - iv - 1, v);
+            dirAway: ActiveSection.SetVoxel(XSize - iu - 1, ActiveSection.Y, ZSize - iv - 1, v);
           end;
+
+        end;
+      end;
 
       oriZ:
-        with ActiveSection.Tailer do
-          for iu:=0 to XSize - 1 do
-          begin
-            if iu >= Bmp.Width then
-              Break;
+      with ActiveSection.Tailer do
+      for iu:=0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
 
-            for iv:=0 to YSize - 1 do
-            begin
-              if iv >= Bmp.Height then
-                Break;
+        for iv:=0 to YSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
 
-              v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
+          v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
 
-              case ActiveSection.View[0].getDir of
-                dirTowards: ActiveSection.SetVoxel(iu, YSize - iv - 1, ActiveSection.Z, v);
-                dirAway: ActiveSection.SetVoxel(XSize - iu - 1, YSize - iv - 1, ActiveSection.Z, v);
-              end;
-
-            end;
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, YSize - iv - 1, ActiveSection.Z, v);
+            dirAway: ActiveSection.SetVoxel(XSize - iu - 1, YSize - iv - 1, ActiveSection.Z, v);
           end;
+
+        end;
+      end;
     end;
 
     RefreshAll;
@@ -3819,10 +3813,130 @@ begin
   finally
     Bmp.Free;
   end;
-  //ActiveSection.X
-  //ActiveSection.View[0].GetOrient
-
 end;
+
+procedure TFrmMain.ImportSectionHeightMap1Click(Sender: TObject);
+var
+  Bmp: TBitmap;
+  iu, iv, n, i: Integer;
+  v: TVoxelUnpacked;
+begin
+  OpenVXLDialog.Filter:= 'Bitmap|*.bmp';
+  if not OpenVXLDialog.Execute then
+    Exit;
+
+  Bmp:=TBitmap.Create;
+  try
+    Bmp.LoadFromFile(OpenVXLDialog.FileName);
+    if Bmp.Empty then
+      Exit;
+
+    CreateVXLRestorePoint(ActiveSection, Undo);
+    v.Used:=true;
+
+    case ActiveSection.View[0].GetOrient of
+      oriX:
+      with ActiveSection.Tailer do
+      begin
+        for iu:=0 to YSize - 1 do
+        begin
+          if iu >= Bmp.Width then Break;
+
+          for iv:=0 to ZSize - 1 do
+          begin
+            if iv >= Bmp.Height then Break;
+
+            i := 1;
+            // 사용 복셀인지 체크. 
+            case ActiveSection.View[0].getDir of
+              dirTowards:
+              begin
+                ActiveSection.GetVoxel(ActiveSection.X, iu, ZSize - iv - 1, v);
+                i := XSize - ActiveSection.X;
+              end;
+              dirAway:
+              begin
+                ActiveSection.GetVoxel(ActiveSection.X, YSize - iu - 1, ZSize - iv - 1, v);
+                i := ActiveSection.X;
+              end;
+            end;
+
+            if not v.Used then Continue;
+
+            n := GetRValue(Bmp.Canvas.Pixels[iu, iv]) * i div 255;
+
+            case ActiveSection.View[0].getDir of
+              dirTowards:
+              begin
+              for i:= ActiveSection.X+1 to ActiveSection.X+n do
+                ActiveSection.SetVoxel(i, iu, ZSize - iv - 1, v);
+              end;
+
+              dirAway:
+              begin
+              for i := ActiveSection.X-1 downto ActiveSection.X-n do
+                ActiveSection.SetVoxel(i, YSize - iu - 1, ZSize - iv - 1, v);
+              end;
+            end;
+
+          end;
+        end;
+      end;
+
+      // 나머지 방향은 차근차근 구현하세.
+
+      {
+      oriY:
+      with ActiveSection.Tailer do
+      for iu:=0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
+
+        for iv:=0 to ZSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
+
+          v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
+
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, ActiveSection.Y, ZSize - iv - 1, v);
+            dirAway: ActiveSection.SetVoxel(XSize - iu - 1, ActiveSection.Y, ZSize - iv - 1, v);
+          end;
+
+        end;
+      end;
+
+      oriZ:
+      with ActiveSection.Tailer do
+      for iu:=0 to XSize - 1 do
+      begin
+        if iu >= Bmp.Width then Break;
+
+        for iv:=0 to YSize - 1 do
+        begin
+          if iv >= Bmp.Height then Break;
+
+          v.Colour:=getpalettecolour(VXLPalette, Bmp.Canvas.Pixels[iu, iv]);
+
+          case ActiveSection.View[0].getDir of
+            dirTowards: ActiveSection.SetVoxel(iu, YSize - iv - 1, ActiveSection.Z, v);
+            dirAway: ActiveSection.SetVoxel(XSize - iu - 1, YSize - iv - 1, ActiveSection.Z, v);
+          end;
+
+        end;
+      end;
+      }
+    end;
+
+    RefreshAll;
+    UpdateUndo_RedoState;
+    
+  finally
+    Bmp.Free;
+  end;
+end;
+
+
 
 procedure firstlastword(const words: string; var first, rest: string);
 var
