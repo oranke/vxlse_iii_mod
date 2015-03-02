@@ -684,7 +684,7 @@ begin
         FrmMain.SetActiveColor(v.Colour, SpectrumMode = ModeColours);
         FrmMain.SetActiveNormal(v.Normal, SpectrumMode = ModeColours);
 
-        fHitIndex := -1; 
+        fHitIndex := -1;
       end;
     end;
 
@@ -702,6 +702,13 @@ begin
          (nz >= 0) and (nz < ZSize) then
       begin
         CreateVXLRestorePoint(ActiveSection, Undo); // Save Undo
+
+        if ssCtrl in Shift then
+        begin
+          ActiveSection.GetVoxel(X, Y, Z, v);
+          FrmMain.SetActiveColor(v.Colour, SpectrumMode = ModeColours);
+          FrmMain.SetActiveNormal(v.Normal, SpectrumMode = ModeColours);
+        end;
 
         v.Used := true;
         v.Normal := ActiveNormal;
