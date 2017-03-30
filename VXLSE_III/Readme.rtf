@@ -1,0 +1,446 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fnil\fcharset0 MS Sans Serif;}}
+{\*\generator Msftedit 5.41.15.1507;}\viewkind4\uc1\pard\b\f0\fs36 Voxel Section Editor III v1.38 Readme\fs28\par
+\b0\fs20\par
+---------------------\par
+1. Product Info\par
+2. Product History\par
+3. To do, future features\par
+4. Version history\par
+5. Contact\par
+6. Homepages/Links\par
+7. Source\par
+---------------------\par
+\par
+\b\fs24 1. \ul Product Info\par
+\ulnone\b0\fs20\par
+\pard\tx1704  - Src:\tab Turbo Delphi Explorer\par
+ - Compiled:\tab August 19th, 2008, 06:45 GMT\par
+ - Current version:\tab 1.38\par
+ - Authors:\tab Banshee, Stucuk, Will, Plasmadroid & Koen\par
+\pard\par
+\par
+\pard\tx1704\b\fs24 2. \ul Product History\par
+\ulnone\b0\fs20\par
+\ul\b VXLSE III History\ulnone\b0\par
+\par
+\ul\b Version 1.38\ulnone\b0\par
+Auto Normals 8.2 get more realistic normals with several bug fixes. This version also comes with improved renderer, ability to view the whole model, HVA loading fixes, HVA animation preview.\par
+\par
+\ul\b Version 1.37\ulnone\b0\par
+Auto Normals 8.0 get more realistic normals. This version also comes with several bug fixes on coordinates, Red Alert 2 new files, import sections. It also reduces the cpu load heavly when the program is not being used. Contributions from VK (coding) and IcySon55 (icons).\par
+\ul\b\par
+Version 1.36\ulnone\b0\par
+Auto Normals 7.0 finally allows the user to customize the way they want to normalize the voxel and also, it allows uber smoothed voxels. A critical bug with screenshots from the new 3d preview window was fixed users can export to other file formats such as bitmap, jpeg and png.\par
+\ul\b\par
+Version 1.35\ulnone\b0\par
+1.33 improves the Smoothed Cubed Normalizer a bit. 1.34 also comes with the New AutoNormals 6.0, which was faster and better during the tests. 1.35 improves both normalizers.\par
+\ul\b\par
+Version 1.32\ulnone\b0\par
+Smoothed Cubed Normalizer v2 has been improved again! Now the 3D Preview window is back. 1.33 improves the normalizer in few bits.\par
+\ul\b\par
+Version 1.31\ulnone\b0\par
+Smoothed Cubed Normalizer v2 was improved!\par
+\ul\b\par
+Version 1.3\ulnone\b0\par
+Smoothed Cubed Normalizer is the main feature of this version. All other auto-normalizers were removed. This version also runs much faster and renders your voxel much faster as well, in the 3d view. Mirror Left To Right returns and several bugs were fixed.\par
+\ul\b\par
+Version 1.2\ulnone\b0\par
+Flood Fill Erase is back, full custom scheme support, paste with and without transparency working and cubed normalizer. The old normalizer is now called 6-faced normalizer. It's still available just in case people dislike the cubed one. It also fixes some major bugs and update the links and redesign the button a bit. Thanks for all of those who reported bugs during almost one year a half at VXLSE forums at PPM. 1.2a fix a small issue in the original 1.2 that could cause trouble with future auto-upgrade tools and also fixes a problem with renaming sections. 1.2b gives an image to Zoom/Magnify button, fixes the hint from Flood Fill Erase and fixes Show Used Colours/Normals. 1.2c fixes Cubed Normalizer making it work perfectly.\par
+\par
+\ul\b Version 1.1\ulnone\b0\par
+Fixes some major bugs. Thx to ppl at Sleipnir's Stuff for reporting the bugs.\par
+\par
+\ul\b Version 1.0\ulnone\b0\par
+A remake of VXLSE II.\par
+\ul\b\par
+VXLSE II History\par
+\par
+Version 2.1 SE OpenGL\ulnone  \b0 "Stucuk Edit"\par
+Dubbed the OpenGL version due to the fact the only addition was a new OpenGL 3D Preview window that replaces the old 3d View.\par
+\par
+\ul\b Version 2.0 SE\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 Special Thanks to AI and the PPM memebers. There have been alot of misc changes and fixes not on the changelog.\par
+\par
+\b Beta Testers List:\b0\par
+\fs16 darkness\par
+DJBREIT\par
+IcySon55\par
+realihm\par
+Reaperrr\par
+Sk8erkid\fs20\par
+\par
+\ul\b Version 1.7.1 SE 3.1\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 Unreleased, Renamed to 2.0 SE after changes became bigger than a bug fix.\par
+\par
+\ul\b Version 1.7.1 SE 3\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 Lots of improvements, see below. Special Thx to the PPM memebers for all there ideas : The DVD (Scale Editing),  Awrethien (Colour Replacer Tool), Sk8erkid (Spraypaint brush,3D View now shows normals,Preset camera angles for 3d View,Flood Fill Erase, A More Adv Colour Replacer Tool), FinalMoon (Darken/Lighten Tool) and any others i have forgotten.\par
+\par
+\ul\b Version 1.7 SE 2.5\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 The magnify button works (doesn't zoom in on a point tho) 1X = 1:15 2X=1:30 4X=1:60, scroll bars added.\par
+\par
+\ul\b Version 1.7 SE 2\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 The line tool now works. Special thx to Banshee for helping with the maths for the line tool.\par
+\par
+\ul\b Version 1.7 SE\ulnone  \b0 "Stucuk Edit"\b\par
+\b0 The 3D view's rotation code has been remade and nolonger deforms voxels when it rotates them.\par
+\par
+\ul\b Version 1.7\ulnone\par
+\b0 We had input from Stucuk on how to create a depth buffer, and together with Plasmadroid and Koen we now have a fully working 3D view (where you can rotate all the way around). To prevent confusion, this is version 1.7, since we had lots of 1.6 beta's.\par
+\par
+\ul\b Version 1.6\ulnone\par
+\b0 Will revisits the code and does a bit of tweaking\par
+\par
+\ul\b Version 1.4\ulnone\par
+\b0 The first voxel editor for Tiberian Sun (and RA2) was created by Will. Because he lost the sources, he was unable to finish it. A few months later, he started working on Voxel Section Editor II, which was open-source (so he'd never lose the source again). After Will lost interest in the Voxel Editor, it was first continued by Plasmadroid. I(Koen) took Plasmadroid's version and improved it. So here is the Voxel Section Editor II (Will->Plasmadroid->Koen version). Since we like to keep things complex, Plasmadroid is also still working on this version.\par
+\pard\par
+\par
+\pard\tx1704\b\fs24 3. \ul To do, Future features\par
+\ulnone\b0\fs20\par
+ - elipse tool, circle tool.\par
+ - dirt tool\par
+ - Try and fix the "checkers" effect on the Voxel texture(only happens on WinME).\par
+ - Try and fix the Win 98 Bugs.\par
+ - FLH finder\par
+ - OS 3D Engine implementation\par
+\pard\par
+\par
+\pard\tx1704\b\fs24 4. \ul Version History\par
+\ulnone\b0\fs20\par
+\b VXLSE III\b0\par
+\par
+\b 1.38\b0\par
+ - revisions by Banshee \par
+\b   - Added\b0 : View "Whole Model" on the 3D Preview Window. You can now preview all sections together, like OS: Voxel Viewer does.\par
+\b   - Added\b0 : Play, pause and stop HVA animations and view other frames than the first one, as long as there is a .hva file available for your voxel with multiples frames.\par
+\b   - Added\b0 : Treat Discontinuities at Tangent Plane auto normals. This option auto-detects the neighbor pixels from the pixel that is being analysed, improving the auto normals result.\b\par
+  - Bug Fix \b0 :Renderer received several fixes and improvements.\par
+\b   - Bug Fix\b0 :\b  \b0 Tangent Plane Auto Normals received several fixes, making it much more efficient and reliable.\par
+\b   - Updated\b0 : Community links.\par
+\par
+\b 1.37\b0\par
+ - revisions by Banshee \par
+\b   - Added\b0 : Tangent Plane auto normals based on the article sent to SIBGRAPI 2007. This should find the lighting of the voxels in a more realistic way.\par
+\b   - Bug Fix \b0 :Import a section will no longer crash the system.\par
+\b   - Bug Fix\b0 :\b  \b0 If the program is deactivated, the application will stop rendering, severely reducing the cpu load on idle moments.\par
+\b   - Bug Fix \b0 :Fixed some inconsistences with the coordinate system.\par
+\b   - Bug Fix\b0 : New Red Alert 2 voxels starts with normals of the type 4 (RA2) and no longer type 2 (TS).\par
+  - \b Bug Fix\b0 :Contrast of 'normals' palette has been increased to the levels of VXLSE III 1.2x\par
+  - \b Bug Fix\b0 :Increased stability when opening and saving palettes, voxels and HVAs. Thanks VK.\par
+  - \b Bug Fix\b0 :Fixed a render problem that would ignore the shaders of remappable colours and also not update the remappable colours of the original 3d preview when changed by the user.\par
+\b   - Updated\b0 : Community links, new program icon from IcySon55 and interface improved thanks to VK.\par
+\b\par
+1.36\b0\par
+ - revisions by Banshee \par
+   - \b Added\b0 : New Auto Normals 7.0 is now available. Users are able to customize the normalizing methods and the procedures done during the operation, as well as the range of normalization and smooth process. You can also use the old 6-Faced normalizer from VXLSE III 1.2c again.\par
+   - \b Added\b0 : The new 3D preview window now exports screenshots as PNG, JPG and Bitmap..\par
+   - \b Bug Fix\b0 : The screenshot feature from the new 3d preview window will no longer distort colours under certain sizes.\par
+   - \b Bug Fix\b0 : The chances of a access violation if you close the program before the 3d preview window are no more.\par
+\b\par
+1.33, 1.34 and 1.35\b0\par
+ - revisions by Banshee \par
+   - \b Added\b0 : New Auto Normals is now available on 1.34 and 1.35. This one also uses the concept of cubed neighborhood, but the reference map is all based on influences, instead of the old way that considered blocks inside the voxel and influence as separate things.\par
+   - \b Updated\b0 : The old Autonormalizer received few bug fixes and improvements.\par
+\b\par
+1.32\b0\par
+ - revisions by Banshee \par
+   - \b Added\b0 : 3D Preview window from VXLSE II 2.1 OpenGL edition is now back and it can render together with the current Preview (at half speed, in this case). It can also be resized and all features from the traditional preview were incorporated into it.\par
+   - \b Added:\b0  Shortcuts from VXLSE II are back. You can move the X, Y and Z axis by pressing x, y and z. To move backwards, add shift to it. Some other random shortcuts were added.\par
+   - \b Updated\b0 : Autonormalizer is now even better. Now it uses the concept of influence area to no longer miss the direction on few specific cases.\par
+\par
+\b 1.31\b0\par
+ - revisions by Banshee \par
+   - \b Updated\b0 : Autonormalizer is now even better. I doubt that there is a better way to normalize your voxels manually.\par
+\b\par
+1.3\b0\par
+ - revisions by Banshee \par
+   - \b Added\b0 : Ability to optimize your voxel/new section for land or air unit. The difference is the bounds calculation. When Land is selection, the minimum height is 0, while Air uses the old system.\par
+   - \b Added\b0 : Mirror -> Mirror Right to Left finally works.\par
+   - \b Updated\b0 : There is only one auto normalizer now: Smoothed Cubed AutoNormals, that brings almost perfect normals, better than the old Cubed AutoNormals. Cubed AutoNormals and 6-Faced Autonormals are gone.\par
+   - \b Updated\b0 : Voxels should be rendered about 20x faster, like in OS:VV 1.6 or better. However, this requires a bit more RAM memory.\par
+   - \b Updated\b0 : Program loads faster and acts faster. The code was also improved to waste less memory. Custom schemes also load considerably faster.\par
+   - \b Updated\b0 : Dropper is now the default tool from the program, instead of pencil. This prevents users from accidentally painting the voxels when creating new files or opening existing voxels.\par
+   - \b Bug Fix\b0 : The program will now load sections with no used voxels instead of giving range check error.\par
+   - \b Bug Fix\b0 : Failed to set data for 'Path' message won't appear anymore if you do not have administrative powers on your operational system.\par
+   - \b Bug Fix\b0 : When creating new voxels or on the resize operation, the x, y and z you determine will be the x, y and z from your voxel. The order is no longer messed up.\par
+   - \b Bug Fix\b0 : Normals are now copied correctly when copy is used with Spectrum -> Normals.\par
+\par
+\par
+ \b 1.2\b0\par
+  - revisions by Banshee\par
+    - \b Added:\b0  Cubed Normalizer: provide almost perfect normals! (Also, updated few wrong spelling bits from the old normalizer)\par
+    - \b Added:\b0  Flood Fill Erase Tool. This tool used to exist on VXLSE II and now it's back. It allows users to erase faster neighboor pixels with the same colour.\par
+    - \b Added:\b0  Full compatibility with all custom schemes types and new custom schemes included.\par
+    - \b Updated\b0 : Tool Buttons re-organized.\par
+    - \b Updated:\b0  Loading screen/About Box re-organized.\par
+    - \b Fixed:\b0  Program now loads parameters.\par
+    - \b Fixed and Updated:\b0  Site links.\par
+    - \b Fixed:\b0  Paste (non full) will now paste with proper transparency\par
+    - \b Fixed:\b0  Resize text boxes are no longer messed up.\par
+    - \b Fixed:\b0  Disable 3d view checking and unchecking works properly now on Windows XP. Windows 9x still might have the preview window not reloaded sometimes.\par
+    - \b Fixed:\b0  Undo will no longer add void operations. I.e.: Hitting Flood and Fill outside the voxel will no longer compromise your undo.\par
+    - \b Fixed: \b0 Whenever you apply a new section name, the Voxel Header Info window will properly update the name of the section displayed in the combo box.\par
+    - \b Fixed:\b0  Show used colours/normals will now show ALL used colours, instead of hide and show the current active colours.\par
+\par
+\par
+  \b 1.1 \b0\par
+  - revisions by Stucuk:\par
+    - \b BugFix:\b0  Voxels created now work in Ra2/Ts.\par
+    - \b BugFix:\b0  When u asign vxl files to VXLSE III they are now opened in VXLSE III rather than just the program loading.\par
+    - \b Addition: \b0 Vxl Error system implemented, if voxel has known errors when u open it, VXLSE III will inform you and ask if you want to fix the errors.\par
+    - \b Addition: \b0 Maginfication from 1x to 25x has been implemented.\par
+    - \b Removed: \b0 Redundent menu's removed.\par
+\par
+  \b 1.0 \b0\par
+  - revisions by Stucuk:\par
+    - \b Initial Version\b0\par
+\par
+\b VXLSE II\b0\par
+\par
+  \b 2.1 SE OpenGL\b0\par
+  - revisions by Stucuk:\par
+    - \b Added\b0 : New OpenGL 3D Preview window, it replaces the old 3D View.\par
+    - \b Changed\b0 : Palette no longer stretches.\par
+\par
+  \b 2.0b SE\b0\par
+  - revisions by Stucuk:\par
+    - \b Bug Fix\b0 : Header Fixed.\par
+\par
+  \b 2.0 SE\b0\par
+  - revisions by Stucuk:\par
+     - \b Added\b0 : Voxel Texture Tool now has a "apply to layers" checkbox, when its checked it will apply the top view to the top half of the voxel and the bottom to the bottom half before it does its normal routine of applying the texture to all the sides. This means hidden bits can be coloured in with the rest of the voxel.\par
+     - \b Added\b0 : New icons for .vxl files.\par
+     - \b Added\b0 : Importing sections from other voxels.\par
+     - \b Added\b0 : New section - copy of current section.\par
+     - \b Added\b0 : Front and back mirroring.\par
+     - \b Added\b0 : Clear layer.\par
+     - \b Added\b0 : Tiberian Sun and Red Alert Palettes(both use wills original normals), also the ability to load, save and edit palettes.\par
+     - \b Added\b0 : CnC *.pal files can be loaded into the palette (only affects the "colours palette", normals are unchanged when a *.pal is loaded)\par
+     - \b Added\b0 : Magnify button added to 3d view. (1x, 2x and 4x zoom factors)\par
+     - \b Added\b0 : Show used colours, all used colours are shown on the palette(can be used to easily change colours when used with the replace colour tool).\par
+     - \b Added\b0 : 3rd Party palettes now load into a menu in "Palettes" (Note: Palettes with no name are ignored).\par
+     - \b Added\b0 : Added colour scheme system.\par
+     - \b Added\b0 : Added 2 preset camera angles: Front2 and Cameo2.\par
+     - \b Added\b0 : Added Magnify and preset camera angles to 3d view popup.\par
+     - \b Added\b0 : Count used voxels added.\par
+     - \b Added\b0 : Game specific palete selection option, when enabled it loads a specific palette depending on the game(user can pick palette). Off by defult.\par
+     - \b Added\b0 : Reaperrr's tweaked flyby's Normals scheme, and Reaperrr's Normals scheme have been added.\par
+     - \b Added\b0 : Reaperrr's colour schemes added.\par
+     - \b Added\b0 : Holding alt when clicking on editing view will select the colour from the voxel.\par
+     - \b Bug Fix\b0 : Flood Fill no longer gives acess violation on large voxels.\par
+     - \b Bug Fix\b0 : Resize, HVA and clear buttons now disabled when voxel is not editable(stops memory access errors when clicked while voxel is not editable).\par
+     - \b Bug Fix\b0 : Undo now works after Voxel Texture, Replace Colour,Clear Voxel tools and after an autonormal scheme has been applyed.\par
+     - \b Bug Fix\b0 : Scrollbars are updated when window is resized.\par
+     - \b Bug Fix\b0 : Line tool bottom left bug fixed.\par
+     - \b Changed\b0 : Loading/About box looks changed. Everything now "grayed" on load. Help File looks changed too.\par
+     - \b Changed\b0 : Loading box now loads stuff...\par
+     - \b Changed\b0 : You can now create a tiberiun sun or red alert 2 voxel insted of it defultly being red alert 2.\par
+     - \b Changed\b0 : Line and rectangle tools now work like ms paint, you click and drag.\par
+     - \b Changed\b0 : 3D View can now "jump out" and turn into a "window", it can be resized by clicking and draging the bottom left of it. Note: to activate double click on the "View: 3D" text.\par
+     - \b Changed\b0 : Zoom factor printed on 3D view.\par
+     - \b Changed\b0 : Autonormals moved to 'Scripts' menu, same with remove redundent voxels.\par
+     - \b Changed\b0 : Normal schemes can now have the following properties: name, split, gametype and imageindex.\par
+     - \b Changed\b0 : ViewMode no longer applys to the non-editable views.\par
+     - \b Fixed\b0 : MAXNORM_TIBERIAN_SUN changed to 35(thats 36 normals 0 to 35), before there were 33 normals displayed in the palette for TS voxels.\par
+     - \b Fixed\b0 : Minor Fix to Voxel Texture tool.\par
+     - \b Fixed\b0 : The "rotate/single rotation" button is now updated when a new voxel is created/loaded. (stops it saying its in single rotation mode when its in rotation mode)\par
+     - \b Fixed\b0 : Normal Palette had strange red colour at the start when black is the first colour. Also 3D view displayed the normals -1 of what colour it should be.\par
+     - \b Fixed\b0 : 2d copy and paste remade, now can be used with multipul vxlse exe's running. (saves "slice" as a image in the clipboard")\par
+     - \b Fixed\b0 : Normal Palette updated when voxel is changed from ts to ra2 or visa versa.\par
+     - \b Fixed\b0 : Scrollbox's fixed, normals use to be displayed wrongly.\par
+     - \b Fixed\b0 : Editing a header of a voxel is counted as a change to the file.\par
+     - \b Improved Code\b0 : 3D View's render speed improved, Koens Heap: 64.9 new code: 13.7 for 100 refreshes on zep.vxl. \par
+     - \b Removed\b0 : Model menu removed.\par
+     - \b Removed\b0 : Koens Normals removed, flyby's work better.\par
+\par
+  \b 1.7.1 SE 3\b0\par
+  - revisions by Stucuk:\par
+     - \b Added\b0 : 2 more rotate buttons on 3d view for more user control\par
+     - \b Added\b0 : More header editing, scales can now be edited.\par
+     - \b Added\b0 : Darken/Lighten Tool (you can change the amount the tool darkens or lightens a square by. It also works with the brush tool)\par
+     - \b Added\b0 : Colour Replacer Tool (works with normals as well as colour spectrums)\par
+     - \b Added\b0 : Preset camera angles for 3d View (front, back, top, bottom, left, right and Cameo)\par
+     - \b Added\b0 : Voxel Texture tool, can import and export BMP images of the voxels "skin" (works with normals and colours, u must used colours in the pallet when importing)\par
+     - \b Added\b0 : Spraypaint brush added (basic, works with darken/lighten tool as well)\par
+     - \b Added\b0 : 2D Copy, Cut and Paste Tools (they copy the current cross section and paste to another. Paste Full copys over everything exactly as it is, Paste just copys the used squares)\par
+     - \b Added\b0 : Clear Voxel Colour Tool (useful when skinning, sets every one of the voxels squares to the colour fo your choice, ready for a skin to be applyed on top)\par
+     - \b Added\b0 : Flood Fill Erase (just liek normal flood fill but it erases)\par
+     - \b Added\b0 : Added option in view menu to turn the 3d view off\par
+     - \b Changed\b0 : Voxel Header window looks have been improved, most of the read only information is hidden to the user.\par
+     - \b Changed\b0 : New Project area changed, now only needs new window for voxels with animations and its look has been improved.\par
+     - \b Changed\b0 : 3D View now shows normals when spectrum is set to them.\par
+     - \b Changed\b0 : Defult Zoom Changed to 1:7 insted of 1:15 (better for RA2 Voxels)\par
+     - \b Fixed\b0 : The position bit at the bottom right now works properly\par
+     - \b Removed\b0 : Refresh 3d View button as it didn't do a thing.... (its refreshed automaticaly when u draw,etc)\par
+\par
+  \b 1.7 SE 2.5\b0\par
+  - revisions by Stucuk:\par
+     - Magnify button now works(tho doesn't zoom in on a point)\par
+     - Added : 2 scroll bars for when the voxel is more zoomed in that it all can't fit in the window.\par
+     - Changed : Voxels are now zoomed in to 1:15 defultly insted of fitting to the screen liek b4.\par
+\par
+  \b 1.7 SE 2\b0\par
+  - revisions by Stucuk:\par
+     - Line tool works now\par
+\par
+  \b 1.7 SE\b0\par
+  - revisions by Stucuk:\par
+     - BUGFIX: Remade 3D View Rotation Code so it no longer deforms the voxels\par
+     - Fixed : 3d View no longer resets its rotation when you refesh the view.\par
+     - Added "rotate" mode, which keeps rotating the voxel until you press the button again (can b switched off)\par
+     - 3D view is now updated when a file is loaded, new file is started or when u draw.\par
+\par
+  \b 1.7\b0\par
+  - revisions by Koen:\par
+     - Fixed 3D view to support full rotation; thanks to Stucuk for this!\par
+     - BUGFIX: When in Normals editing mode, no longer will the color change too. The modes\par
+               are now independant (at least when drawing).\par
+\par
+  \b 1.6 beta 3\par
+\b0   - revisions by Koen:\par
+     - Optimized 3D view a bit\par
+\par
+  \b 1.6 beta 2\par
+\b0   - revisions by Kamil (Plasmadroid):\par
+     - 3D View!\par
+  - revisions by Koen:\par
+     - added my own auto-normals routine (based on file knormals.ini).\par
+     - merged Will's 1.6 beta with my 1.41 beta and with Kamil's 3d version, giving 1.6 beta 2\par
+     - BUGFIX: 3D View doesn't crash on non-cuboid voxels\par
+     - UPDATE: 3D View memory leak fixed (I think; I removed a lot of TBitmap creates/frees).\par
+     - BUGFIX: 3D View should now be able to handle voxel sections with > 9000 voxels too.\par
+     - NOTE: Kamil made the 3D view, I just tweaked it a little :)\par
+\par
+  \b 1.6 beta:\b0\par
+  - revisions by Will:\par
+     - can auto-normalise!  Place normal-scheme files (.normals) in the same directory\par
+       as the editor, and they appear in the Sections|Autonormals menu (if they loaded\par
+       correctly)\par
+     - can optimise better!  The remove-redundant-voxels function now does not remove\par
+       voxels that are on the underside of slopes, stopping holes appearing in the model\par
+       in the game\par
+     - BUGFIX: replaced recusive search for model outsides with a multi-pass algorithm, \par
+       stopping stack overflows in very large voxel models with a lot of outside space in\par
+       them\par
+     - BUGFIX: normals spectrum not set when openning new models\par
+     - BUGFIX: auto-normalise and optimise now clear the undo buffer (and warn the user\par
+       that they will)\par
+     - BUGFIX: normals spectrum now based upon the normals scheme for the section\par
+     - BUGFIX: normals now shown when the normals mode is selected\par
+     - CODE REVIEW: like Koen and Plasmadroid's work!  Thanks for all the effort, lads!\par
+  - 1.5 skipped to allow for working versions by Koen and Plasmadroid\par
+\par
+  \b 1.4 final:\b0\par
+  - Header editing (partially)\par
+  - BUGFIX: Voxel.LoadFromFile didn't close file! Messed up things when in plug-in mode.\par
+  - BUGFIX: No more ToolBar Resize button causes an error (when no file open)\par
+  - Little improves in: Scroll Box (Zoom in & out)\par
+  - About box backgroung image changed\par
+  - Rectangle tool now supported - simply click Rectangle button (left Bar) and:\par
+    first click on PaintBox = Rectangle begin, second click (anywhere) = Rectangle End\par
+  - RectangleFill Tool is now supported too.  [Kamil ^aka Plasmadroid^]\par
+  - Floodfill: It now actually does what you'd expect: fill an entire area.\par
+  - Color Select Tool added.\par
+  - Brush tool added: You can choose Brush with one of 4 sizes.\par
+  - Added Flip commands (Flip X, Y and Z)\par
+  - Added Mirror commands (Mirror Horizontal/Vertical)\par
+  - Added Nudge commands (Nudge Left/Right/Up/Down)\par
+  - BUGFIX: The Undo/Redo commands didn't update the two small views.\par
+  - BUGFIX: When switching direction of a view, clicks weren't translated properly (old ZBuffer bug again).\par
+  - BUGFIX: Det part of the header wasn't set correctly when adding new section.\par
+  - This version will be available as a TibEd plug-in along with TibEd v1.4\par
+  - Loads of small changes and bugfixes, but I can't remember them all.\par
+\par
+  \b 1.4 beta:\b0  These changes are listed with the final version\par
+\par
+  \b 1.3 beta:\b0\par
+  - Crosshair (showing current slice of voxel) isn't redrawn when drawing.\par
+    This is a bit faster, but mostly less annoying.\par
+  - BUGFIX: Rewrote the TranslateClick range checking. No more crashes, and\par
+    the bottom row can now be edited properly. (also known as ZBuffer bug)\par
+  - Insert sections before and after (no longer just as last section)\par
+  - Got rid of all compiler warnings.\par
+  - The Recently used file list now starts counting at 1 instead of 0.\par
+    (only programmers make such mistakes ;)\par
+  - The recently used file list now has 10 items instead of 4\par
+\par
+  \b 1.2 beta:\b0\par
+  - New, multi-level undo/redo system (and faster than the old, single-level one)\par
+  - 'New section' command added: Add new sections to voxels?\par
+    (*not* tested, tell me if it works: koen@tibed.net)\par
+\par
+  \b 1.11 beta:\b0\par
+  - New "View Header" option added\par
+  - Now options are saved again (broken in 1.1)\par
+  - The history works properly now (broken in 1.1)\par
+\par
+\b   1.1 beta:\b0\par
+  - Loading/saving code cleaned up\par
+  - Options now stored in registry\par
+  - Fixed memory leaks in options dialog\par
+  - The reopen file history now goes up to 4 files\par
+    Note: can be as high as 36 -> HistoryDepth constant\par
+  - Forms created on-demand instead of at startup\par
+  - TibEd plug-in support (in progress)\par
+  - Added About dialog box\par
+\par
+\b   1.0 beta:\b0\par
+  - Associate *.vxl files with VxlSE\par
+  - File -> Save option\par
+  - Edit -> Undo (only one step)\par
+\par
+  \b 9.9 alpha:\b0\par
+  - HVA Editor luncher\par
+  - Options Menu\par
+\par
+  \b 9.6 alpha:\b0\par
+  - Reopen\par
+  - Menu Bar\par
+  - voxel palette now loaded from resource stream\par
+\par
+  \b 9.3 alpha:\b0\par
+  - dialog box when file isn't saved\par
+  - some bug fixes\par
+\par
+  \b 9.0 alpha:\b0\par
+  - File -> new (custom voxel size)\par
+\par
+\b   8.5 alpha:\b0\par
+  - File -> New (only one voxel size 10x10x10)\par
+\pard\par
+\par
+\pard\tx1704\b\fs24 5. \ul Contact\par
+\ulnone\b0\fs20\par
+\par
+ - \f1 leon256@tlen.pl\f0\par
+ - koen@tibed.net \par
+ - stuc_uk_2000@hotmail.com (Contact for SE Range)\par
+ - bansheeppm@hotmail.com (for 1.2x and 1.3x)\par
+\par
+\pard\par
+\pard\tx1704\b\fs24 6. \ul Homepages/Links\par
+\ulnone\b0\fs20\par
+\par
+\b http://www.ppmsite.com/   \b0 (For Updates)\par
+\b http://www.cnc-source.com/\b0  \par
+http://www.tibed.net/voxel/\par
+\par
+Check our forums for updates and support at: \b http://vxlseforums.ppmsite.com\b0\par
+\par
+Check out the Voxel Section Editor III SVN located at \b http://svn.ppmsite.com/listing.php?repname=OS%20Voxel%20Tools&path=%2F&sc=1\par
+\par
+\b0 In order to checkout the SVN, use the url: \b svn://svn.ppmsite.com/voxel_tools\b0\par
+To commit, contact bansheeppm@hotmail.com with a name and a password that you don't use anywhere to get an account.\par
+\par
+\pard\par
+\pard\tx1704\b\fs24 7. \ul Source\par
+\ulnone\b0\fs20\par
+\par
+To compile the source you need:\par
+\par
+TGIFImage installed onto delphi, you can download it here: http://www.torry.net/vcl/graphics/gif/gifimage.exe\par
+\par
+Note: The source includes the component TPNGImage, which was created by Gustavo Huffenbacher Daud, for PNG support. You can find more informations and download of the full component with a complete documentation at \b http://pngdelphi.sourceforge.net\b0 .\par
+\par
+The source code of the algorithm disclosed on "Finding Surface Normals From Voxels" article submitted to SIBGRAPI 2007 is located at Voxel_AutoNormals.pas.\par
+}
+ 

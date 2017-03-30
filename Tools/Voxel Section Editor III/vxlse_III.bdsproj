@@ -119,7 +119,7 @@
 			<Linker Name="GenerateHpps">False</Linker>
 		</Linker>
 		<Directories>
-			<Directories Name="OutputDir">..\..\..\VXLSE_III</Directories>
+			<Directories Name="OutputDir">..\..\VXLSE_III</Directories>
 			<Directories Name="UnitOutputDir">.\Dcu</Directories>
 			<Directories Name="PackageDLLOutputDir"></Directories>
 			<Directories Name="PackageDCPOutputDir"></Directories>
