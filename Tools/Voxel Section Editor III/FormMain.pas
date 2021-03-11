@@ -2691,8 +2691,20 @@ begin
   if not SaveVXLDialog.Execute then
     Exit;
 
-  //ExportToMonotoneObjFile(SaveVXLDialog.FileName);
-  ExportToGreedyObjFile(SaveVXLDialog.FileName);
+
+  If Application.MessageBox(
+    'Optimize to Greedy? or Monotone?'+#10#10+
+    'If yes, use Greedy style.'+#10+
+    'If No, use Monotone style.',
+    'Optimize style', MB_YESNO+MB_ICONQUESTION+MB_DEFBUTTON1+MB_APPLMODAL) = ID_YES Then
+  begin
+    ExportToGreedyObjFile(SaveVXLDialog.FileName);
+    //ExportToObjFile(SaveVXLDialog.FileName, true);
+  end else
+  begin
+    ExportToMonotoneObjFile(SaveVXLDialog.FileName);
+    //ExportToObjFile(SaveVXLDialog.FileName, false);
+  end;
 
 end;
 

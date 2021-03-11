@@ -44,7 +44,7 @@ type
       1: (Arr: array [0..2] of I32);
   end;
 
-  // ∏≥Î≈Ê ∏È
+  // Î™®ÎÖ∏ÌÜ§ Î©¥
   PVxMtFace = ^TVxMtFace;
   TVxMtFace = record
     c, n: I32;
@@ -53,7 +53,7 @@ type
       1: (Arr: array [0..2] of I32);
   end;
 
-  // ±◊∏Æµ ∏È
+  // Í∑∏Î¶¨Îîî Î©¥
   PVxGdFace = ^TVxGdFace;
   TVxGdFace = record
     c, n: I32;
@@ -78,23 +78,25 @@ type
 
 function GetCubicNormalIndex(const aNormal: TVector3f): I32;
 
-// ∫πºø -> Monotone.
+// Î≥µÏÖÄ -> Monotone.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
 procedure BuildMonotone(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 
 
-// ∫πºø -> Greedy
+// Î≥µÏÖÄ -> Greedy
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/greedy.js
 procedure BuildGreedy(aVertices, aFaces: TRecords; aEraseDupVt, aChkSkin: Boolean);
 
 procedure ExportToMonotoneObjFile(const aFileName: String);
 procedure ExportToGreedyObjFile(const aFileName: String);
 
+//procedure ExportToObjFile(const aFileName: String; optimizeGreedy: Boolean);
+
 implementation
 
 uses
-  ogl3dview_engine, 
+  ogl3dview_engine,
   pngimage;
 
 { TObjects }
@@ -113,7 +115,7 @@ begin
   if Action = lnDeleted then Dispose(Ptr);
 end;
 
-// ∫πºø -> Monotone ≈◊Ω∫∆Æ.
+// Î≥µÏÖÄ -> Monotone ÌÖåÏä§Ìä∏.
 // http://0fps.net/2012/07/07/meshing-minecraft-part-2/
 // https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/monotone.js
 
@@ -329,8 +331,8 @@ begin
       begin
         //Make one pass over the u-scan line of the volume to run-length encode polygon
         nr := 0;
-        // js øπ¡¶ø°º≠¥¬ 0¿Ã ∫Û ∞˜¿ª ≥™≈∏≥ø. ø©±‚º≠¥¬ ªÁøÎµ«¡ˆ æ ¥¬ ∫πºø¿∫ -1∑Œ.
-        // -->> 0 ±◊¥Î∑Œ æ≤∞Ì ƒÆ∂Û∞™ø° 1¿ª ¥ı«ÿ æ≤¿⁄.
+        // js ÏòàÏ†úÏóêÏÑúÎäî 0Ïù¥ Îπà Í≥≥ÏùÑ ÎÇòÌÉÄÎÉÑ. Ïó¨Í∏∞ÏÑúÎäî ÏÇ¨Ïö©ÎêòÏßÄ ÏïäÎäî Î≥µÏÖÄÏùÄ -1Î°ú.
+        // -->> 0 Í∑∏ÎåÄÎ°ú Ïì∞Í≥† ÏπºÎùºÍ∞íÏóê 1ÏùÑ ÎçîÌï¥ Ïì∞Ïûê.
         p := 0; //c := 0;
 
         x[u] := 0;
@@ -344,7 +346,7 @@ begin
           begin
             ActiveSection.GetVoxel(x[0], x[1], x[2], vxl);
             if vxl.Used then
-            // 2015-02-27. ø…º¬¿ßƒ° πÊ«‚¿Ã Ω«¡¶ Ω∫≈≤¿œ∂ß∏∏ √≥∏Æ 
+            // 2015-02-27. ÏòµÏÖãÏúÑÏπò Î∞©Ìñ•Ïù¥ Ïã§Ï†ú Ïä§ÌÇ®ÏùºÎïåÎßå Ï≤òÎ¶¨ 
             if (not aChkSkin) or CheckFace(ActiveSection, x[0]+q[0], x[1]+q[1], x[2]+q[2]) then
               a := vxl.Colour +1
           end;
@@ -354,7 +356,7 @@ begin
           begin
             ActiveSection.GetVoxel(x[0]+q[0], x[1]+q[1], x[2]+q[2], vxl);
             if vxl.Used then
-            // 2015-02-27. ø…º¬¿ßƒ°ø°º≠ ±‚¡ÿπÊ«‚¬ ¿Ã Ω«¡¶ Ω∫≈≤¿œ∂ß∏∏ √≥∏Æ. 
+            // 2015-02-27. ÏòµÏÖãÏúÑÏπòÏóêÏÑú Í∏∞Ï§ÄÎ∞©Ìñ•Ï™ΩÏù¥ Ïã§Ï†ú Ïä§ÌÇ®ÏùºÎïåÎßå Ï≤òÎ¶¨. 
             if (not aChkSkin) or CheckFace(ActiveSection, x[0], x[1], x[2]) then
               b := vxl.Colour +1
           end;
@@ -421,7 +423,8 @@ begin
             next_frontier[fp] := frontier[i];
             Inc(fp);
 
-            Inc(i);
+
+            Inc(i);
             Inc(j, 2);
           end else
           begin
@@ -676,15 +679,15 @@ begin
   Polygons.Free;
 
 
-  // ∏È¿« ≈•∫Ú≥Î∏÷ º≥¡§.
+  // Î©¥Ïùò ÌÅêÎπÖÎÖ∏Î©Ä ÏÑ§Ï†ï.
   for i := 0 to aFaces.Count - 1 do
   begin
     facep := aFaces[i];
-    // ¡§¡°¡¬«• ∆˜¿Œ≈Õ æÚ∞Ì
+    // Ï†ïÏ†êÏ¢åÌëú Ìè¨Ïù∏ÌÑ∞ ÏñªÍ≥†
     for j := 0 to 3 - 1 do
       vps[j] := aVertices[facep^.Arr[j]];
 
-    // ≥Î∏÷. 0->1, 0->2 ¿« ø‹¿˚ ∞ËªÍ.
+    // ÎÖ∏Î©Ä. 0->1, 0->2 Ïùò Ïô∏Ï†Å Í≥ÑÏÇ∞.
     v0 :=
       MakeVector3f(
         vps[1]^.x - vps[0]^.x,
@@ -704,14 +707,14 @@ begin
 
   if not aEraseDupVt then Exit;
 
-  // ¡ﬂ∫π¡§¡° ∏∂≈∑
+  // Ï§ëÎ≥µÏ†ïÏ†ê ÎßàÌÇπ
   for i := 0 to aVertices.Count-2 do
   for j := i+1 to aVertices.Count - 1 do
   if PVxVertex(aVertices[j])^.DupIndex < 0 then
   if CompareMem(@TVxVertex(aVertices[i]^).Arr, @TVxVertex(aVertices[j]^).Arr, SizeOf(I32) * 3) then
     PVxVertex(aVertices[j])^.DupIndex := i;
 
-  // ¡ﬂ∫π ¡§¡°¿ª ªÁøÎ«— ∏È¿« ¡§¡° ¿Œµ¶Ω∫ ºˆ¡§.
+  // Ï§ëÎ≥µ Ï†ïÏ†êÏùÑ ÏÇ¨Ïö©Ìïú Î©¥Ïùò Ï†ïÏ†ê Ïù∏Îç±Ïä§ ÏàòÏ†ï.
   for i := 0 to aFaces.Count - 1 do
   begin
     facep := aFaces[i];
@@ -723,7 +726,7 @@ begin
     end;
   end;
 
-  // ¡ﬂ∫π ¡§¡° ¡¶∞≈. «ÿ¥Á ¿Œµ¶Ω∫∏¶ ∞°¡¯ ∏È¿« ¡§¡°¿Œµ¶Ω∫ ∞®º“.
+  // Ï§ëÎ≥µ Ï†ïÏ†ê Ï†úÍ±∞. Ìï¥Îãπ Ïù∏Îç±Ïä§Î•º Í∞ÄÏßÑ Î©¥Ïùò Ï†ïÏ†êÏù∏Îç±Ïä§ Í∞êÏÜå.
   for i := aVertices.Count-1 downto 0 do
   begin
     vp := aVertices[i];
@@ -815,7 +818,7 @@ begin
           begin
             ActiveSection.GetVoxel(x[0], x[1], x[2], vxl);
             if vxl.Used then
-            // 2015-02-27. ø…º¬¿ßƒ° πÊ«‚¿Ã Ω«¡¶ Ω∫≈≤¿œ∂ß∏∏ √≥∏Æ 
+            // 2015-02-27. ÏòµÏÖãÏúÑÏπò Î∞©Ìñ•Ïù¥ Ïã§Ï†ú Ïä§ÌÇ®ÏùºÎïåÎßå Ï≤òÎ¶¨ 
             if (not aChkSkin) or CheckFace(ActiveSection, x[0]+q[0], x[1]+q[1], x[2]+q[2]) then
             //if CheckFace(ActiveSection, x[0], x[1], x[2]+1) then
               a := vxl.Colour +1
@@ -826,7 +829,7 @@ begin
           begin
             ActiveSection.GetVoxel(x[0]+q[0], x[1]+q[1], x[2]+q[2], vxl);
             if vxl.Used then
-            // 2015-02-27. ø…º¬¿ßƒ°ø°º≠ ±‚¡ÿπÊ«‚¬ ¿Ã Ω«¡¶ Ω∫≈≤¿œ∂ß∏∏ √≥∏Æ. 
+            // 2015-02-27. ÏòµÏÖãÏúÑÏπòÏóêÏÑú Í∏∞Ï§ÄÎ∞©Ìñ•Ï™ΩÏù¥ Ïã§Ï†ú Ïä§ÌÇ®ÏùºÎïåÎßå Ï≤òÎ¶¨. 
             if (not aChkSkin) or CheckFace(ActiveSection, x[0], x[1], x[2]) then
               b := vxl.Colour +1
           end;
@@ -956,15 +959,15 @@ begin
   end;
 
 
-  // ∏È¿« ≈•∫Ú≥Î∏÷ º≥¡§.
+  // Î©¥Ïùò ÌÅêÎπÖÎÖ∏Î©Ä ÏÑ§Ï†ï.
   for i := 0 to aFaces.Count - 1 do
   begin
     fp := aFaces[i];
-    // ¡§¡°¡¬«• ∆˜¿Œ≈Õ æÚ∞Ì
+    // Ï†ïÏ†êÏ¢åÌëú Ìè¨Ïù∏ÌÑ∞ ÏñªÍ≥†
     for j := 0 to 3 - 1 do
       vps[j] := aVertices[fp^.Arr[j]];
 
-    // ≥Î∏÷. 0->1, 0->2 ¿« ø‹¿˚ ∞ËªÍ.
+    // ÎÖ∏Î©Ä. 0->1, 0->2 Ïùò Ïô∏Ï†Å Í≥ÑÏÇ∞.
     v0 :=
       MakeVector3f(
         vps[1]^.x - vps[0]^.x,
@@ -984,14 +987,14 @@ begin
 
   if not aEraseDupVt then Exit;
 
-  // ¡ﬂ∫π¡§¡° ∏∂≈∑
+  // Ï§ëÎ≥µÏ†ïÏ†ê ÎßàÌÇπ
   for i := 0 to aVertices.Count-2 do
   for j := i+1 to aVertices.Count - 1 do
   if PVxVertex(aVertices[j])^.DupIndex < 0 then
   if CompareMem(@TVxVertex(aVertices[i]^).Arr, @TVxVertex(aVertices[j]^).Arr, SizeOf(I32) * 3) then
     PVxVertex(aVertices[j])^.DupIndex := i;
 
-  // ¡ﬂ∫π ¡§¡°¿ª ªÁøÎ«— ∏È¿« ¡§¡° ¿Œµ¶Ω∫ ºˆ¡§.
+  // Ï§ëÎ≥µ Ï†ïÏ†êÏùÑ ÏÇ¨Ïö©Ìïú Î©¥Ïùò Ï†ïÏ†ê Ïù∏Îç±Ïä§ ÏàòÏ†ï.
   for i := 0 to aFaces.Count - 1 do
   begin
     fp := aFaces[i];
@@ -1003,7 +1006,7 @@ begin
     end;
   end;
 
-  // ¡ﬂ∫π ¡§¡° ¡¶∞≈. «ÿ¥Á ¿Œµ¶Ω∫∏¶ ∞°¡¯ ∏È¿« ¡§¡°¿Œµ¶Ω∫ ∞®º“.
+  // Ï§ëÎ≥µ Ï†ïÏ†ê Ï†úÍ±∞. Ìï¥Îãπ Ïù∏Îç±Ïä§Î•º Í∞ÄÏßÑ Î©¥Ïùò Ï†ïÏ†êÏù∏Îç±Ïä§ Í∞êÏÜå.
   for i := aVertices.Count-1 downto 0 do
   begin
     vp := aVertices[i];
@@ -1099,7 +1102,7 @@ begin
   WriteLn(F, 'Kd 1.000 1.000 1.000');
   WriteLn(F, 'Ks 0.000 0.000 0.000');
   WriteLn(F, 'Ns 1000');
-  
+
   WriteLn(F, 'map_Kd ', TextureName);
 
 
@@ -1135,7 +1138,7 @@ begin
   BuildTexture(aFileName);
   BuildMerterial(aFileName); 
 
-  // ªÁøÎµ» ªˆªÛ∏∏ ∏∂≈∑. 
+  // ÏÇ¨Ïö©Îêú ÏÉâÏÉÅÎßå ÎßàÌÇπ. 
   for i := 0 to 16*16 - 1 do
   begin
     New(UsedColor);
@@ -1192,7 +1195,7 @@ begin
       Format('vt %.4f %.4f',
         [
           (i div 16 + 0.5) / 16,
-          (15 - i mod 16 + 0.5) / 16 // Y√‡¿∫ µ⁄¡˝æÓ¡ÿ¥Ÿ. 
+          (15 - i mod 16 + 0.5) / 16 // YÏ∂ïÏùÄ Îí§ÏßëÏñ¥Ï§ÄÎã§. 
         ]
       )
     );
@@ -1201,7 +1204,7 @@ begin
   end;
   WriteLn(F, '# Texture Coods ', j); 
   WriteLn(F, '');
-  
+
   for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
     WriteLn(F,
       //Format('vn %d.0 %d.0 %d.0',
@@ -1270,7 +1273,7 @@ begin
   BuildTexture(aFileName);
   BuildMerterial(aFileName);
 
-  // ªÁøÎµ» ªˆªÛ∏∏ ∏∂≈∑.
+  // ÏÇ¨Ïö©Îêú ÏÉâÏÉÅÎßå ÎßàÌÇπ.
   for i := 0 to 16*16 - 1 do
   begin
     New(UsedColor);
@@ -1327,7 +1330,158 @@ begin
       Format('vt %.4f %.4f',
         [
           (i div 16 + 0.5) / 16,
-          (15 - i mod 16 + 0.5) / 16 // Y√‡¿∫ µ⁄¡˝æÓ¡ÿ¥Ÿ. 
+          (15 - i mod 16 + 0.5) / 16 // YÏ∂ïÏùÄ Îí§ÏßëÏñ¥Ï§ÄÎã§. 
+        ]
+      )
+    );
+    //WriteLn(F, '# ', i div 16, ' ', i mod 16); 
+    Inc(j);
+  end;
+  WriteLn(F, '# Texture Coods ', j); 
+  WriteLn(F, '');
+  
+  for i := Low(CUBIC_NORMALS) to High(CUBIC_NORMALS) do
+    WriteLn(F,
+      Format('vn %d.0000 %d.0000 %d.0000',
+      //Format('vn %d %d %d',
+        [
+          CUBIC_NORMALS[i][C_x],
+          CUBIC_NORMALS[i][C_y],
+          CUBIC_NORMALS[i][C_z]
+        ]
+      )
+    );
+  WriteLn(F, '# Normals ', High(CUBIC_NORMALS) - Low(CUBIC_NORMALS) +1);
+  WriteLn(F, '');
+
+
+  //}
+  WriteLn(F, 'g object');
+  WriteLn(F, 's off');
+  
+  for i := 0 to Faces.Count - 1 do
+  with PVxGdFace(Faces[i])^ do
+  begin
+    if (c >= 0) and (c < 16*16) then
+      j := PUsedColorRec(UsedColors[c])^.RealIndex +1
+    else
+      j := -1;
+
+    if j < 0 then j := 0;
+
+    //WriteLn(F, Format('f %d//%d %d//%d %d//%d', [v0+1, n+1, v1+1, n+1, v2+1, n+1]));
+    //WriteLn(F, Format('f %d %d %d', [v0+1, v1+1, v2+1]));
+    //WriteLn(F, Format('f %d %d %d', [Arr[0]+1, Arr[1]+1, Arr[2]+1]));
+    //WriteLn(F, Format('f %d/%d %d/%d %d/%d', [v0+1, j, v1+1, j, v2+1, j]));
+
+    //WriteLn(F, 's ', i+1);
+    //WriteLn(F, 's off');
+
+    WriteLn(F,
+      Format(
+        'f %d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d',
+        [
+          v0+1, j, n+1,
+          v1+1, j, n+1,
+          v2+1, j, n+1,
+          v3+1, j, n+1
+        ]
+      )
+    );
+  end;
+
+  WriteLn(F, '');
+
+  CloseFile(F);
+
+  Vertices.Free;
+  Faces.Free;
+  UsedColors.Free;
+end;
+
+procedure ExportToObjFile(const aFileName: String; optimizeGreedy: Boolean);
+var
+  F: TextFile;
+  Vertices: TRecords;
+  Faces: TRecords;
+
+  UsedColor: PUsedColorRec;
+  UsedColors: TRecords;
+
+  i, j: Integer;
+begin
+  //AllocConsole;
+
+  Vertices:= TRecords.Create;
+  Faces:= TRecords.Create;
+  UsedColors:= TRecords.Create;
+
+  if optimizeGreedy then
+    BuildGreedy(Vertices, Faces, true, true)
+  else
+    BuildMonotone(Vertices, Faces, true, true);
+    
+  BuildTexture(aFileName);
+  BuildMerterial(aFileName);
+
+  // ÏÇ¨Ïö©Îêú ÏÉâÏÉÅÎßå ÎßàÌÇπ.
+  for i := 0 to 16*16 - 1 do
+  begin
+    New(UsedColor);
+    UsedColor^.Used := false;
+    UsedColor^.RealIndex := -1;
+    UsedColors.Add(UsedColor);
+  end;
+
+  for i := 0 to Faces.Count - 1 do
+  with PVxMtFace(Faces[i])^ do
+  if (c >= 0) and (c < 16*16) then
+  begin
+    PUsedColorRec(UsedColors[c])^.Used := true;
+  end;
+
+  //WriteLn('-------');
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  with PUsedColorRec(UsedColors[i])^ do
+  if Used then
+  begin
+    //WriteLn('i: ', i, ', RealIndex: ', j, '  -> ', i div 16, ', ', i mod 16); 
+    RealIndex := j;
+    Inc(j);
+  end; 
+
+  AssignFile(F, aFileName);
+  Rewrite(F);
+
+  Writeln(F, '# Voxel Section Editor III Wavefront OBJ Exporter v0.01 - by oranke');
+  Write(F, '# File Created: ');
+  Write(F, DateToStr(Now));
+  WriteLn(F, ' ', TimeToStr(Now));
+  WriteLn(F, '');  
+
+  WriteLn(F, 'mtllib ', ExtractJustName(aFileName) + '.mtl');  
+  WriteLn(F, '');
+
+  for i := 0 to Vertices.Count - 1 do
+  with PVxVertex(Vertices[i])^ do
+    WriteLn(F, Format('v %d.0 %d.0 %d.0', [x, y, z]));
+  WriteLn(F, '# Vertexs ', Vertices.Count);
+  WriteLn(F, '');
+
+  WriteLn(F, 'usemtl material_0');
+  WriteLn(F, '');
+
+  //{
+  j := 0;
+  for i := 0 to UsedColors.Count - 1 do
+  if PUsedColorRec(UsedColors[i])^.Used then
+  begin
+    WriteLn(F,
+      Format('vt %.4f %.4f',
+        [
+          (i div 16 + 0.5) / 16,
+          (15 - i mod 16 + 0.5) / 16 // YÏ∂ïÏùÄ Îí§ÏßëÏñ¥Ï§ÄÎã§. 
         ]
       )
     );
